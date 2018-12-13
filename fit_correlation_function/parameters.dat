@@ -1,0 +1,64 @@
+#===========
+# single-particle momenta
+# pT grid
+n_pT_pts = 6
+pTmin = 0.0
+pTmax = 1.0
+
+# pphi grid
+n_pphi_pts = 6
+#pphimax, pphimin
+#determined automatically
+
+# pY grid
+n_pY_pts = 2
+pYmin = -1.0
+pYmax = 1.0
+
+#===========
+# also include XYZ
+# px,py,pz grid
+n_px_pts = 11
+n_py_pts = 11
+n_pz_pts = 3
+pxmin = -1.0
+pxmax =  1.0
+pymin = -1.0
+pymax =  1.0
+pzmin = -0.2
+pzmax =  0.2
+
+
+
+#===========
+# pair momenta
+# KT grid
+n_KT_pts = 2
+KTmin = 0.0
+KTmax = 0.2
+
+# Kphi grid
+n_Kphi_pts = 2 
+#Kphimax, Kphimin
+#determined automatically
+
+# KL grid
+n_KL_pts = 2
+KLmin = -0.1
+KLmax = 0.1
+
+
+
+#===========
+# relative momenta
+n_qo_pts = 16
+n_qs_pts = 16
+n_ql_pts = 16
+delta_qo = 0.004
+delta_qs = 0.004
+delta_ql = 0.004
+
+#===========
+# misc. parameters
+
+bin_mode = 0
