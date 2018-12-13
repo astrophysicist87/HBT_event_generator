@@ -72,12 +72,6 @@ void Correlation_function::initialize_all(
 	init_qs 		= -0.5*double(n_qs_pts-1)*delta_qs;
 	init_ql 		= -0.5*double(n_ql_pts-1)*delta_ql;
 
-	// - number of points to use when fleshing out correlation
-	//   function in each direction
-	//new_nqopts 		= ( n_qo_pts > 1 ) ? new_nqpts : 1;
-	//new_nqspts 		= ( n_qs_pts > 1 ) ? new_nqpts : 1;
-	//new_nqlpts 		= ( n_ql_pts > 1 ) ? new_nqpts : 1;
-
 	n_qo_bins 		= n_qo_pts - 1;
 	n_qs_bins 		= n_qs_pts - 1;
 	n_ql_bins 		= n_ql_pts - 1;
@@ -188,8 +182,6 @@ void Correlation_function::Load_correlation_function( string filepath )
 	getline(infile, line);
 	getline(infile, line);
 
-//cout << "filepath = " << filepath << endl;
-
 	// Load correlation function itself
 	int idx = 0;
 	double dummy = 0.0;
@@ -204,9 +196,7 @@ void Correlation_function::Load_correlation_function( string filepath )
 				>> dummy >> dummy >> dummy
 				>> correlation_function[idx]
 				>> correlation_function_error[idx];
-//cout << "Check: " << iKT << "   " << iKphi << "   " << iKL << "   "
-//		<< iqo << "   " << iqs << "   " << iql << "   "
-//		<< correlation_function[idx] << "   " << correlation_function_error[idx] << endl;
+
 		++idx;
 	}
 
@@ -220,67 +210,30 @@ void Correlation_function::Output_HBTradii( string outHBT_filename )
 	int prec = 4;
 	int extrawidth = 12;
 
-	//ofstream outHBT( outHBT_filename.c_str() );
 	FILE * pFile = fopen (outHBT_filename.c_str(),"w");
 
-	//std::ios oldState(nullptr);
-	//oldState.copyfmt(out);
-
 	// Print header inforamtion
-	fprintf (pFile, "# K_T      K_phi      K_L      lambda      R2o      R2s      R2l      R2os      R2ol      R2sl      lambda(err)      R2o(err)      R2s(err)      R2l(err)      R2os(err)      R2ol(err)      R2sl(err)\n");
-	/*outHBT << setfill('X') << setw(prec+extrawidth+2)
-		<< left << "# K_T" << setw(prec+extrawidth)
-		<< left << "K_phi" << setw(prec+extrawidth)
-		<< left << "K_L" << setw(prec+extrawidth)
-		<< left << "lambda" << setw(prec+extrawidth)
-		<< left << "R2o" << setw(prec+extrawidth)
-		<< left << "R2s" << setw(prec+16)
-		<< left << "R2l" << setw(prec+16)
-		<< left << "R2os" << setw(prec+16)
-		<< left << "R2ol" << setw(prec+36)
-		<< left << "R2sl" << setw(prec+36)
-		<< left << "lambda(err)" << setw(prec+extrawidth)
-		<< left << "R2o(err)" << setw(prec+extrawidth)
-		<< left << "R2s(err)" << setw(prec+16)
-		<< left << "R2l(err)" << setw(prec+16)
-		<< left << "R2os(err)" << setw(prec+16)
-		<< left << "R2ol(err)" << setw(prec+36)
-		<< left << "R2sl(err)" << endl;*/
+	fprintf ( pFile, "# K_T      K_phi      K_L      lambda      \
+					R2o      R2s      R2l      R2os      R2ol      \
+					R2sl      lambda(err)      R2o(err)      \
+					R2s(err)      R2l(err)      R2os(err)      \
+					R2ol(err)      R2sl(err)\n" );
 
-	//outHBT << "# " << setfill('-') << setw(150) << " " << endl;
 	fprintf (pFile, "#----------------------------------------");
 	fprintf (pFile, "----------------------------------------");
 	fprintf (pFile, "----------------------------------------");
 	fprintf (pFile, "----------------------------------------");
 	fprintf (pFile, "----------------------------------------\n");
 
-	//outHBT.copyfmt(oldState);
-
 	int idx = 0;
 	for (int iKT = 0; iKT < n_KT_bins; iKT++)
 	for (int iKphi = 0; iKphi < n_Kphi_bins; iKphi++)
 	for (int iKL = 0; iKL < n_KL_bins; iKL++)
 	{
-		/*outHBT << setfill('X') << fixed << setprecision(prec) << "  "
-			<< 0.5*(KT_pts[iKT]+KT_pts[iKT+1]) << setw(prec+extrawidth)
-			<< 0.5*(Kphi_pts[iKphi]+Kphi_pts[iKphi+1]) << setw(prec+extrawidth)
-			<< 0.5*(KL_pts[iKL]+KL_pts[iKL+1]) << setw(prec+extrawidth)
-			<< setw(prec+extrawidth+2)
-			<< left << lambda_Correl[idx] << setw(prec+extrawidth)
-			<< left << R2_out[idx] << setw(prec+extrawidth)
-			<< left << R2_side[idx] << setw(prec+16)
-			<< left << R2_long[idx] << setw(prec+16)
-			<< left << R2_outside[idx] << setw(prec+16)
-			<< left << R2_outlong[idx] << setw(prec+36)
-			<< left << R2_sidelong[idx] << setw(prec+36)
-			<< left << lambda_Correl_err[idx] << setw(prec+extrawidth)
-			<< left << R2_out_err[idx] << setw(prec+extrawidth)
-			<< left << R2_side_err[idx] << setw(prec+16)
-			<< left << R2_long_err[idx] << setw(prec+16)
-			<< left << R2_outside_err[idx] << setw(prec+16)
-			<< left << R2_outlong_err[idx] << setw(prec+36)
-			<< left << R2_sidelong_err[idx] << endl;*/
-			fprintf (  pFile, "%f      %f      %f      %f      %f      %f      %f      %f      %f      %f      %f      %f      %f      %f      %f      %f      %f\n",
+			fprintf (  pFile,  "%f      %f      %f      %f      %f      \
+								%f      %f      %f      %f      %f      \
+								%f      %f      %f      %f      %f      \
+								%f      %f\n",
 						0.5*(KT_pts[iKT]+KT_pts[iKT+1]),
 						0.5*(Kphi_pts[iKphi]+Kphi_pts[iKphi+1]),
 						0.5*(KL_pts[iKL]+KL_pts[iKL+1]),
