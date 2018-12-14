@@ -23,7 +23,7 @@ SRCDIR		=	src
 # --------------- Files involved ------------------
 
 ifeq "$(MAIN)" ""
-MAIN		=	run.e
+MAIN		=	run_fit_correlation_function.e
 endif
 
 SRC		=	main.cpp \

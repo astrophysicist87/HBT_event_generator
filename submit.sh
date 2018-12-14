@@ -1,7 +1,3 @@
 #! /usr/bin/env bash
 
-./compile_all.sh &> compile_all.out &
-
-wait
-
-./driver.sh &> driver.out &
+( ./compile_all.sh &> compile_all.out && ./driver.sh &> driver.out ) &

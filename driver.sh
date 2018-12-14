@@ -26,7 +26,7 @@ runPythia=true
 projectile="Pb"
 target="Pb"
 beamEnergy="2760.0"
-Nevents="200"
+Nevents="100000"
 
 #=====================================
 # Run Pythia (if desired)
@@ -101,8 +101,8 @@ Nevents="200"
 zip -r $HOME_DIRECTORY/$projectile$target"_"`echo $beamEnergy`"GeV_NeV"$Nevents"_results.zip" $RESULTS_DIRECTORY
 
 # Clean-up HBT directories (but not Pythia results directory!!!)
-rm -rf HBT_event_generator.[oe]* $HBT_EVENT_GEN_DIRECTORY/results\
-       fit_correlation_function.[oe]* $HBT_FITCF_DIRECTORY/results
+rm -rf $HBT_EVENT_GEN_DIRECTORY/HBT_event_generator.[oe]* $HBT_EVENT_GEN_DIRECTORY/results\
+       $HBT_FITCF_DIRECTORY/fit_correlation_function.[oe]* $HBT_FITCF_DIRECTORY/results
 
 echo 'Finished everything!'
 
