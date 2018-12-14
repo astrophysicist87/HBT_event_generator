@@ -1,0 +1,27 @@
+nohup: ignoring input
+cat: /scratch/blixen/plumberg/results/PbPb_2760.0GeV_NeV1000_S_x_p_filenames.dat: No such file or directory
+cp: cannot stat './results/*': No such file or directory
+  adding: home/blixen/plumberg/HBT_event_generator/results/ (stored 0%)
+  adding: home/blixen/plumberg/HBT_event_generator/results/fit_correlation_function.out (deflated 65%)
+  adding: home/blixen/plumberg/HBT_event_generator/results/PbPb_2760.0GeV_Nev1000_5.dat (deflated 66%)
+  adding: home/blixen/plumberg/HBT_event_generator/results/HBT_pipiCF.err (deflated 95%)
+  adding: home/blixen/plumberg/HBT_event_generator/results/PbPb_2760.0GeV_Nev1000_7.dat (deflated 66%)
+  adding: home/blixen/plumberg/HBT_event_generator/results/PbPb_2760.0GeV_Nev1000_4.dat (deflated 66%)
+  adding: home/blixen/plumberg/HBT_event_generator/results/PbPb_2760.0GeV_Nev1000_S_x_p_filenames.dat (deflated 79%)
+  adding: home/blixen/plumberg/HBT_event_generator/results/HBT_particle.dat (deflated 31%)
+  adding: home/blixen/plumberg/HBT_event_generator/results/PbPb_2760.0GeV_Nev1000_mult.dat (deflated 60%)
+  adding: home/blixen/plumberg/HBT_event_generator/results/PbPb_2760.0GeV_Nev1000_0.dat (deflated 66%)
+  adding: home/blixen/plumberg/HBT_event_generator/results/fit_correlation_function.err (deflated 17%)
+  adding: home/blixen/plumberg/HBT_event_generator/results/HBT_event_generator.err (deflated 45%)
+  adding: home/blixen/plumberg/HBT_event_generator/results/HBT_pipiCF.dat (deflated 98%)
+  adding: home/blixen/plumberg/HBT_event_generator/results/PbPb_2760.0GeV_Nev1000_8.dat (deflated 66%)
+  adding: home/blixen/plumberg/HBT_event_generator/results/PbPb_2760.0GeV_Nev1000_2.dat (deflated 66%)
+  adding: home/blixen/plumberg/HBT_event_generator/results/PbPb_2760.0GeV_Nev1000_total_N_filenames.dat (stored 0%)
+  adding: home/blixen/plumberg/HBT_event_generator/results/PbPb_2760.0GeV_Nev1000_9.dat (deflated 66%)
+  adding: home/blixen/plumberg/HBT_event_generator/results/PbPb_2760.0GeV_Nev1000_6.dat (deflated 66%)
+  adding: home/blixen/plumberg/HBT_event_generator/results/HBT_event_generator.out (deflated 74%)
+  adding: home/blixen/plumberg/HBT_event_generator/results/PbPb_2760.0GeV_Nev1000_3.dat (deflated 66%)
+  adding: home/blixen/plumberg/HBT_event_generator/results/PbPb_2760.0GeV_Nev1000_1.dat (deflated 66%)
+Finished everything!
+509.88user 2.88system 8:33.13elapsed 99%CPU (0avgtext+0avgdata 113484maxresident)k
+272inputs+1076080outputs (0major+21728minor)pagefaults 0swaps

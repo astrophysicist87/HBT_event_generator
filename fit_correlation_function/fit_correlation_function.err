@@ -1,0 +1,4 @@
+gsl: lu.c:262: ERROR: matrix is singular
+Default GSL error handler invoked.
+0.00user 0.00system 0:00.00elapsed 50%CPU (0avgtext+0avgdata 4608maxresident)k
+0inputs+24outputs (0major+203minor)pagefaults 0swaps

@@ -6,10 +6,11 @@ HOME_DIRECTORY=~/HBT_event_generator
 # Pythia
 PYTHIA_DIRECTORY=~/pythia8235/examples
 ALT_PYTHIA_DIRECTORY=/scratch/blixen/plumberg
+PYTHIA_RESULTS_DIRECTORY=$ALT_PYTHIA_DIRECTORY/results
 # HBT event generator
-HBT_EVENT_GEN_DIRECTORY=./HBT_event_generator_w_errors
+HBT_EVENT_GEN_DIRECTORY=$HOME_DIRECTORY/HBT_event_generator_w_errors
 # Fit correlation function
-HBT_FITCF_DIRECTORY=./fit_correlation_function
+HBT_FITCF_DIRECTORY=$HOME_DIRECTORY/fit_correlation_function
 
 # Make sure results directory exists
 RESULTS_DIRECTORY=$HOME_DIRECTORY/results
@@ -22,27 +23,40 @@ fi
 #===================
 runPythia=true
 
+projectile="Pb"
+target="Pb"
+beamEnergy="2760.0"
+Nevents="200"
+
 #=====================================
 # Run Pythia (if desired)
 (
 
 	cd $PYTHIA_DIRECTORY
 
-	projectile="Pb"
-	target="Pb"
-	beamEnergy="2760.0"
-	Nevents="100"
-
 	if [ $runPythia ]
 	then
+
+		# make sure results directory exists
+		if [ ! -d "$PYTHIA_RESULTS_DIRECTORY" ]
+		then
+			    mkdir $PYTHIA_RESULTS_DIRECTORY
+		fi
+
 		# time and run
-		./run_mainHIC.sh $projectile $target $beamEnergy $Nevents
-		cp ./results/* $RESULTS_DIRECTORY/
+		./run_mainHIC.sh $projectile $target $beamEnergy $Nevents "$PYTHIA_RESULTS_DIRECTORY/"
+		#cp $PYTHIA_RESULTS_DIRECTORY/* $RESULTS_DIRECTORY/
 	fi
 
-	readlink -f ./results/$projectile$target"_"$beamEnergy"GeV"_*.dat > $HBT_EVENT_GEN_DIRECTORY/catalogue.dat
-	readlink -f ./results/HBT_particle.dat > $HBT_EVENT_GEN_DIRECTORY/particle_catalogue.dat
-	readlink -f ./results/HBT_particle.dat > $HBT_FITCF_DIRECTORY/particle_catalogue.dat
+	# Get the filenames which need to be processed
+	recordOfOutputFilenames_Sxp=$PYTHIA_RESULTS_DIRECTORY/$projectile$target"_"`echo $beamEnergy`"GeV_Nev"$Nevents"_S_x_p_filenames.dat"
+	recordOfOutputFilename_mult=$PYTHIA_RESULTS_DIRECTORY/$projectile$target"_"`echo $beamEnergy`"GeV_Nev"$Nevents"_total_N_filename.dat"
+	for line in `cat $recordOfOutputFilenames_Sxp`
+	do
+		readlink -f $PYTHIA_RESULTS_DIRECTORY/$line >> $HBT_EVENT_GEN_DIRECTORY/catalogue.dat
+	done
+	readlink -f $PYTHIA_RESULTS_DIRECTORY/HBT_particle.dat > $HBT_EVENT_GEN_DIRECTORY/particle_catalogue.dat
+	readlink -f $PYTHIA_RESULTS_DIRECTORY/HBT_particle.dat > $HBT_FITCF_DIRECTORY/particle_catalogue.dat
 
 )
 
@@ -55,11 +69,15 @@ runPythia=true
 	# using OpenMP (leave a couple cores free)
 	export OMP_NUM_THREADS=10
 
-	# time and run
-	nohup time ./HBT_event_generator.e 1>> HBT_event_generator.out 2>> HBT_event_generator.err
-	cp ./results/* $RESULTS_DIRECTORY/
+	if [ ! -d "./results" ]; then
+	        mkdir results
+	fi
 
-	readlink -f ./results/HBT_pipiCF_*.dat > $HBT_EVENT_GEN_DIRECTORY/catalogue.dat
+	# time and run
+	nohup time ./run.e 1>> HBT_event_generator.out 2>> HBT_event_generator.err
+	cp HBT_event_generator.[oe]* ./results/* $RESULTS_DIRECTORY/
+
+	readlink -f ./results/HBT_pipiCF.dat > $HBT_FITCF_DIRECTORY/catalogue.dat
 
 )
 
@@ -69,13 +87,22 @@ runPythia=true
 
 	cd $HBT_FITCF_DIRECTORY
 
+	if [ ! -d "./results" ]
+	then
+		mkdir results
+	fi
+
 	# time and run
-	nohup time ./run.e 1> run.out 2> run.err
-	cp ./results/* $RESULTS_DIRECTORY/
+	nohup time ./run.e 1> fit_correlation_function.out 2> fit_correlation_function.err
+	cp fit_correlation_function.[oe]* ./results/* $RESULTS_DIRECTORY/
 
 )
 
-zip -r ./$projectile$target"_"`echo $beamEnergy`GeV_results.zip ./$RESULTS_DIRECTORY
+zip -r $HOME_DIRECTORY/$projectile$target"_"`echo $beamEnergy`"GeV_NeV"$Nevents"_results.zip" $RESULTS_DIRECTORY
+
+# Clean-up HBT directories (but not Pythia results directory!!!)
+rm -rf HBT_event_generator.[oe]* $HBT_EVENT_GEN_DIRECTORY/results\
+       fit_correlation_function.[oe]* $HBT_FITCF_DIRECTORY/results
 
 echo 'Finished everything!'
 

@@ -63,12 +63,18 @@ int main(int argc, char *argv[])
 	//string collision_system = "pPb_5.02TeV";
 	string collision_system = "PbPb_2.760TeV";
 	ostringstream out_filename_stream, err_filename_stream;
-	out_filename_stream << path << "HBT_"
+	/*out_filename_stream << path << "HBT_"
 						<< chosen_particle_name << chosen_particle_name
 						<< "CF_" << collision_system << "_100000events.dat";
 	err_filename_stream << path << "HBT_"
 						<< chosen_particle_name << chosen_particle_name
-						<< "CF_" << collision_system << "_100000events.err";
+						<< "CF_" << collision_system << "_100000events.err";*/
+	out_filename_stream << path << "HBT_"
+						<< chosen_particle_name << chosen_particle_name
+						<< "CF.dat";
+	err_filename_stream << path << "HBT_"
+						<< chosen_particle_name << chosen_particle_name
+						<< "CF.err";
 	ofstream outmain(out_filename_stream.str().c_str());
 	ofstream errmain(err_filename_stream.str().c_str());
 

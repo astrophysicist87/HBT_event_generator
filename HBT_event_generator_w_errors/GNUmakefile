@@ -36,7 +36,7 @@ SRCDIR		=	src
 # --------------- Files involved ------------------
 
 ifeq "$(MAIN)" ""
-MAIN		=	HBT_event_generator.e
+MAIN		=	run.e
 endif
 
 SRC		=	main.cpp \

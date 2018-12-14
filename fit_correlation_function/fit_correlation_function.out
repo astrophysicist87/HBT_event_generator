@@ -15,4 +15,3 @@
 **********************************************************
 
 n_pt_pts=6  ptmin=0  ptmax=1  n_pphi_pts=6  n_py_pts=11  pymin=-1  pymax=1  n_px_pts=11  n_pz_pts=3  pxmin=-1  pxmax=1  pzmin=-0.2  pzmax=0.2  n_kt_pts=2  ktmin=0  ktmax=0.2  n_kphi_pts=2  n_kl_pts=2  klmin=-0.1  klmax=0.1  n_qo_pts=16  n_qs_pts=16  n_ql_pts=16  delta_qo=0.004  delta_qs=0.004  delta_ql=0.004  bin_mode=0  name=0  monval=211  mass=0.13957  charge=1  spintype=1  chargetype=3  
-Finished everything in 0.009379 seconds.

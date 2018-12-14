@@ -10,4 +10,4 @@ if [ ! -d "$DIRECTORY" ]; then
 fi
 
 # time and run
-nohup time ./HBT_event_generator.e 1>> HBT_event_generator.out 2>> HBT_event_generator.err &
+nohup time ./run.e 1>> HBT_event_generator.out 2>> HBT_event_generator.err &
