@@ -60,6 +60,7 @@ then
 	echo 'END RESULT: Everything compiled successfully!'
 else
 	echo 'END RESULT: There were problems compiling.'
+	exit $success
 fi
 
 # End of file

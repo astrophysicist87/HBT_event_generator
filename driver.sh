@@ -98,7 +98,7 @@ Nevents="100000"
 
 )
 
-zip -r $HOME_DIRECTORY/$projectile$target"_"`echo $beamEnergy`"GeV_NeV"$Nevents"_results.zip" $RESULTS_DIRECTORY
+zip -r $HOME_DIRECTORY/$projectile$target"_"`echo $beamEnergy`"GeV_Nev"$Nevents"_results.zip" $RESULTS_DIRECTORY
 
 # Clean-up HBT directories (but not Pythia results directory!!!)
 rm -rf $HBT_EVENT_GEN_DIRECTORY/HBT_event_generator.[oe]* $HBT_EVENT_GEN_DIRECTORY/results\
