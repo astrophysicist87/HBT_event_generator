@@ -210,36 +210,35 @@ void Correlation_function::Output_HBTradii( string outHBT_filename )
 	int prec = 4;
 	int extrawidth = 12;
 
-	FILE * pFile = fopen (outHBT_filename.c_str(),"w");
+	FILE * pFile = fopen ( outHBT_filename.c_str(), "w" );
 
 	// Print header inforamtion
-	fprintf ( pFile, "# K_T      K_phi      K_L      lambda      \
-					R2o      R2s      R2l      R2os      R2ol      \
-					R2sl      lambda(err)      R2o(err)      \
-					R2s(err)      R2l(err)      R2os(err)      \
-					R2ol(err)      R2sl(err)\n" );
+	fprintf ( pFile, "# K_T      K_phi      K_L      lambda      ");
+	fprintf ( pFile, "R2o      R2s      R2l      R2os      R2ol      ");
+	fprintf ( pFile, "R2sl      lambda(err)      R2o(err)      ");
+	fprintf ( pFile, "R2s(err)      R2l(err)      R2os(err)      ");
+	fprintf ( pFile, "R2ol(err)      R2sl(err)\n" );
 
-	fprintf (pFile, "#----------------------------------------");
-	fprintf (pFile, "----------------------------------------");
-	fprintf (pFile, "----------------------------------------");
-	fprintf (pFile, "----------------------------------------");
-	fprintf (pFile, "----------------------------------------\n");
+	fprintf ( pFile, "#----------------------------------------" );
+	fprintf ( pFile, "----------------------------------------" );
+	fprintf ( pFile, "----------------------------------------" );
+	fprintf ( pFile, "----------------------------------------" );
+	fprintf ( pFile, "----------------------------------------\n" );
 
 	int idx = 0;
 	for (int iKT = 0; iKT < n_KT_bins; iKT++)
 	for (int iKphi = 0; iKphi < n_Kphi_bins; iKphi++)
 	for (int iKL = 0; iKL < n_KL_bins; iKL++)
 	{
-			fprintf (  pFile,  "%f      %f      %f      %f      %f      \
-								%f      %f      %f      %f      %f      \
-								%f      %f      %f      %f      %f      \
-								%f      %f\n",
+			fprintf (  pFile,  "%f      %f      %f      ",
 						0.5*(KT_pts[iKT]+KT_pts[iKT+1]),
 						0.5*(Kphi_pts[iKphi]+Kphi_pts[iKphi+1]),
-						0.5*(KL_pts[iKL]+KL_pts[iKL+1]),
+						0.5*(KL_pts[iKL]+KL_pts[iKL+1]) );
+			fprintf (  pFile,  "%f      %f      %f      %f      %f      %f      %f      ",
 						lambda_Correl[idx],
 						R2_out[idx], R2_side[idx], R2_long[idx],
-						R2_outside[idx], R2_outlong[idx], R2_sidelong[idx],
+						R2_outside[idx], R2_outlong[idx], R2_sidelong[idx] );
+			fprintf (  pFile,  "%f      %f      %f      %f      %f      %f      %f\n",
 						lambda_Correl_err[idx],
 						R2_out_err[idx], R2_side_err[idx], R2_long_err[idx],
 						R2_outside_err[idx], R2_outlong_err[idx], R2_sidelong_err[idx] );
