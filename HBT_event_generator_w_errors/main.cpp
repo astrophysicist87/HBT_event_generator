@@ -33,8 +33,8 @@ int main(int argc, char *argv[])
 	ParameterReader * paraRdr = new ParameterReader;
 	paraRdr->readFromFile("./parameters.dat");
 
-	// Read-in particle information
-	vector<string> particle_info_filename;
+	// Read-in particle and ensemble information
+	vector<string> particle_info_filename, ensemble_info_filename;
 	read_file_catalogue("./particle_catalogue.dat", particle_info_filename);
 	paraRdr->readFromFile(particle_info_filename[0]);
 
@@ -54,6 +54,31 @@ int main(int argc, char *argv[])
 	// from which to construct HBT correlation function
 	vector<string> all_file_names;
 	read_file_catalogue("./catalogue.dat", all_file_names);
+
+
+	// Process multiplicity and ensemble information
+	vector<string> ensemble_info;
+	read_file_catalogue("./ensemble_catalogue.dat", ensemble_info);
+
+	// allows to give files appropriate names
+	string collision_system_info = ensemble_info[0];
+	string target_name, projectile_name, beam_energy;
+	int Nevents;
+	double centrality_minimum, centrality_maximum;
+	istringstream iss(collision_system_info);
+	iss >> target_name >> projectile_name >> beam_energy >> centrality_minimum >> centrality_maximum >> Nevents;
+	
+	// select only those events falling into specificed centrality range
+	string multiplicity_filename = ensemble_info[1];
+	get_events_in_centrality_class(
+				multiplicity_filename, ensemble_multiplicites,
+				centrality_minimum, centrality_maximum );
+
+	cout << "run_HBT_event_generator(): "
+			<< "Using " << ensemble_multiplicites.size()
+			<< " events in centrality class "
+			<< centrality_minimum << "-"
+			<< centrality_maximum << "%!" << endl;
 
 
 	// Set-up output files

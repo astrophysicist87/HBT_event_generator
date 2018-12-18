@@ -54,6 +54,7 @@ INC		= 	main.h \
 			$(SRCDIR)/Stopwatch.h \
 			$(SRCDIR)/Arsenal.h \
 			$(SRCDIR)/ParameterReader.h \
+			$(SRCDIR)/ensemble.h \
 			$(SRCDIR)/HBT_event_generator.h
 
 # -------------------------------------------------
@@ -106,7 +107,7 @@ $(SRCDIR)/Arsenal.cpp: $(SRCDIR)/Arsenal.h
 $(SRCDIR)/ParameterReader.cpp: $(SRCDIR)/ParameterReader.h $(SRCDIR)/Arsenal.h
 $(SRCDIR)/HBT_event_generator.cpp: $(SRCDIR)/HBT_event_generator.h $(SRCDIR)/Arsenal.h \
 									$(SRCDIR)/Stopwatch.h $(SRCDIR)/EventRecord.h \
-									$(SRCDIR)/ParticleRecord.h
+									$(SRCDIR)/ParticleRecord.h $(SRCDIR)/ensemble.h
 ./main.cpp: $(SRCDIR)/Stopwatch.h $(SRCDIR)/ParameterReader.h main.h $(SRCDIR)/EventRecord.h \
-			$(SRCDIR)/ParticleRecord.h
+			$(SRCDIR)/ParticleRecord.h $(SRCDIR)/ensemble.h
 

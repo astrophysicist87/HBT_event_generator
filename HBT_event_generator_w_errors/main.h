@@ -12,23 +12,27 @@
 #include "src/EventRecord.h"
 #include "src/ParticleRecord.h"
 #include "src/ParameterReader.h"
+#include "src/ensemble.h"
 
 using namespace std;
 
 //this is just to give this file a reason to exist for the moment...
 const double plumbergtest = 0.;
-const double MmPerFm = 1.e-12;	//mm/fm
+const bool CONVERT_MM_TO_FM = true;	// needs to be true if running on Pythia output
+const double MmPerFm = ( CONVERT_MM_TO_FM ) ? 1.e-12 : 1.0;	//mm-to-fm conversion
+
+vector<EventMultiplicity> ensemble_multiplicites;
 
 // function to read in catalogue of event files and return number of files to read
-int read_file_catalogue(string catalogue_name, vector<string> & allFilenames)
+int read_file_catalogue(string catalogue_name, vector<string> & allLines)
 {
 	ifstream catalogue_in(catalogue_name.c_str());
 
-	string filename;
-	while (getline(catalogue_in, filename))
-		allFilenames.push_back(filename);
+	string line;
+	while (getline(catalogue_in, line))
+		allLines.push_back(line);
 
-	return ( allFilenames.size() );
+	return ( allLines.size() );
 }
 
 inline void complete_particle(ParticleRecord & p)
@@ -36,32 +40,17 @@ inline void complete_particle(ParticleRecord & p)
 	double E = p.E, px = p.px, py = p.py, pz = p.pz;
 	double t = p.t, x = p.x, y = p.y, z = p.z;
 
-	//cout << "\t\t * setting pT..." << endl;
 	p.pT 		= sqrt(px*px+py*py);
-	//cout << "\t\t * setting pMag..." << endl;
 	p.pMag 		= sqrt(px*px+py*py+pz*pz);
-	//cout << "\t\t * setting pphi..." << endl;
 	p.pphi 		= atan2(py, px);
-	//cout << "\t\t * setting pY..." << endl;
 	p.pY 		= 0.5*log(abs((E+pz)/(E-pz+1.e-100)));
 	//p.pY = 0.0;
-	//cout << "\t\t * setting ps_eta..." << endl;
 	p.ps_eta 	= 0.5*log(abs((p.pMag+pz)/(p.pMag-pz+1.e-100)));
 
-	//cout << "\t\t * setting rT..." << endl;
 	p.rT 		= sqrt(x*x+y*y);
-	//cout << "\t\t * setting r..." << endl;
 	p.r 		= sqrt(x*x+y*y+z*z);
-	//cout << "\t\t * setting phi..." << endl;
 	p.phi 		= atan2(y, x);
-	//cout << "\t\t * setting tau..." << endl;
-	//cout << "\t\t * t = " << t << endl;
-	//cout << "\t\t * z = " << z << endl;
-	//p.tau 		= sqrt(t*t-z*z);
-	//cout << "\t\t * setting eta_s..." << endl;
-	//p.eta_s 	= 0.5*log(abs((t+z)/(t-z+1.e-100)));
 
-	//cout << "\t\t * finished all!" << endl;
 	return;
 }
 
@@ -115,6 +104,10 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 	double max_pz = 1.01*(KL_max + max_ql);
 	//=============================================
 
+	// this vector contains events to include (for specific centrality class)
+	int nextEventIndex = 0;
+	int nextEventID = ensemble_multiplicites[nextEventIndex].eventID;
+
 	while (getline(infile, line))
 	{
 		istringstream iss(line);
@@ -132,6 +125,9 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 					>> E >> px >> py >> pz
 					>> t >> x >> y >> z
 			 ) ) { break; }
+
+		if ( eventID < nextEventID )
+			continue;
 
 		// apply momentum-space cuts, if any
 		bool apply_momentum_space_cuts = true;
@@ -198,7 +194,22 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 				// push event to eventsInFile
 				eventsInFile.push_back(event);
 
-				// reset event
+				//set next event to include
+				// (negative means we're done reading in selected events)
+				++nextEventIndex;
+				nextEventID = ( nextEventIndex == ensemble_multiplicites.size() ) ?
+								-1 : ensemble_multiplicites[nextEventIndex].eventID;
+
+				// break if done with this centrality class
+				if ( nextEventID < 0 )
+					goto finish;
+
+				// skip if not an event to include
+				// in this centrality class
+				if ( current_eventID < nextEventID )
+					continue;
+
+				// otherwise, reset event
 				event = EventRecord();
 
 				// push new particle to new event
@@ -210,6 +221,11 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 		previous_eventID = current_eventID;
 		++count;
 	}
+
+	// reading in events terminates to here
+	// if all events from specified centrality
+	// class have been read in
+	finish:
 
 	// push final event to eventsInFile
 	eventsInFile.push_back(event);

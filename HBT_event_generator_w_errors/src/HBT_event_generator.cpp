@@ -24,6 +24,8 @@ void HBT_event_generator::initialize_all(
 	// Copy in records of all events
 	allEvents		= allEvents_in;
 	total_N_events	= allEvents.size();
+	number_of_completed_events
+					= 0;
 
 	//Set header info
 	// - particle information
@@ -268,7 +270,7 @@ if (disc < -1.e-6) err << "disc < 0!" << endl;
 			correlation_function_error[idx] =
 				( disc < 0.0 )
 				? 1.e-6
-				: R2 * sqrt( cA + cB - 2.0*cAB );
+				: abs(R2) * sqrt( cA + cB - 2.0*cAB );
 //err << "\t\t finished without difficulty" << endl;
 		}
 		else if ( iqo == iqoC
@@ -352,7 +354,7 @@ void HBT_event_generator::Update_records( const vector<EventRecord> & allEvents_
 	// Copy in new records of all events
 	// (erases old event information)
 	allEvents		= allEvents_in;
-	total_N_events	= allEvents.size();
+	total_N_events	+= allEvents.size();
 
 	// Compute numerator and denominator of correlation function,
 	// along with quantities needed to estimate error

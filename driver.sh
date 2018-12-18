@@ -12,23 +12,29 @@ HBT_EVENT_GEN_DIRECTORY=$HOME_DIRECTORY/HBT_event_generator_w_errors
 # Fit correlation function
 HBT_FITCF_DIRECTORY=$HOME_DIRECTORY/fit_correlation_function
 
-# Make sure results directory exists
+# Clean out previous results
 RESULTS_DIRECTORY=$HOME_DIRECTORY/results
-if [ ! -d "$RESULTS_DIRECTORY" ]; then
-	mkdir $RESULTS_DIRECTORY
+if [ -d "$RESULTS_DIRECTORY" ]; then
+	rm -rf $RESULTS_DIRECTORY
 fi
+
+mkdir $RESULTS_DIRECTORY
 
 #===================
 # Main calculation
 #===================
-runPythia=false
+runPythia=true
 
 projectile="Pb"
 target="Pb"
 beamEnergy="2760.0"
-Nevents="100"
+Nevents="1000"
+centralityCutString="0-10%"
+centralityCut=(`echo $centralityCutString | sed 's/-/ /g' | sed 's/%//g'`)
+lowerLimit=${centralityCut[0]}
+upperLimit=${centralityCut[1]}
 
-collisionSystemStem=$projectile$target"_"`echo $beamEnergy`"GeV_Nev"$Nevents
+collisionSystemStem=$projectile$target"_"`echo $beamEnergy`"GeV_C"$lowerLimit"_"$upperLimit"_Nev"$Nevents
 
 #=====================================
 # Run Pythia (if desired)
@@ -46,7 +52,9 @@ collisionSystemStem=$projectile$target"_"`echo $beamEnergy`"GeV_Nev"$Nevents
 		fi
 
 		# time and run
-		./run_mainHIC.sh $projectile $target $beamEnergy $Nevents "$PYTHIA_RESULTS_DIRECTORY/"
+		./run_mainHIC.sh $projectile $target $beamEnergy \
+							$lowerLimit $upperLimit $Nevents \
+							"$PYTHIA_RESULTS_DIRECTORY/"
 		#cp $PYTHIA_RESULTS_DIRECTORY/* $RESULTS_DIRECTORY/
 	fi
 
@@ -58,8 +66,25 @@ collisionSystemStem=$projectile$target"_"`echo $beamEnergy`"GeV_Nev"$Nevents
 	do
 		readlink -f $PYTHIA_RESULTS_DIRECTORY/$line >> $HBT_EVENT_GEN_DIRECTORY/catalogue.dat
 	done
+	# Set particle catalogue
 	readlink -f $PYTHIA_RESULTS_DIRECTORY/HBT_particle.dat > $HBT_EVENT_GEN_DIRECTORY/particle_catalogue.dat
 	readlink -f $PYTHIA_RESULTS_DIRECTORY/HBT_particle.dat > $HBT_FITCF_DIRECTORY/particle_catalogue.dat
+	# Set ensemble catalogue
+	echo $projectile $target $beamEnergy $lowerLimit $upperLimit $Nevents > $HBT_EVENT_GEN_DIRECTORY/ensemble_catalogue.dat
+	readlink -f $recordOfOutputFilename_mult >> $HBT_EVENT_GEN_DIRECTORY/ensemble_catalogue.dat
+	#don't need to do this directory
+	#echo $projectile$target"_"`echo $beamEnergy`"GeV_C"$lowerLimit"_"$upperLimit"_Nev"$Nevents > $HBT_FITCF_DIRECTORY/ensemble_catalogue.dat
+	#readlink -f $recordOfOutputFilename_mult >> $HBT_FITCF_DIRECTORY/ensemble_catalogue.dat
+
+	# do sorting inside HBT code, not here
+	#recordOfOutputFilename_multSorted=`cat $recordOfOutputFilename_mult | sed 's/total_N/total_N_Sorted/g'`
+	#sort -k2,2 $PYTHIA_RESULTS_DIRECTORY/$recordOfOutputFilename_mult > $recordOfOutputFilename_multSorted
+
+	#nev=`wc -l $recordOfOutputFilename_multSorted`
+	#calcString=`echo 'print int(0.01*'$lowerLimit'*'$nev')'`
+	#firstSortedEvent=`python -c $calcString`
+	#calcString=`echo 'print int(0.01*'$upperLimit'*'$nev')'`
+	#lastSortedEvent=`python -c $calcString`
 
 )
 
@@ -70,17 +95,22 @@ collisionSystemStem=$projectile$target"_"`echo $beamEnergy`"GeV_Nev"$Nevents
 	cd $HBT_EVENT_GEN_DIRECTORY
 
 	# using OpenMP (leave a couple cores free)
-	export OMP_NUM_THREADS=1
+	export OMP_NUM_THREADS=10
 
 	if [ ! -d "./results" ]; then
 	        mkdir results
 	fi
 
+	cp ../parameters.dat .
+
 	# time and run
 	nohup time ./run_HBT_event_generator.e \
+			centrality_minimum=$lowerLimit \
+			centrality_maximum=$upperLimit \
 			1> HBT_event_generator.out \
 			2> HBT_event_generator.err
-	cp HBT_event_generator.[oe]* ./results/* $RESULTS_DIRECTORY/
+	cp HBT_event_generator.[oe]* \
+		./results/* $RESULTS_DIRECTORY/
 
 	readlink -f ./results/HBT_pipiCF.dat > $HBT_FITCF_DIRECTORY/catalogue.dat
 
@@ -96,6 +126,8 @@ collisionSystemStem=$projectile$target"_"`echo $beamEnergy`"GeV_Nev"$Nevents
 	then
 		mkdir results
 	fi
+
+	cp ../parameters.dat .
 
 	# time and run
 	nohup time ./run_fit_correlation_function.e \

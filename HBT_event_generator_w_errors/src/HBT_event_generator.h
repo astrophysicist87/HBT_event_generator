@@ -30,7 +30,7 @@ class HBT_event_generator
 		string particle_name;
 		double particle_mass;
 
-		int bin_mode, total_N_events;
+		int bin_mode, total_N_events, number_of_completed_events;
 
 		int n_pT_pts, n_pphi_pts, n_pY_pts;
 		int n_KT_pts, n_Kphi_pts, n_KL_pts;
