@@ -12,30 +12,22 @@ HBT_EVENT_GEN_DIRECTORY=$HOME_DIRECTORY/HBT_event_generator_w_errors
 # Fit correlation function
 HBT_FITCF_DIRECTORY=$HOME_DIRECTORY/fit_correlation_function
 
-# Clean out previous results
-RESULTS_DIRECTORY=$HOME_DIRECTORY/results
-if [ -d "$RESULTS_DIRECTORY" ]; then
-	rm -rf $RESULTS_DIRECTORY
-fi
-
-mkdir $RESULTS_DIRECTORY
-
 #============================
 # Some function definitions
 #============================
-#check_success () {
-#	if [ "$2" -eq "0" ]
-#	then
-#		echo '===================================================='
-#		echo '== '$1': run completed successfully!'
-#		echo '===================================================='
-#	else
-#		echo '===================================================='
-#		echo '== '$1': problems encountered!'
-#		echo '===================================================='
-#		exit $2
-#	fi
-#} 
+check_success () {
+	if [ "$2" -eq "0" ]
+	then
+		echo '===================================================='
+		echo '== '$1': run completed successfully!'
+		echo '===================================================='
+	else
+		echo '===================================================='
+		echo '== '$1': problems encountered!'
+		echo '===================================================='
+		exit $2
+	fi
+} 
 
 #===================
 # Main calculation
@@ -45,12 +37,16 @@ runPythia=true
 projectile="Pb"
 target="Pb"
 beamEnergy="2760.0"
-Nevents="5"
+Nevents="100"
+
+echo 'Processing Nevents =' $Nevents $projectile'+'$target 'collisions at' $beamEnergy 'GeV'
 
 nCC=0
-for centralityCutString in "0-100%"
+for centralityCutString in "0-5%" "0-10%" "0-20%" "10-20%" "20-100%" "0-100%"
+#for centralityCutString in "0-50%" "0-100%"
 do
-	#success=0
+	success=0
+	echo '  -- analyzing centrality class' $centralityCutString
 
 	centralityCut=(`echo $centralityCutString | sed 's/-/ /g' | sed 's/%//g'`)
 	lowerLimit=${centralityCut[0]}
@@ -59,12 +55,21 @@ do
 	collisionSystemStem=$projectile$target"_"`echo $beamEnergy`"GeV_Nev"$Nevents
 	collisionSystemCentralityStem=$projectile$target"_"`echo $beamEnergy`"GeV_C"$lowerLimit"_"$upperLimit"_Nev"$Nevents
 
+	# Clean out previous results
+	RESULTS_DIRECTORY=$HOME_DIRECTORY/results
+	if [ -d "$RESULTS_DIRECTORY" ]; then
+		rm -rf $RESULTS_DIRECTORY
+	fi
+
+	mkdir $RESULTS_DIRECTORY
+
 	#=====================================
 	# Run Pythia (if desired)
+	#PythiaSuccess=$(
 	(
 
 		cd $PYTHIA_DIRECTORY
-		echo 'Now in '`pwd`
+		echo '     Now in '`pwd`
 
 		if $runPythia && [ "$nCC" -eq "0" ]
 		then
@@ -80,8 +85,8 @@ do
 								$Nevents "$PYTHIA_RESULTS_DIRECTORY/"
 
 			# check and report whether run was successful
-			#success=$[success+`echo $?`]
-			#check_success 'Pythia' $success
+			runSuccess=`echo $?`
+			check_success 'Pythia' $runSuccess
 
 			# copy results
 			#cp $PYTHIA_RESULTS_DIRECTORY/* $RESULTS_DIRECTORY/
@@ -102,14 +107,16 @@ do
 		echo $projectile $target $beamEnergy $lowerLimit $upperLimit $Nevents > $HBT_EVENT_GEN_DIRECTORY/ensemble_catalogue.dat
 		readlink -f $PYTHIA_RESULTS_DIRECTORY/`cat $recordOfOutputFilename_mult` >> $HBT_EVENT_GEN_DIRECTORY/ensemble_catalogue.dat
 
+		#exit $runSuccess
 	)
 
 	#=====================================
 	# Run HBT_event_generator
+	#HBTegSuccess=$(
 	(
 
 		cd $HBT_EVENT_GEN_DIRECTORY
-		echo 'Now in '`pwd`
+		echo '     Now in '`pwd`
 
 		# using OpenMP (leave a couple cores free)
 		export OMP_NUM_THREADS=10
@@ -128,8 +135,8 @@ do
 				2> HBT_event_generator.err
 
 		# check and report whether run was successful
-		#success=$[success+`echo $?`]
-		#check_success 'HBT_event_generator' $success
+		runSuccess=`echo $?`
+		check_success 'HBT_event_generator' $runSuccess
 
 		# copy results
 		cp HBT_event_generator.[oe]* \
@@ -137,14 +144,16 @@ do
 
 		readlink -f ./results/HBT_pipiCF.dat > $HBT_FITCF_DIRECTORY/catalogue.dat
 
+		#exit $runSuccess
 	)
 
 	#=====================================
 	# Run fit_correlation_function
+	#fitCFSuccess=$(
 	(
 
 		cd $HBT_FITCF_DIRECTORY
-		echo 'Now in '`pwd`
+		echo '     Now in '`pwd`
 
 		if [ ! -d "./results" ]
 		then
@@ -159,23 +168,29 @@ do
 				2> fit_correlation_function.err
 
 		# check and report whether run was successful
-		#success=$[success+`echo $?`]
-		#check_success 'fit_correlation_function' $success
+		runSuccess=`echo $?`
+		check_success 'fit_correlation_function' $runSuccess
 
 		# copy results
 		cp fit_correlation_function.[oe]* ./results/* $RESULTS_DIRECTORY/
 
+		#exit $runSuccess
 	)
 
 	# only store results and clean up if run was successful
+	#success=$[PythiaSuccess + HBTegSuccess + fitCFSuccess]
+
+	# check if all codes were successful
 	#if [ "$success" -eq "0" ]
 	#then
+		#add a few more files
+		cp ./parameters.dat $RESULTS_DIRECTORY
 
-	#	zip -r $HOME_DIRECTORY/`echo $collisionSystemCentralityStem`"_results.zip" $RESULTS_DIRECTORY
+		zip -r $HOME_DIRECTORY/`echo $collisionSystemCentralityStem`"_results.zip" $RESULTS_DIRECTORY
 
 		# Clean-up HBT directories (but not Pythia results directory!!!)
-	#	rm -rf $HBT_EVENT_GEN_DIRECTORY/*HBT_event_generator.[oe]* $HBT_EVENT_GEN_DIRECTORY/results\
-	#		   $HBT_FITCF_DIRECTORY/*fit_correlation_function.[oe]* $HBT_FITCF_DIRECTORY/results
+		#rm -rf $HBT_EVENT_GEN_DIRECTORY/*HBT_event_generator.[oe]* $HBT_EVENT_GEN_DIRECTORY/results\
+		#	   $HBT_FITCF_DIRECTORY/*fit_correlation_function.[oe]* $HBT_FITCF_DIRECTORY/results
 	#fi
 
 	# move on to next centrality class
