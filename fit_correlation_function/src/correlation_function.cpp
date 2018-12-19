@@ -19,6 +19,7 @@ void Correlation_function::initialize_all(
 	ParameterReader * paraRdr_in,
 	string filepath_in )
 {
+	err << "Starting initializiations:" << endl;
 	// Load parameters
 	paraRdr = paraRdr_in;
 
@@ -67,6 +68,9 @@ void Correlation_function::initialize_all(
 	delta_qo 		= paraRdr->getVal("delta_qo");
 	delta_qs 		= paraRdr->getVal("delta_qs");
 	delta_ql 		= paraRdr->getVal("delta_ql");
+
+	err << " --> all parameters read in." << endl;
+
 	// - minimum value in each q direction
 	init_qo 		= -0.5*double(n_qo_pts-1)*delta_qo;
 	init_qs 		= -0.5*double(n_qs_pts-1)*delta_qs;
@@ -148,6 +152,8 @@ void Correlation_function::initialize_all(
 	correlation_function 		= vector<double> (n_KT_bins*n_Kphi_bins*n_KL_bins*n_qo_bins*n_qs_bins*n_ql_bins);
 	correlation_function_error 	= vector<double> (n_KT_bins*n_Kphi_bins*n_KL_bins*n_qo_bins*n_qs_bins*n_ql_bins);
 
+	err << " --> all vectors initialized." << endl;
+
 	// Read in correlation function
 	Load_correlation_function( filepath_in );
 
@@ -167,6 +173,7 @@ Correlation_function::~Correlation_function()
 
 void Correlation_function::Load_correlation_function( string filepath )
 {
+	err << "  --> Loading the correlation function from " << filepath << endl;
 	// For timebeing, just skip header lines
 	string line;
 	ifstream infile( filepath.c_str() );
@@ -199,6 +206,8 @@ void Correlation_function::Load_correlation_function( string filepath )
 
 		++idx;
 	}
+
+	err << "  --> Finished loading the correlation function from " << filepath << endl;
 
 	return;
 }

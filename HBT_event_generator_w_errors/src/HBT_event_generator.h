@@ -79,8 +79,9 @@ class HBT_event_generator
 		ostream & err;
 
 		vector<double> denominator, correlation_function, correlation_function_error;
-		vector<bool> denominator_cell_was_filled;
 		vector<double> numerator, numerator2, denominator2, numerator_denominator;
+		vector<bool> denominator_cell_was_filled;
+		vector<int> numerator_bin_count, denominator_bin_count;
 
 
 	public:
@@ -181,7 +182,9 @@ class HBT_event_generator
 							vector<double> & in_numerator2,
 							vector<double> & in_denominator,
 							vector<double> & in_denominator2,
-							vector<double> & in_numerator_denominator
+							vector<double> & in_numerator_denominator,
+							vector<int> & in_numerator_bin_count,
+							vector<int> & in_denominator_bin_count
 							);
 
 

@@ -33,7 +33,7 @@ cd $HBT_EVENT_GEN_DIRECTORY
 echo 'In directory='`pwd`':'
 echo '#====================================='
 export OMP_NUM_THREADS=10
-gmake clean
+gmake distclean
 gmake all
 success=$[success+`echo $?`]
 
@@ -45,7 +45,7 @@ echo '#====================================='
 cd $HBT_FITCF_DIRECTORY
 echo 'In directory='`pwd`':'
 echo '#====================================='
-gmake clean
+gmake distclean
 gmake all
 success=$[success+`echo $?`]
 echo '#====================================='

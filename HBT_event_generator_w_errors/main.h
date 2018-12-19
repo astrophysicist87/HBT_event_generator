@@ -70,20 +70,6 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 	// Set momentum ranges to try to reduce number
 	// of unnecessary particles
 
-	// bin widths
-	/*double n_px_pts 		= paraRdr->getVal("n_px_pts");
-	double n_py_pts 		= paraRdr->getVal("n_py_pts");
-	double n_pz_pts 		= paraRdr->getVal("n_pz_pts");
-	double px_min 			= paraRdr->getVal("pxmin");
-	double px_max 			= paraRdr->getVal("pxmax");
-	double py_min 			= paraRdr->getVal("pymin");
-	double py_max 			= paraRdr->getVal("pymax");
-	double pz_min 			= paraRdr->getVal("pzmin");
-	double pz_max 			= paraRdr->getVal("pzmax");
-	double px_bw			= (px_max - px_min) / (n_px_pts - 1.0);
-	double py_bw			= (py_max - py_min) / (n_py_pts - 1.0);
-	double pz_bw			= (pz_max - pz_min) / (n_pz_pts - 1.0);*/
-
 	// pair momentum
 	double KT_max 			= paraRdr->getVal("KTmax");
 	double KL_max 			= paraRdr->getVal("KLmax");
@@ -113,6 +99,7 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 		istringstream iss(line);
 
 		//cout << "Made it to line#" << count << endl;
+//cout << "Check event size: " << __LINE__ << "   " << event.particles.size() << endl;
 
 		ParticleRecord particle;
 		int eventID, particleID;
@@ -134,10 +121,7 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 		if ( apply_momentum_space_cuts
 				and ( abs(px) > max_pT
 				or abs(py) > max_pT
-				or abs(pz) > max_pz )
-				/*and ( abs(px) > max_pT + px_bw
-				or abs(py) > max_pT + py_bw
-				or abs(pz) > max_pz + pz_bw )*/ )
+				or abs(pz) > max_pz ) )
 		{
 			continue;
 		}
@@ -194,6 +178,9 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 				// push event to eventsInFile
 				eventsInFile.push_back(event);
 
+				// reset event
+				event = EventRecord();
+
 				//set next event to include
 				// (negative means we're done reading in selected events)
 				++nextEventIndex;
@@ -204,16 +191,17 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 				if ( nextEventID < 0 )
 					goto finish;
 
-				// skip if not an event to include
+				// skip if next event not included
 				// in this centrality class
 				if ( current_eventID < nextEventID )
+				{
+					count = 0;
 					continue;
+				}
 
-				// otherwise, reset event
-				event = EventRecord();
-
-				// push new particle to new event
+				// otherwise, push new particle to new event
 				event.particles.push_back(particle);
+//cout << "Check event size: " << __LINE__ << "   " << event.particles.size() << endl;
 			}
 		}
 		//cout << "\t - finished this loop!" << endl;
@@ -222,13 +210,13 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 		++count;
 	}
 
+	// push final event to eventsInFile
+	eventsInFile.push_back(event);
+
 	// reading in events terminates to here
 	// if all events from specified centrality
 	// class have been read in
 	finish:
-
-	// push final event to eventsInFile
-	eventsInFile.push_back(event);
 
 	infile.close();
 

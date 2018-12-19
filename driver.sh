@@ -20,6 +20,23 @@ fi
 
 mkdir $RESULTS_DIRECTORY
 
+#============================
+# Some function definitions
+#============================
+#check_success () {
+#	if [ "$2" -eq "0" ]
+#	then
+#		echo '===================================================='
+#		echo '== '$1': run completed successfully!'
+#		echo '===================================================='
+#	else
+#		echo '===================================================='
+#		echo '== '$1': problems encountered!'
+#		echo '===================================================='
+#		exit $2
+#	fi
+#} 
+
 #===================
 # Main calculation
 #===================
@@ -28,11 +45,12 @@ runPythia=true
 projectile="Pb"
 target="Pb"
 beamEnergy="2760.0"
-Nevents="100"
+Nevents="5"
 
 nCC=0
-for centralityCutString in "0-10%"
+for centralityCutString in "0-100%"
 do
+	#success=0
 
 	centralityCut=(`echo $centralityCutString | sed 's/-/ /g' | sed 's/%//g'`)
 	lowerLimit=${centralityCut[0]}
@@ -60,6 +78,12 @@ do
 			# time and run
 			./run_mainHIC.sh $projectile $target $beamEnergy \
 								$Nevents "$PYTHIA_RESULTS_DIRECTORY/"
+
+			# check and report whether run was successful
+			#success=$[success+`echo $?`]
+			#check_success 'Pythia' $success
+
+			# copy results
 			#cp $PYTHIA_RESULTS_DIRECTORY/* $RESULTS_DIRECTORY/
 		fi
 
@@ -102,6 +126,12 @@ do
 				centrality_maximum=$upperLimit \
 				1> HBT_event_generator.out \
 				2> HBT_event_generator.err
+
+		# check and report whether run was successful
+		#success=$[success+`echo $?`]
+		#check_success 'HBT_event_generator' $success
+
+		# copy results
 		cp HBT_event_generator.[oe]* \
 			./results/* $RESULTS_DIRECTORY/
 
@@ -127,15 +157,26 @@ do
 		nohup time ./run_fit_correlation_function.e \
 				1> fit_correlation_function.out \
 				2> fit_correlation_function.err
+
+		# check and report whether run was successful
+		#success=$[success+`echo $?`]
+		#check_success 'fit_correlation_function' $success
+
+		# copy results
 		cp fit_correlation_function.[oe]* ./results/* $RESULTS_DIRECTORY/
 
 	)
 
-	zip -r $HOME_DIRECTORY/`echo $collisionSystemCentralityStem`"_results.zip" $RESULTS_DIRECTORY
+	# only store results and clean up if run was successful
+	#if [ "$success" -eq "0" ]
+	#then
 
-	# Clean-up HBT directories (but not Pythia results directory!!!)
-	rm -rf $HBT_EVENT_GEN_DIRECTORY/*HBT_event_generator.[oe]* $HBT_EVENT_GEN_DIRECTORY/results\
-		   $HBT_FITCF_DIRECTORY/*fit_correlation_function.[oe]* $HBT_FITCF_DIRECTORY/results
+	#	zip -r $HOME_DIRECTORY/`echo $collisionSystemCentralityStem`"_results.zip" $RESULTS_DIRECTORY
+
+		# Clean-up HBT directories (but not Pythia results directory!!!)
+	#	rm -rf $HBT_EVENT_GEN_DIRECTORY/*HBT_event_generator.[oe]* $HBT_EVENT_GEN_DIRECTORY/results\
+	#		   $HBT_FITCF_DIRECTORY/*fit_correlation_function.[oe]* $HBT_FITCF_DIRECTORY/results
+	#fi
 
 	# move on to next centrality class
 	nCC=$[nCC+1]

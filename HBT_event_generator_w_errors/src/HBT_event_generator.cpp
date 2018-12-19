@@ -151,6 +151,8 @@ void HBT_event_generator::initialize_all(
 
 	denominator_cell_was_filled
 							= vector<bool> (n_KT_bins*n_Kphi_bins*n_KL_bins*n_qo_bins*n_qs_bins*n_ql_bins, false);
+	numerator_bin_count		= vector<int> (n_KT_bins*n_Kphi_bins*n_KL_bins*n_qo_bins*n_qs_bins*n_ql_bins);
+	denominator_bin_count	= vector<int> (n_KT_bins*n_Kphi_bins*n_KL_bins*n_qo_bins*n_qs_bins*n_ql_bins);
 
 
 	// Compute numerator and denominator of correlation function,
@@ -160,7 +162,9 @@ void HBT_event_generator::initialize_all(
 							numerator2,
 							denominator,
 							denominator2,
-							numerator_denominator
+							numerator_denominator,
+							numerator_bin_count,
+							denominator_bin_count
 					);
 
 	return;
@@ -221,48 +225,48 @@ void HBT_event_generator::Compute_correlation_function()
 					or iqs != iqsC
 					or iql != iqlC ) )
 		{
-//err << setprecision(16);
+err << setprecision(16);
 			// average of numerator in this q-K cell
 			double EA = num / static_cast<double>(total_N_events);
-//err << "\t\t EA = " << EA << endl;
+err << "\t\t EA = " << EA << endl;
 			// average of denominator in this q-K cell
 			double EB = den / static_cast<double>(total_N_events);
-//err << "\t\t EB = " << EB << endl;
+err << "\t\t EB = " << EB << endl;
 			// average of numerator^2 in this q-K cell
 			double EA2 = num2 / static_cast<double>(total_N_events);
-//err << "\t\t EA2 = " << EA2 << endl;
+err << "\t\t EA2 = " << EA2 << endl;
 			// average of denominator^2 in this q-K cell
 			double EB2 = den2 / static_cast<double>(total_N_events);
-//err << "\t\t EB2 = " << EB2 << endl;
+err << "\t\t EB2 = " << EB2 << endl;
 			// average of numerator*denominator in this q-K cell
 			double EAB = numden / static_cast<double>(total_N_events);
-//err << "\t\t EAB = " << EAB << endl;
+err << "\t\t EAB = " << EAB << endl;
 			// set variances and covariance
 			double sigA2 = prefactor * (EA2 - EA*EA);
 			double sigB2 = prefactor * (EB2 - EB*EB);
 			double sigAB = prefactor * (EAB - EA*EB);
-//err << "\t\t sigA2 = " << sigA2 << endl;
-//err << "\t\t sigB2 = " << sigB2 << endl;
-//err << "\t\t sigAB = " << sigAB << endl;
+err << "\t\t sigA2 = " << sigA2 << endl;
+err << "\t\t sigB2 = " << sigB2 << endl;
+err << "\t\t sigAB = " << sigAB << endl;
 
 			// want standard error, not variance itself
 			sigA2 /= static_cast<double>(total_N_events);
 			sigB2 /= static_cast<double>(total_N_events);
 			sigAB /= static_cast<double>(total_N_events);
-//err << "\t\t sigA2 / total_N_events = " << sigA2 << endl;
-//err << "\t\t sigB2 / total_N_events = " << sigB2 << endl;
-//err << "\t\t sigAB / total_N_events = " << sigAB << endl;
+err << "\t\t sigA2 / total_N_events = " << sigA2 << endl;
+err << "\t\t sigB2 / total_N_events = " << sigB2 << endl;
+err << "\t\t sigAB / total_N_events = " << sigAB << endl;
 
 			// set relative widths
 			double cA = sigA2 / ( EA*EA+1.e-100 );
 			double cB = sigB2 / ( EB*EB+1.e-100 );
 			double cAB = sigAB / ( EA*EB+1.e-100 );
-//err << "\t\t cA = " << cA << endl;
-//err << "\t\t cB = " << cB << endl;
-//err << "\t\t cAB = " << cAB << endl;
+err << "\t\t cA = " << cA << endl;
+err << "\t\t cB = " << cB << endl;
+err << "\t\t cAB = " << cAB << endl;
 
 			double disc = cA + cB - 2.0*cAB;
-//err << "\t\t disc = " << disc << endl;
+err << "\t\t disc = " << disc << endl;
 if (disc < -1.e-6) err << "disc < 0!" << endl;
 
 			// N.B.: R2 == EA / EB
@@ -271,7 +275,10 @@ if (disc < -1.e-6) err << "disc < 0!" << endl;
 				( disc < 0.0 )
 				? 1.e-6
 				: abs(R2) * sqrt( cA + cB - 2.0*cAB );
-//err << "\t\t finished without difficulty" << endl;
+err << "\t\t Finally, check bin counts:" << endl;
+err << "\t\t num. BC = " << numerator_bin_count[idx] << endl;
+err << "\t\t den. BC = " << denominator_bin_count[idx] << endl;
+err << "\t\t finished without difficulty" << endl;
 		}
 		else if ( iqo == iqoC
 					and iqs == iqsC
@@ -363,7 +370,9 @@ void HBT_event_generator::Update_records( const vector<EventRecord> & allEvents_
 							numerator2,
 							denominator,
 							denominator2,
-							numerator_denominator
+							numerator_denominator,
+							numerator_bin_count,
+							denominator_bin_count
 					);
 
 	return;

@@ -62,6 +62,8 @@ int main(int argc, char *argv[])
 	ofstream outmain(out_filename_stream.str().c_str());
 	ofstream errmain(err_filename_stream.str().c_str());
 
+	cout << "fit_correlation_function(): set-up completed." << endl;
+
 	// Define correlation function object
 	// (loading and fitting correlation function
 	//  performed automatically)
