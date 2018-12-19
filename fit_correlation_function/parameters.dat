@@ -51,12 +51,12 @@ KLmax = 0.1
 
 #===========
 # relative momenta
-n_qo_pts = 20
-n_qs_pts = 20
-n_ql_pts = 20
-delta_qo = 0.002
-delta_qs = 0.002
-delta_ql = 0.002
+n_qo_pts = 16
+n_qs_pts = 16
+n_ql_pts = 16
+delta_qo = 0.004
+delta_qs = 0.004
+delta_ql = 0.004
 
 #===========
 # misc. and ensemble parameters

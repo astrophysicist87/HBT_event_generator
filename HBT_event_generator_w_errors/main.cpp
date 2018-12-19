@@ -55,7 +55,6 @@ int main(int argc, char *argv[])
 	vector<string> all_file_names;
 	read_file_catalogue("./catalogue.dat", all_file_names);
 
-
 	// Process multiplicity and ensemble information
 	vector<string> ensemble_info;
 	read_file_catalogue("./ensemble_catalogue.dat", ensemble_info);
@@ -67,9 +66,16 @@ int main(int argc, char *argv[])
 	double centrality_minimum, centrality_maximum;
 	istringstream iss(collision_system_info);
 	iss >> target_name >> projectile_name >> beam_energy >> centrality_minimum >> centrality_maximum >> Nevents;
+
+	cout << "run_HBT_event_generator(): "
+			<< "Using centrality class: "
+			<< centrality_minimum << "-"
+			<< centrality_maximum << "%!" << endl;
+
 	
 	// select only those events falling into specificed centrality range
 	string multiplicity_filename = ensemble_info[1];
+	cout << "Reading in " << multiplicity_filename << endl;
 	get_events_in_centrality_class(
 				multiplicity_filename, ensemble_multiplicites,
 				centrality_minimum, centrality_maximum );
@@ -80,6 +86,11 @@ int main(int argc, char *argv[])
 			<< centrality_minimum << "-"
 			<< centrality_maximum << "%!" << endl;
 
+	cout << "Check events in this centrality class: " << endl;
+	for (int iEvent = 0; iEvent < ensemble_multiplicites.size(); ++iEvent)
+		cout << ensemble_multiplicites[iEvent].eventID << "   "
+				<< ensemble_multiplicites[iEvent].total_multiplicity << "   "
+				<< ensemble_multiplicites[iEvent].particle_multiplicity << endl;
 
 	// Set-up output files
 	string path = "./results/";	// make sure this directory exists
