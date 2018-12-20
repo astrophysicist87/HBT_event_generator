@@ -50,6 +50,8 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors(
 		vector<int> private_ABC(in_numerator_bin_count.size());
 		vector<int> private_DBC(in_denominator_bin_count.size());
 
+		double number_of_pairs = event.particles.size()*(event.particles.size() - 1) / 2;
+
 		// Sum over pairs of distinct particles
 		for (int iParticle = 0; iParticle < event.particles.size(); ++iParticle)
 		for (int jParticle = 0; jParticle < event.particles.size(); ++jParticle)
@@ -112,10 +114,9 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors(
 									- qy * (yi - yj)
 									- qz * (zi - zj);
 
-						//complex<double> num_term = exp(i*arg/hbarC) * num_bin_factor;
-						double num_term = cos(arg/hbarC) * num_bin_factor;
+						double num_term = cos(arg/hbarC) / num_bin_factor;
 
-						private_A[index6D] += num_term;
+						private_A[index6D] += num_term / number_of_pairs;
 						private_ABC[index6D]++;
 
 					}
@@ -156,9 +157,9 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors(
 
 						denominator_cell_was_filled[index6D] = true;
 
-						double den_term = den_bin_factor;	//no phase factor in denominator
+						double den_term = 1.0 / den_bin_factor;	//no phase factor in denominator
 
-						private_B[index6D] += den_term;
+						private_B[index6D] += den_term / number_of_pairs;
 						private_DBC[index6D]++;
 
 					}
@@ -224,7 +225,9 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors(
 							vector<double> & in_numerator2,
 							vector<double> & in_denominator,
 							vector<double> & in_denominator2,
-							vector<double> & in_numerator_denominator
+							vector<double> & in_numerator_denominator,
+							vector<int> & in_numerator_bin_count,
+							vector<int> & in_denominator_bin_count
 							)
 {
 	int number_of_completed_events = 0;

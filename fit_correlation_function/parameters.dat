@@ -33,12 +33,12 @@ pzmax =  0.2
 #===========
 # pair momenta
 # KT grid
-n_KT_pts = 6
+n_KT_pts = 2
 KTmin = 0.0
-KTmax = 1.0
+KTmax = 0.2
 
 # Kphi grid
-n_Kphi_pts = 8
+n_Kphi_pts = 2
 #Kphimax, Kphimin
 #determined automatically
 
