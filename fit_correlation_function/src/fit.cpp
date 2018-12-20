@@ -70,16 +70,16 @@ void Correlation_function::Fit_correlation_function()
 
 void Correlation_function::find_minimum_chisq_correlationfunction_full( int iKT, int iKphi, int iKL )
 {
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
 	const size_t data_length = n_qo_bins*n_qs_bins*n_ql_bins;  // # of points
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
     double lambda, R_o, R_s, R_l, R_os, R_ol, R_sl;
     int dim = 7;
     int s_gsl;
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
-    double *V = new double [dim];
-    double *qweight = new double [dim];
-    double **T = new double* [dim];
+
+    double * V = new double [dim];
+    double * qweight = new double [dim];
+    double ** T = new double * [dim];
     for(int i = 0; i < dim; i++)
     {
         V[i] = 0.0;
@@ -87,11 +87,11 @@ void Correlation_function::find_minimum_chisq_correlationfunction_full( int iKT,
         for(int j = 0; j < dim; j++)
             T[i][j] = 0.0;
     }
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
 	gsl_matrix * T_gsl = gsl_matrix_alloc (dim, dim);
 	gsl_matrix * T_inverse_gsl = gsl_matrix_alloc (dim, dim);
 	gsl_permutation * perm = gsl_permutation_alloc (dim);
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
 	for (int i = 0; i < n_qo_bins; i++)
 	for (int j = 0; j < n_qs_bins; j++)
 	for (int k = 0; k < n_ql_bins; k++)
@@ -101,12 +101,12 @@ void Correlation_function::find_minimum_chisq_correlationfunction_full( int iKT,
         double q_out_local = 0.5*(qo_pts[i]+qo_pts[i+1]);
         double q_side_local = 0.5*(qs_pts[j]+qs_pts[j+1]);
         double q_long_local = 0.5*(ql_pts[k]+ql_pts[k+1]);
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
 		double correl_local = correlation_function[idx]-1.0;
 		double correl_err_local = correlation_function_error[idx];
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
 		if(correl_local < 1.0e-15) continue;
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
 		bool ignore_central_point = true;
 		if ( 	ignore_central_point
 				and i==(n_qo_bins-1)/2
@@ -115,10 +115,10 @@ void Correlation_function::find_minimum_chisq_correlationfunction_full( int iKT,
 			continue;
 //			correl_err_local = 1.0e10;	//ignore central point
         double sigma_k_prime = correl_err_local/correl_local;
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
         double inv_sigma_k_prime_sq = 1./(sigma_k_prime*sigma_k_prime);
         double log_correl_over_sigma_sq = log(correl_local)*inv_sigma_k_prime_sq;
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
 		qweight[0] = - 1.0;
 		qweight[1] = q_out_local*q_out_local;
 		qweight[2] = q_side_local*q_side_local;
@@ -126,27 +126,23 @@ void Correlation_function::find_minimum_chisq_correlationfunction_full( int iKT,
 		qweight[4] = q_out_local*q_side_local;
 		qweight[5] = q_out_local*q_long_local;
 		qweight[6] = q_side_local*q_long_local;
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
         for(int ij = 0; ij < dim; ij++)
         {
-//cout << ij << "   " << qweight[ij];
-//cout << "   " << log_correl_over_sigma_sq;
-//cout << "   " << inv_sigma_k_prime_sq << endl;
             V[ij] += qweight[ij]*log_correl_over_sigma_sq;
             T[0][ij] += qweight[ij]*inv_sigma_k_prime_sq;
         }
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
         for(int ij = 1; ij < dim; ij++)
             T[ij][0] = T[0][ij];
             
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
         for(int ij = 1; ij < dim; ij++)
         {
             for(int lm = 1; lm < dim; lm++)
                 T[ij][lm] += -qweight[ij]*qweight[lm]*inv_sigma_k_prime_sq;
         }
     }
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
     for(int i = 0; i < dim; i++)
         for(int j = 0; j < dim; j++)
             gsl_matrix_set(T_gsl, i, j, T[i][j]);
@@ -156,21 +152,21 @@ void Correlation_function::find_minimum_chisq_correlationfunction_full( int iKT,
     // Invert the matrix m
     gsl_linalg_LU_invert (T_gsl, perm, T_inverse_gsl);
 
-    double **T_inverse = new double* [dim];
+    double ** T_inverse = new double * [dim];
     for(int i = 0; i < dim; i++)
     {
         T_inverse[i] = new double [dim];
         for(int j = 0; j < dim; j++)
             T_inverse[i][j] = gsl_matrix_get(T_inverse_gsl, i, j);
     }
-    double *results = new double [dim];
+    double * results = new double [dim];
     for(int i = 0; i < dim; i++)
     {
         results[i] = 0.0;
         for(int j = 0; j < dim; j++)
             results[i] += T_inverse[i][j]*V[j];
     }
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
 	// compute results
 	lambda_Correl[indexerK(iKT, iKphi, iKL)] = exp(results[0]);
 	R2_out[indexerK(iKT, iKphi, iKL)] = results[1]*hbarC*hbarC;
@@ -179,7 +175,7 @@ void Correlation_function::find_minimum_chisq_correlationfunction_full( int iKT,
 	R2_outside[indexerK(iKT, iKphi, iKL)] = results[4]*hbarC*hbarC;
 	R2_outlong[indexerK(iKT, iKphi, iKL)] = results[5]*hbarC*hbarC;
 	R2_sidelong[indexerK(iKT, iKphi, iKL)] = results[6]*hbarC*hbarC;
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
 	// compute chi^2
     double chi_sq = 0.0;
 	for (int i = 0; i < n_qo_bins; i++)
@@ -187,16 +183,16 @@ void Correlation_function::find_minimum_chisq_correlationfunction_full( int iKT,
 	for (int k = 0; k < n_ql_bins; k++)
     {
 		int idx = indexer(iKT, iKphi, iKL, i, j, k);
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
         double q_out_local = 0.5*(qo_pts[i]+qo_pts[i+1]);
         double q_side_local = 0.5*(qs_pts[j]+qs_pts[j+1]);
         double q_long_local = 0.5*(ql_pts[k]+ql_pts[k+1]);
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
 		double correl_local = correlation_function[idx]-1.0;
 		double correl_err_local = correlation_function_error[idx];
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;		
+
 		if(correl_local < 1.0e-15) continue;
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
 		bool ignore_central_point = true;
 		if ( 	ignore_central_point
 				and i==(n_qo_bins-1)/2
@@ -205,7 +201,7 @@ void Correlation_function::find_minimum_chisq_correlationfunction_full( int iKT,
 			continue;
 //			correl_err_local = 1.0e10;	//ignore central point
         double sigma_k_prime = correl_err_local/correl_local;
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
         chi_sq += pow( ( log(correl_local) - results[0] 
 						+ results[1]*q_out_local*q_out_local 
 						+ results[2]*q_side_local*q_side_local
@@ -216,14 +212,14 @@ void Correlation_function::find_minimum_chisq_correlationfunction_full( int iKT,
 						, 2 )
                   /sigma_k_prime/sigma_k_prime;
     }
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
     double chi_sq_per_dof = chi_sq/(data_length - dim);
     cout << "chi_sq = " << chi_sq << endl;
     cout << "Number d.o.f. = " << data_length - dim << endl;
     cout << "chi_sq/d.o.f. = " << chi_sq_per_dof << endl;
 	cout << "Goodness-of-fit parameter Q = "
 			<< gsl_sf_gamma_inc_Q (0.5*(data_length - dim), 0.5*chi_sq) << endl;
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
 	//============================================
 	// compute curvature and covariance matrices
     double ** curvature_mat = new double * [dim];
@@ -238,23 +234,23 @@ void Correlation_function::find_minimum_chisq_correlationfunction_full( int iKT,
             covariance_mat[i][j] = 0.0;
 		}
     }
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
 	//=============================
 	for (int i = 0; i < n_qo_bins; i++)
 	for (int j = 0; j < n_qs_bins; j++)
 	for (int k = 0; k < n_ql_bins; k++)
     {
 		int idx = indexer(iKT, iKphi, iKL, i, j, k);
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
         double q_out_local = 0.5*(qo_pts[i]+qo_pts[i+1]);
         double q_side_local = 0.5*(qs_pts[j]+qs_pts[j+1]);
         double q_long_local = 0.5*(ql_pts[k]+ql_pts[k+1]);
 
 		double correl_local = correlation_function[idx]-1.0;
 		double correl_err_local = correlation_function_error[idx];
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;		
+
 		if(correl_local < 1.0e-15) continue;
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
 		bool ignore_central_point = true;
 		if ( 	ignore_central_point
 				and i==(n_qo_bins-1)/2
@@ -262,10 +258,10 @@ void Correlation_function::find_minimum_chisq_correlationfunction_full( int iKT,
 				and k==(n_ql_bins-1)/2)
 			continue;
 		//	correl_err_local = 1.0e10;	//ignore central point
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
         double sigma_k_prime = correl_err_local/correl_local;
         double inv_sigma_k_prime_sq = 1./(sigma_k_prime*sigma_k_prime);
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;		
+
 		qweight[0] = - 1.0;
 		qweight[1] = q_out_local*q_out_local;
 		qweight[2] = q_side_local*q_side_local;
@@ -273,17 +269,17 @@ void Correlation_function::find_minimum_chisq_correlationfunction_full( int iKT,
 		qweight[4] = q_out_local*q_side_local;
 		qweight[5] = q_out_local*q_long_local;
 		qweight[6] = q_side_local*q_long_local;
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
 		for(int ij = 0; ij < dim; ij++)
 		for(int lm = 0; lm < dim; lm++)
             curvature_mat[ij][lm] += qweight[ij]*qweight[lm]
 										* inv_sigma_k_prime_sq;
     }
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
 	//=============================
 	// covariance matrix is inverse of curvaure matrix
 	gsl_matrix_invert( curvature_mat, covariance_mat, dim );
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
 	//=============================
 	// determine errors on fit parameters
 	// (i.e., diagonal elements of covariance matrix)
@@ -294,13 +290,13 @@ void Correlation_function::find_minimum_chisq_correlationfunction_full( int iKT,
 	R2_outside_err[indexerK(iKT, iKphi, iKL)] = sqrt(covariance_mat[4][4])*hbarC*hbarC;
 	R2_outlong_err[indexerK(iKT, iKphi, iKL)] = sqrt(covariance_mat[5][5])*hbarC*hbarC;
 	R2_sidelong_err[indexerK(iKT, iKphi, iKL)] = sqrt(covariance_mat[6][6])*hbarC*hbarC;
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
 	//=============================
     // clean up
     gsl_matrix_free (T_gsl);
     gsl_matrix_free (T_inverse_gsl);
     gsl_permutation_free (perm);
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
+
     delete [] qweight;
     delete [] V;
     for(int i = 0; i < dim; i++)
@@ -316,7 +312,6 @@ void Correlation_function::find_minimum_chisq_correlationfunction_full( int iKT,
 	delete [] covariance_mat;
     delete [] results;
 
-//cout << "File: " << __FILE__ << "; line: " << __LINE__ << "; in function: " << __func__ << endl;
 	return;
 }
 

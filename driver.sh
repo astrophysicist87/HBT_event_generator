@@ -34,16 +34,15 @@ check_success () {
 #===================
 runPythia=true
 
-projectile="Pb"
-target="Pb"
-beamEnergy="2760.0"
-Nevents="100"
+projectile="Au"
+target="Au"
+beamEnergy="200.0"
+Nevents="100000"
 
 echo 'Processing Nevents =' $Nevents $projectile'+'$target 'collisions at' $beamEnergy 'GeV'
 
 nCC=0
 for centralityCutString in "0-5%" "0-10%" "0-20%" "10-20%" "20-100%" "0-100%"
-#for centralityCutString in "0-50%" "0-100%"
 do
 	success=0
 	echo '  -- analyzing centrality class' $centralityCutString
