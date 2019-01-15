@@ -158,6 +158,7 @@ int main(int argc, char *argv[])
 		// Compute correlation function itself (after
 		// all events have been read in)
 		HBT_event_ensemble.Compute_correlation_function();
+		//HBT_event_ensemble.Compute_correlation_function_mode2();
 
 
 		// Output results
@@ -183,6 +184,7 @@ int main(int argc, char *argv[])
 
 		// Compute correlation function itself
 		HBT_event_ensemble.Compute_correlation_function();
+		//HBT_event_ensemble.Compute_correlation_function_mode2();
 
 
 		// Output correlation function

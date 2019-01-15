@@ -52,7 +52,8 @@ class HBT_event_generator
 		double Kx_min, Kx_max, Ky_min, Ky_max, Kz_min, Kz_max;
 		double qx_min, qx_max, qy_min, qy_max, qz_min, qz_max;
 
-		double init_qo, init_qs, init_ql;
+		double qo_min, qs_min, ql_min;
+		double qo_max, qs_max, ql_max;
 		double delta_qo, delta_qs, delta_ql;
 
 		double pT_bin_width, pphi_bin_width, pY_bin_width;
@@ -80,6 +81,9 @@ class HBT_event_generator
 
 		vector<double> denominator, correlation_function, correlation_function_error;
 		vector<double> numerator, numerator2, denominator2, numerator_denominator;
+		vector<double> numPair, numPair2, denPair, denPair2;
+		vector<double> numerator_numPair, denominator_denPair;
+		vector<double> qo_mean_diff, qs_mean_diff, ql_mean_diff, diff_numPair_count;
 		vector<bool> denominator_cell_was_filled;
 		vector<int> numerator_bin_count, denominator_bin_count;
 
@@ -186,10 +190,22 @@ class HBT_event_generator
 							vector<int> & in_numerator_bin_count,
 							vector<int> & in_denominator_bin_count
 							);
+		void Compute_numerator_and_denominator_with_errors_mode2(
+							vector<double> & in_numerator, vector<double> & in_numerator2,
+							vector<double> & in_numPair, vector<double> & in_numPair2,
+							vector<double> & in_denominator, vector<double> & in_denominator2,
+							vector<double> & in_denPair, vector<double> & in_denPair2,
+							vector<double> & in_numerator_numPair, vector<double> & in_denominator_denPair,
+							vector<double> & in_qo_mean_diff,
+							vector<double> & in_qs_mean_diff,
+							vector<double> & in_ql_mean_diff,
+							vector<double> & in_diff_numPair_count
+							);
 
 
 		// Correlation function itself
 		void Compute_correlation_function();
+		void Compute_correlation_function_mode2();
 
 
 		// Input/output
