@@ -43,6 +43,7 @@ SRC		=	main.cpp \
 			$(SRCDIR)/Arsenal.cpp \
 			$(SRCDIR)/ParameterReader.cpp \
 			$(SRCDIR)/NumeratorAndDenominator.cpp \
+			$(SRCDIR)/NumeratorAndDenominator1D.cpp \
 			$(SRCDIR)/HBT_event_generator.cpp
 			#$(SRCDIR)/SingleParticleSpectra.cpp \
 			#$(SRCDIR)/Numerator.cpp \

@@ -30,7 +30,7 @@ class HBT_event_generator
 		string particle_name;
 		double particle_mass;
 
-		int bin_mode, total_N_events, number_of_completed_events;
+		int bin_mode, q_mode, total_N_events, number_of_completed_events;
 
 		int n_pT_pts, n_pphi_pts, n_pY_pts;
 		int n_KT_pts, n_Kphi_pts, n_KL_pts;
@@ -38,6 +38,7 @@ class HBT_event_generator
 		int n_px_pts, n_py_pts, n_pz_pts;
 		int n_Kx_pts, n_Ky_pts, n_Kz_pts;
 		int n_qx_pts, n_qy_pts, n_qz_pts;
+		int n_Q_pts;
 
 		int n_pT_bins, n_pphi_bins, n_pY_bins;
 		int n_KT_bins, n_Kphi_bins, n_KL_bins;
@@ -45,6 +46,7 @@ class HBT_event_generator
 		int n_px_bins, n_py_bins, n_pz_bins;
 		int n_Kx_bins, n_Ky_bins, n_Kz_bins;
 		int n_qx_bins, n_qy_bins, n_qz_bins;
+		int n_Q_bins;
 
 		double pT_min, pT_max, pphi_min, pphi_max, pY_min, pY_max;
 		double KT_min, KT_max, Kphi_min, Kphi_max, KL_min, KL_max;
@@ -55,6 +57,7 @@ class HBT_event_generator
 		double qo_min, qs_min, ql_min;
 		double qo_max, qs_max, ql_max;
 		double delta_qo, delta_qs, delta_ql;
+		double Q_min, Q_max, delta_Q;
 
 		double pT_bin_width, pphi_bin_width, pY_bin_width;
 		double KT_bin_width, Kphi_bin_width, KL_bin_width;
@@ -71,6 +74,7 @@ class HBT_event_generator
 		vector<double> px_pts, py_pts, pz_pts;
 		vector<double> Kx_pts, Ky_pts, Kz_pts;
 		vector<double> qx_pts, qy_pts, qz_pts;
+		vector<double> Q_pts;
 
 		vector<double> dN_pTdpTdpphidpY;
 		
@@ -150,6 +154,15 @@ class HBT_event_generator
 					);
 		}
 		////////////////////
+		inline int indexer_qmode_1(int iKT, int iKphi, int iKL, int iQ)
+		{
+			return (
+					( ( iKT * n_Kphi_bins + iKphi )
+								* n_KL_bins + iKL )
+								* n_Q_bins + iQ 
+					);
+		}
+		////////////////////
 		inline double get_q0(double m, double qo, double qs, double ql, double KT, double KL)
 		{
 			double xi2 = m*m + KT*KT + KL*KL + 0.25*(qo*qo + qs*qs + ql*ql);
@@ -190,26 +203,36 @@ class HBT_event_generator
 							vector<int> & in_numerator_bin_count,
 							vector<int> & in_denominator_bin_count
 							);
-		void Compute_numerator_and_denominator_with_errors_mode2(
-							vector<double> & in_numerator, vector<double> & in_numerator2,
-							vector<double> & in_numPair, vector<double> & in_numPair2,
-							vector<double> & in_denominator, vector<double> & in_denominator2,
-							vector<double> & in_denPair, vector<double> & in_denPair2,
-							vector<double> & in_numerator_numPair, vector<double> & in_denominator_denPair,
-							vector<double> & in_qo_mean_diff,
-							vector<double> & in_qs_mean_diff,
-							vector<double> & in_ql_mean_diff,
-							vector<double> & in_diff_numPair_count
+		void Compute_numerator_and_denominator_with_errors_q_mode_3D(
+							vector<double> & in_numerator,
+							vector<double> & in_numerator2,
+							vector<double> & in_denominator,
+							vector<double> & in_denominator2,
+							vector<double> & in_numerator_denominator,
+							vector<int> & in_numerator_bin_count,
+							vector<int> & in_denominator_bin_count
+							);
+		void Compute_numerator_and_denominator_with_errors_q_mode_1D(
+							vector<double> & in_numerator,
+							vector<double> & in_numerator2,
+							vector<double> & in_denominator,
+							vector<double> & in_denominator2,
+							vector<double> & in_numerator_denominator,
+							vector<int> & in_numerator_bin_count,
+							vector<int> & in_denominator_bin_count
 							);
 
 
 		// Correlation function itself
 		void Compute_correlation_function();
-		void Compute_correlation_function_mode2();
+		void Compute_correlation_function_q_mode_3D();
+		void Compute_correlation_function_q_mode_1D();
 
 
 		// Input/output
 		void Output_correlation_function();
+		void Output_correlation_function_q_mode_3D();
+		void Output_correlation_function_q_mode_1D();
 
 };
 

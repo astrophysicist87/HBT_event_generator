@@ -58,10 +58,14 @@ delta_qo = 0.004
 delta_qs = 0.004
 delta_ql = 0.004
 
+n_Q_pts = 16
+delta_Q = 0.004
+
 #===========
 # misc. and ensemble parameters
 
 bin_mode = 0
+q_mode = 0
 
 # include all events by default
 centrality_minimum = 0
