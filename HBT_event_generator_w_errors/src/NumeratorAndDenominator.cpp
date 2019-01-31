@@ -28,7 +28,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors(
 	//int number_of_completed_events = 0;
 	err << "  * Computing numerator and denominator of correlation function with errors" << endl;
 
-	const double KYmin = -10.0, KYmax = 10.0;
+	const double KYmin = -0.1, KYmax = 0.1;
 	const double Kz_over_K0_min = tanh( KYmin );
 	const double Kz_over_K0_max = tanh( KYmax );
 

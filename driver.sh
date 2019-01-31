@@ -34,10 +34,12 @@ check_success () {
 #===================
 runPythia=true
 
-projectile="Au"
-target="Au"
-beamEnergy="200.0"
-Nevents="10"
+projectile="p"
+target="p"
+beamEnergy="13000.0"	#GeV
+Nevents="1000"
+QRefValue="0.2"			#GeV
+#PythiaExecutableToUse=""
 
 echo 'Processing Nevents =' $Nevents $projectile'+'$target 'collisions at' $beamEnergy 'GeV'
 
@@ -80,8 +82,11 @@ do
 			fi
 
 			# time and run
-			./run_mainHIC.sh $projectile $target $beamEnergy \
-								$Nevents "$PYTHIA_RESULTS_DIRECTORY/"
+			#./run_mainHIC.sh $projectile $target $beamEnergy \
+			#					$Nevents "$PYTHIA_RESULTS_DIRECTORY/"
+			./run_testBEeffects.sh $projectile $target $beamEnergy \
+								$Nevents "$PYTHIA_RESULTS_DIRECTORY/"\
+								$QRefValue
 
 			# check and report whether run was successful
 			runSuccess=`echo $?`

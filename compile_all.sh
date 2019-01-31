@@ -20,8 +20,8 @@ echo '#====================================='
 cd $PYTHIA_DIRECTORY
 echo 'In directory='`pwd`':'
 echo '#====================================='
-rm mainHIC
-make mainHIC
+rm mainHIC main_testBEeffects
+make mainHIC main_testBEeffects
 success=$[success+`echo $?`]
 
 #=====================================

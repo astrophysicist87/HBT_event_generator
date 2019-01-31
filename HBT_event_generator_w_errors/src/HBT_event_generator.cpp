@@ -133,9 +133,12 @@ void HBT_event_generator::initialize_all(
 	pT_bin_width 	= pT_pts[1]-pT_pts[0];
 	pphi_bin_width 	= pphi_pts[1]-pphi_pts[0];
 	pY_bin_width 	= pY_pts[1]-pY_pts[0];
-	px_bin_width 	= px_pts[1]-px_pts[0];
-	py_bin_width 	= py_pts[1]-py_pts[0];
-	pz_bin_width 	= pz_pts[1]-pz_pts[0];
+	//px_bin_width 	= px_pts[1]-px_pts[0];
+	//py_bin_width 	= py_pts[1]-py_pts[0];
+	//pz_bin_width 	= pz_pts[1]-pz_pts[0];
+	px_bin_width 	= paraRdr->getVal("n_px_pts");
+	py_bin_width 	= paraRdr->getVal("n_py_pts");
+	pz_bin_width 	= paraRdr->getVal("n_pz_pts");
 
 	// assume uniform grid spacing for now
 	KT_bin_width 	= KT_pts[1]-KT_pts[0];
