@@ -85,7 +85,7 @@ do
 			#./run_mainHIC.sh $projectile $target $beamEnergy \
 			#					$Nevents "$PYTHIA_RESULTS_DIRECTORY/"
 			./run_testBEeffects.sh $projectile $target $beamEnergy \
-								$Nevents "$PYTHIA_RESULTS_DIRECTORY/"\
+								$Nevents $PYTHIA_RESULTS_DIRECTORY \
 								$QRefValue
 
 			# check and report whether run was successful
