@@ -99,7 +99,7 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 		istringstream iss(line);
 
 		//cout << "Made it to line#" << count << endl;
-//cout << "Check event size: " << __LINE__ << "   " << event.particles.size() << endl;
+		//cout << "Check event size: " << __LINE__ << "   " << event.particles.size() << endl;
 
 		ParticleRecord particle;
 		int eventID, particleID;
@@ -111,13 +111,16 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 					>> particleID
 					>> E >> px >> py >> pz
 					>> t >> x >> y >> z
-			 ) ) { break; }
+			 ) ) { /*cout << "no success reading in!" << endl;*/ break; }
+
+		//cout << "eventID = " << eventID << endl;
+		//cout << "nextEventID = " << nextEventID << endl;
 
 		if ( eventID < nextEventID )
 			continue;
 
 		// apply momentum-space cuts, if any
-		bool apply_momentum_space_cuts = true;
+		bool apply_momentum_space_cuts = false;
 		if ( apply_momentum_space_cuts
 				and ( abs(px) > max_pT
 				or abs(py) > max_pT
@@ -203,10 +206,12 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 
 				// otherwise, push new particle to new event
 				event.particles.push_back(particle);
-//cout << "Check event size: " << __LINE__ << "   " << event.particles.size() << endl;
+
+				//cout << "Check event size: " << __LINE__ << "   "
+				//		<< event.particles.size() << endl;
 			}
 		}
-		//cout << "\t - finished this loop!" << endl;
+		cout << "\t - finished this loop!" << endl;
 
 		previous_eventID = current_eventID;
 		++count;

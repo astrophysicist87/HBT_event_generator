@@ -82,11 +82,11 @@ do
 			fi
 
 			# time and run
-			#./run_mainHIC.sh $projectile $target $beamEnergy \
-			#					$Nevents "$PYTHIA_RESULTS_DIRECTORY/"
-			./run_testBEeffects.sh $projectile $target $beamEnergy \
-								$Nevents $PYTHIA_RESULTS_DIRECTORY \
-								$QRefValue
+			./run_mainHIC.sh $projectile $target $beamEnergy \
+								$Nevents$PYTHIA_RESULTS_DIRECTORY
+			#./run_testBEeffects.sh $projectile $target $beamEnergy \
+			#					$Nevents $PYTHIA_RESULTS_DIRECTORY \
+			#					$QRefValue
 
 			# check and report whether run was successful
 			runSuccess=`echo $?`
@@ -190,7 +190,9 @@ do
 		#add a few more files
 		cp ./parameters.dat $RESULTS_DIRECTORY
 
-		zip -r $HOME_DIRECTORY/`echo $collisionSystemCentralityStem`"_results.zip" $RESULTS_DIRECTORY
+		zipFilename=$HOME_DIRECTORY/`echo $collisionSystemCentralityStem`"_results.zip"
+
+		zip -r `get_filename $zipFilename` $RESULTS_DIRECTORY
 
 		# Clean-up HBT directories (but not Pythia results directory!!!)
 		#rm -rf $HBT_EVENT_GEN_DIRECTORY/*HBT_event_generator.[oe]* $HBT_EVENT_GEN_DIRECTORY/results\

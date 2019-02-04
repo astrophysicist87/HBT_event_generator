@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <cstdlib>
 #include <complex>
+#include <random>
+#include <algorithm>
 
 #include "HBT_event_generator.h"
 #include "Arsenal.h"
@@ -33,6 +35,7 @@ void HBT_event_generator::initialize_all(
 	// - some parameters
 	bin_mode 		= paraRdr->getVal("bin_mode");
 	q_mode 			= paraRdr->getVal("q_mode");
+	BE_mode 		= paraRdr->getVal("BE_mode");
 	//Define various grid sizes
 	// - SP momentum points at which to evaluate correlation function
 	n_pT_pts 		= paraRdr->getVal("n_pT_pts");
@@ -141,12 +144,12 @@ void HBT_event_generator::initialize_all(
 	pT_bin_width 	= pT_pts[1]-pT_pts[0];
 	pphi_bin_width 	= pphi_pts[1]-pphi_pts[0];
 	pY_bin_width 	= pY_pts[1]-pY_pts[0];
-	//px_bin_width 	= px_pts[1]-px_pts[0];
-	//py_bin_width 	= py_pts[1]-py_pts[0];
-	//pz_bin_width 	= pz_pts[1]-pz_pts[0];
-	px_bin_width 	= paraRdr->getVal("n_px_pts");
-	py_bin_width 	= paraRdr->getVal("n_py_pts");
-	pz_bin_width 	= paraRdr->getVal("n_pz_pts");
+	px_bin_width 	= px_pts[1]-px_pts[0];
+	py_bin_width 	= py_pts[1]-py_pts[0];
+	pz_bin_width 	= pz_pts[1]-pz_pts[0];
+	//px_bin_width 	= paraRdr->getVal("n_px_pts");
+	//py_bin_width 	= paraRdr->getVal("n_py_pts");
+	//pz_bin_width 	= paraRdr->getVal("n_pz_pts");
 
 	// assume uniform grid spacing for now
 	KT_bin_width 	= KT_pts[1]-KT_pts[0];
@@ -184,15 +187,27 @@ void HBT_event_generator::initialize_all(
 
 	// Compute numerator and denominator of correlation function,
 	// along with quantities needed to estimate error
-	Compute_numerator_and_denominator_with_errors(
-							numerator,
-							numerator2,
-							denominator,
-							denominator2,
-							numerator_denominator,
-							numerator_bin_count,
-							denominator_bin_count
-					);
+	if ( BE_mode == 0 )
+	{
+		Compute_numerator_and_denominator_with_errors(
+						numerator, numerator2, denominator, denominator2,
+						numerator_denominator, numerator_bin_count, denominator_bin_count
+						);
+	}
+	else if ( BE_mode == 1 )
+	{
+		Compute_numerator_and_denominator_with_errors_momentum_space_only(
+							numerator, numerator2, numPair, numPair2,
+							denominator, denominator2, denPair, denPair2,
+							numerator_numPair, denominator_denPair
+							);
+	}
+	else
+	{
+		err << "HBT_event_generator(): BE_mode = "
+			<< BE_mode << " not supported!" << endl;
+		exit(8);
+	}
 
 	return;
 }
@@ -283,7 +298,7 @@ void HBT_event_generator::Compute_correlation_function_q_mode_3D()
 		else if ( denominator_cell_was_filled[idx] )
 		{
 bool verbose = (idx==1) or (idx==9);
-verbose = false;
+verbose = true;
 
 if (verbose) err << setprecision(8);
 			// average of numerator in this q-K cell
@@ -389,7 +404,7 @@ void HBT_event_generator::Compute_correlation_function_q_mode_1D()
 		double den2 = denominator2[idx];
 		double numden = numerator_denominator[idx];
 
-		double R2 = num / den; // total_N_events factors cancel
+		double R2 = num / (den+1.e-10); // total_N_events factors cancel
 
 		//==============================
 		//==== correlation function ====
@@ -592,29 +607,37 @@ void HBT_event_generator::Update_records( const vector<EventRecord> & allEvents_
 
 	// Compute numerator and denominator of correlation function,
 	// along with quantities needed to estimate error
-	Compute_numerator_and_denominator_with_errors(
-							numerator,
-							numerator2,
-							denominator,
-							denominator2,
-							numerator_denominator,
-							numerator_bin_count,
-							denominator_bin_count
-					);
-
+	if ( BE_mode == 0 )
+	{
+		Compute_numerator_and_denominator_with_errors(
+						numerator, numerator2, denominator, denominator2,
+						numerator_denominator, numerator_bin_count, denominator_bin_count
+						);
+	}
+	else if ( BE_mode == 1 )
+	{
+		Compute_numerator_and_denominator_with_errors_momentum_space_only(
+							numerator, numerator2, numPair, numPair2,
+							denominator, denominator2, denPair, denPair2,
+							numerator_numPair, denominator_denPair
+							);
+	}
+	else
+	{
+		err << "HBT_event_generator(): BE_mode = "
+			<< BE_mode << " not supported!" << endl;
+		exit(8);
+	}
 
 	return;
 }
 
 
 void HBT_event_generator::Compute_numerator_and_denominator_with_errors(
-							vector<double> & in_numerator,
-							vector<double> & in_numerator2,
-							vector<double> & in_denominator,
-							vector<double> & in_denominator2,
-							vector<double> & in_numerator_denominator,
-							vector<int> & in_numerator_bin_count,
-							vector<int> & in_denominator_bin_count
+							vector<double> & in_numerator, 				vector<double> & in_numerator2,
+							vector<double> & in_denominator, 			vector<double> & in_denominator2,
+							vector<double> & in_numerator_denominator, 	vector<int>    & in_numerator_bin_count,
+							vector<int>    & in_denominator_bin_count
 							)
 {
 	switch(q_mode)
@@ -640,6 +663,56 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors(
 
 	return;	
 }
+
+
+void HBT_event_generator::Compute_numerator_and_denominator_with_errors_momentum_space_only(
+							vector<double> & in_numerator, 			vector<double> & in_numerator2,
+							vector<double> & in_numPair, 			vector<double> & in_numPair2,
+							vector<double> & in_denominator, 		vector<double> & in_denominator2,
+							vector<double> & in_denPair, 			vector<double> & in_denPair2,
+							vector<double> & in_numerator_numPair, 	vector<double> & in_denominator_denPair
+							)
+{
+	switch(q_mode)
+	{
+		case 0:
+			Compute_numerator_and_denominator_with_errors_q_mode_3D_momentum_space_only(
+							numerator, numerator2, numPair, numPair2,
+							denominator, denominator2, denPair, denPair2,
+							numerator_numPair, denominator_denPair
+							);
+			break;
+		case 1:
+			Compute_numerator_and_denominator_with_errors_q_mode_1D_momentum_space_only(
+							numerator, numerator2, numPair, numPair2,
+							denominator, denominator2, denPair, denPair2,
+							numerator_numPair, denominator_denPair
+							);
+			break;
+		default:
+			err << "Compute_numerator_and_denominator_with_errors_momentum_space_only(): q_mode = "
+				<< q_mode << " not supported!" << endl;
+			exit(8);
+			break;
+	}
+
+	return;	
+}
+
+
+void HBT_event_generator::get_random_angles(int n_mixed_events, vector<double> & random_angles)
+{
+	random_device rd;
+	mt19937_64 mt(rd());
+	uniform_real_distribution<double> distribution(-M_PI,M_PI);
+
+	random_angles.clear();
+	for (int rand_idx = 0; rand_idx < n_mixed_events; ++rand_idx)
+		random_angles.push_back( distribution(mt) );
+
+	return;
+}
+
 
 
 

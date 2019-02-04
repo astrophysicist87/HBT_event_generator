@@ -30,7 +30,8 @@ class HBT_event_generator
 		string particle_name;
 		double particle_mass;
 
-		int bin_mode, q_mode, total_N_events, number_of_completed_events;
+		int bin_mode, q_mode, BE_mode;
+		int total_N_events, number_of_completed_events;
 
 		int n_pT_pts, n_pphi_pts, n_pY_pts;
 		int n_KT_pts, n_Kphi_pts, n_KL_pts;
@@ -174,6 +175,7 @@ class HBT_event_generator
 		// For subsequent chunks of events
 		void Update_records( const vector<EventRecord> & allEvents_in );
 
+		void get_random_angles(int n_mixed_events, vector<double> & random_angles);
 
 		// Functions to compute single-particle spectra
 		//void Compute_spectra();
@@ -195,31 +197,43 @@ class HBT_event_generator
 		//void Compute_numerator(vector<complex<double> > & in_numerator);
 		//void Compute_denominator(vector<double> & in_denominator);
 		void Compute_numerator_and_denominator_with_errors(
-							vector<double> & in_numerator,
-							vector<double> & in_numerator2,
-							vector<double> & in_denominator,
-							vector<double> & in_denominator2,
-							vector<double> & in_numerator_denominator,
-							vector<int> & in_numerator_bin_count,
-							vector<int> & in_denominator_bin_count
+							vector<double> & in_numerator, 				vector<double> & in_numerator2,
+							vector<double> & in_denominator, 			vector<double> & in_denominator2,
+							vector<double> & in_numerator_denominator, 	vector<int>    & in_numerator_bin_count,
+							vector<int>    & in_denominator_bin_count
 							);
 		void Compute_numerator_and_denominator_with_errors_q_mode_3D(
-							vector<double> & in_numerator,
-							vector<double> & in_numerator2,
-							vector<double> & in_denominator,
-							vector<double> & in_denominator2,
-							vector<double> & in_numerator_denominator,
-							vector<int> & in_numerator_bin_count,
-							vector<int> & in_denominator_bin_count
+							vector<double> & in_numerator, 				vector<double> & in_numerator2,
+							vector<double> & in_denominator, 			vector<double> & in_denominator2,
+							vector<double> & in_numerator_denominator, 	vector<int>    & in_numerator_bin_count,
+							vector<int>    & in_denominator_bin_count
 							);
 		void Compute_numerator_and_denominator_with_errors_q_mode_1D(
-							vector<double> & in_numerator,
-							vector<double> & in_numerator2,
-							vector<double> & in_denominator,
-							vector<double> & in_denominator2,
-							vector<double> & in_numerator_denominator,
-							vector<int> & in_numerator_bin_count,
-							vector<int> & in_denominator_bin_count
+							vector<double> & in_numerator, 				vector<double> & in_numerator2,
+							vector<double> & in_denominator, 			vector<double> & in_denominator2,
+							vector<double> & in_numerator_denominator, 	vector<int>    & in_numerator_bin_count,
+							vector<int>    & in_denominator_bin_count
+							);
+		void Compute_numerator_and_denominator_with_errors_momentum_space_only(
+							vector<double> & in_numerator, 			vector<double> & in_numerator2,
+							vector<double> & in_numPair, 			vector<double> & in_numPair2,
+							vector<double> & in_denominator, 		vector<double> & in_denominator2,
+							vector<double> & in_denPair, 			vector<double> & in_denPair2,
+							vector<double> & in_numerator_numPair, 	vector<double> & in_denominator_denPair
+							);
+		void Compute_numerator_and_denominator_with_errors_q_mode_3D_momentum_space_only(
+							vector<double> & in_numerator, 			vector<double> & in_numerator2,
+							vector<double> & in_numPair, 			vector<double> & in_numPair2,
+							vector<double> & in_denominator, 		vector<double> & in_denominator2,
+							vector<double> & in_denPair, 			vector<double> & in_denPair2,
+							vector<double> & in_numerator_numPair, 	vector<double> & in_denominator_denPair
+							);
+		void Compute_numerator_and_denominator_with_errors_q_mode_1D_momentum_space_only(
+							vector<double> & in_numerator, 			vector<double> & in_numerator2,
+							vector<double> & in_numPair, 			vector<double> & in_numPair2,
+							vector<double> & in_denominator, 		vector<double> & in_denominator2,
+							vector<double> & in_denPair, 			vector<double> & in_denPair2,
+							vector<double> & in_numerator_numPair, 	vector<double> & in_denominator_denPair
 							);
 
 

@@ -51,9 +51,9 @@ KLmax = 0.1
 
 #===========
 # relative momenta
-n_qo_pts = 16
-n_qs_pts = 16
-n_ql_pts = 16
+n_qo_pts = 24
+n_qs_pts = 24
+n_ql_pts = 24
 delta_qo = 0.004
 delta_qs = 0.004
 delta_ql = 0.004
@@ -65,7 +65,8 @@ delta_Q = 0.02
 # misc. and ensemble parameters
 
 bin_mode = 0
-q_mode = 1
+q_mode = 0
+BE_mode = 0
 
 # include all events by default
 centrality_minimum = 0
