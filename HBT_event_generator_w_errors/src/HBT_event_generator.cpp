@@ -32,31 +32,33 @@ void HBT_event_generator::initialize_all(
 	//Set header info
 	// - particle information
 	particle_mass 	= paraRdr->getVal("mass");
-	// - some parameters
+	// - some mode options
 	bin_mode 		= paraRdr->getVal("bin_mode");
 	q_mode 			= paraRdr->getVal("q_mode");
 	BE_mode 		= paraRdr->getVal("BE_mode");
+	// - bin parameters
+	bin_epsilon		= paraRdr->getVal("bin_epsilon");
 	//Define various grid sizes
 	// - SP momentum points at which to evaluate correlation function
-	n_pT_pts 		= paraRdr->getVal("n_pT_pts");
-	pT_min 			= paraRdr->getVal("pTmin");
-	pT_max 			= paraRdr->getVal("pTmax");
-	n_pphi_pts 		= paraRdr->getVal("n_pphi_pts");
-	pphi_min 		= -M_PI;
-	pphi_max 		= M_PI;
-	n_pY_pts 		= paraRdr->getVal("n_pY_pts");
-	pY_min 			= paraRdr->getVal("pYmin");
-	pY_max 			= paraRdr->getVal("pYmax");
+	//n_pT_pts 		= paraRdr->getVal("n_pT_pts");
+	//pT_min 			= paraRdr->getVal("pTmin");
+	//pT_max 			= paraRdr->getVal("pTmax");
+	//n_pphi_pts 		= paraRdr->getVal("n_pphi_pts");
+	//pphi_min 		= -M_PI;
+	//pphi_max 		= M_PI;
+	//n_pY_pts 		= paraRdr->getVal("n_pY_pts");
+	//pY_min 			= paraRdr->getVal("pYmin");
+	//pY_max 			= paraRdr->getVal("pYmax");
 	//
-	n_px_pts 		= paraRdr->getVal("n_px_pts");
-	n_py_pts 		= paraRdr->getVal("n_py_pts");
-	n_pz_pts 		= paraRdr->getVal("n_pz_pts");
-	px_min 			= paraRdr->getVal("pxmin");
-	px_max 			= paraRdr->getVal("pxmax");
-	py_min 			= paraRdr->getVal("pymin");
-	py_max 			= paraRdr->getVal("pymax");
-	pz_min 			= paraRdr->getVal("pzmin");
-	pz_max 			= paraRdr->getVal("pzmax");
+	//n_px_pts 		= paraRdr->getVal("n_px_pts");
+	//n_py_pts 		= paraRdr->getVal("n_py_pts");
+	//n_pz_pts 		= paraRdr->getVal("n_pz_pts");
+	//px_min 			= paraRdr->getVal("pxmin");
+	//px_max 			= paraRdr->getVal("pxmax");
+	//py_min 			= paraRdr->getVal("pymin");
+	//py_max 			= paraRdr->getVal("pymax");
+	//pz_min 			= paraRdr->getVal("pzmin");
+	//pz_max 			= paraRdr->getVal("pzmax");
 	// - pair momenta points at which to interpolate HBT results
 	n_KT_pts 		= paraRdr->getVal("n_KT_pts");
 	KT_min 			= paraRdr->getVal("KTmin");
@@ -99,20 +101,20 @@ void HBT_event_generator::initialize_all(
 	n_ql_bins 		= n_ql_pts - 1;
 	n_Q_bins 		= n_Q_pts - 1;
 
-	n_pT_bins 		= n_pT_pts  - 1;
-	n_pphi_bins 	= n_pphi_pts  - 1;
-	n_pY_bins 		= n_pY_pts  - 1;
+	//n_pT_bins 		= n_pT_pts  - 1;
+	//n_pphi_bins 	= n_pphi_pts  - 1;
+	//n_pY_bins 		= n_pY_pts  - 1;
 
 	n_KT_bins 		= n_KT_pts - 1;
 	n_Kphi_bins 	= n_Kphi_pts - 1;
 	n_KL_bins 		= n_KL_pts - 1;
 
-	pT_pts 			= vector<double> (n_pT_pts);
-	pphi_pts 		= vector<double> (n_pphi_pts);
-	pY_pts 			= vector<double> (n_pY_pts);
-	px_pts 			= vector<double> (n_px_pts);
-	py_pts 			= vector<double> (n_py_pts);
-	pz_pts 			= vector<double> (n_pz_pts);
+	//pT_pts 			= vector<double> (n_pT_pts);
+	//pphi_pts 		= vector<double> (n_pphi_pts);
+	//pY_pts 			= vector<double> (n_pY_pts);
+	//px_pts 			= vector<double> (n_px_pts);
+	//py_pts 			= vector<double> (n_py_pts);
+	//pz_pts 			= vector<double> (n_pz_pts);
 
 	KT_pts 			= vector<double> (n_KT_pts);
 	Kphi_pts 		= vector<double> (n_Kphi_pts);
@@ -123,14 +125,14 @@ void HBT_event_generator::initialize_all(
 	ql_pts 			= vector<double> (n_ql_pts);
 	Q_pts 			= vector<double> (n_Q_pts);
 
-	dN_pTdpTdpphidpY = vector<double> (n_pT_bins*n_pphi_bins*n_pY_pts);
+	//dN_pTdpTdpphidpY = vector<double> (n_pT_bins*n_pphi_bins*n_pY_pts);
 
-	linspace(pT_pts, pT_min, pT_max);
-	linspace(pphi_pts, pphi_min, pphi_max);
-	linspace(pY_pts, pY_min, pY_max);
-	linspace(px_pts, px_min, px_max);
-	linspace(py_pts, py_min, py_max);
-	linspace(pz_pts, pz_min, pz_max);
+	//linspace(pT_pts, pT_min, pT_max);
+	//linspace(pphi_pts, pphi_min, pphi_max);
+	//linspace(pY_pts, pY_min, pY_max);
+	//linspace(px_pts, px_min, px_max);
+	//linspace(py_pts, py_min, py_max);
+	//linspace(pz_pts, pz_min, pz_max);
 
 	linspace(KT_pts, KT_min, KT_max);
 	linspace(Kphi_pts, Kphi_min, Kphi_max);
@@ -141,20 +143,20 @@ void HBT_event_generator::initialize_all(
 	linspace(ql_pts, ql_min, ql_max);
 	linspace(Q_pts, Q_min, Q_max);
 
-	pT_bin_width 	= pT_pts[1]-pT_pts[0];
-	pphi_bin_width 	= pphi_pts[1]-pphi_pts[0];
-	pY_bin_width 	= pY_pts[1]-pY_pts[0];
-	px_bin_width 	= px_pts[1]-px_pts[0];
-	py_bin_width 	= py_pts[1]-py_pts[0];
-	pz_bin_width 	= pz_pts[1]-pz_pts[0];
-	//px_bin_width 	= paraRdr->getVal("n_px_pts");
-	//py_bin_width 	= paraRdr->getVal("n_py_pts");
-	//pz_bin_width 	= paraRdr->getVal("n_pz_pts");
+	//pT_bin_width 	= pT_pts[1]-pT_pts[0];
+	//pphi_bin_width 	= pphi_pts[1]-pphi_pts[0];
+	//pY_bin_width 	= pY_pts[1]-pY_pts[0];
+	//px_bin_width 	= px_pts[1]-px_pts[0];
+	//py_bin_width 	= py_pts[1]-py_pts[0];
+	//pz_bin_width 	= pz_pts[1]-pz_pts[0];
+	px_bin_width 	= bin_epsilon;
+	py_bin_width 	= bin_epsilon;
+	pz_bin_width 	= bin_epsilon;
 
 	// assume uniform grid spacing for now
-	KT_bin_width 	= KT_pts[1]-KT_pts[0];
-	Kphi_bin_width 	= Kphi_pts[1]-Kphi_pts[0];
-	KL_bin_width 	= KL_pts[1]-KL_pts[0];
+	//KT_bin_width 	= KT_pts[1]-KT_pts[0];
+	//Kphi_bin_width 	= Kphi_pts[1]-Kphi_pts[0];
+	//KL_bin_width 	= KL_pts[1]-KL_pts[0];
 
 	const int q_space_size = ( q_mode == 0 ) ?
 								n_qo_bins*n_qs_bins*n_ql_bins :

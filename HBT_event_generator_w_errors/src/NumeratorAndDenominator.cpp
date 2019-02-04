@@ -24,7 +24,8 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 	//int number_of_completed_events = 0;
 	err << "  * Computing numerator and denominator of correlation function with errors" << endl;
 
-	const double KYmin = -100.0, KYmax = 100.0;
+	constexpr bool impose_pair_rapidity_cuts = false;
+	const double KYmin = -0.1, KYmax = 0.1;
 	const double Kz_over_K0_min = tanh( KYmin );
 	const double Kz_over_K0_max = tanh( KYmax );
 
@@ -60,9 +61,9 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 		for (int iKphi 	= 0; iKphi 	< n_Kphi_bins; 	iKphi++)
 		for (int iKL 	= 0; iKL 	< n_KL_bins; 	iKL++)
 		{
-			double KT = 0.5*(KT_pts[iKT]+KT_pts[iKT+1]);
 			double KTmin = KT_pts[iKT];
 			double KTmax = KT_pts[iKT+1];
+			double KT = 0.5*(KTmin+KTmax);
 			double Kphi = 0.5*(Kphi_pts[iKphi]+Kphi_pts[iKphi+1]);
 			double KL = 0.5*(KL_pts[iKL]+KL_pts[iKL+1]);
 			double cKphi = cos(Kphi), sKphi = sin(Kphi);
@@ -76,10 +77,10 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 				ParticleRecord pi = event.particles[iParticle];
 
 				double ti = pi.t, xi = pi.x, yi = pi.y, zi = pi.z;
-err << "made it here: "
-	<< Kx << "   " << pi.px << "   " << 0.5*px_bin_width << "   "
-	<< Ky << "   " << pi.py << "   " << 0.5*py_bin_width << "   "
-	<< Kz << "   " << pi.pz << "   " << 0.5*pz_bin_width << endl;
+				//err << "made it here: "
+				//	<< Kx << "   " << pi.px << "   " << 0.5*px_bin_width << "   "
+				//	<< Ky << "   " << pi.py << "   " << 0.5*py_bin_width << "   "
+				//	<< Kz << "   " << pi.pz << "   " << 0.5*pz_bin_width << endl;
 
 				bool num_bin_true = 	abs( Kx - pi.px ) <= 0.5*px_bin_width
 									and abs( Ky - pi.py ) <= 0.5*py_bin_width
@@ -89,7 +90,7 @@ err << "made it here: "
 				{
 					double num_bin_factor =
 							px_bin_width*py_bin_width*pz_bin_width;
-err << "and also here" << endl;
+
 					for (int iqo = 0; iqo < n_qo_bins; iqo++)
 					for (int iqs = 0; iqs < n_qs_bins; iqs++)
 					for (int iql = 0; iql < n_ql_bins; iql++)
@@ -109,7 +110,10 @@ err << "and also here" << endl;
 						double Eb = sqrt(particle_mass*particle_mass+pbx*pbx+pby*pby+pbz*pbz);
 
 						// rapidity cuts
-						if ( ( 2.0*Kz/(Ea+Eb) < Kz_over_K0_min ) or ( 2.0*Kz/(Ea+Eb) > Kz_over_K0_max ) )
+						if ( impose_pair_rapidity_cuts
+								and ( ( 2.0*Kz/(Ea+Eb) < Kz_over_K0_min )
+								or ( 2.0*Kz/(Ea+Eb) > Kz_over_K0_max ) )
+							)
 							continue;
 
 						double q0 = get_q0(particle_mass, qo, qs, ql, KT, KL);
@@ -117,7 +121,7 @@ err << "and also here" << endl;
 						double arg =  q0 * ti - qx * xi - qy * yi - qz * zi;
 
 						complex<double> complex_num_term = exp(i*arg/hbarC) / num_bin_factor;
-err << "CHECKCOMPLEX " << arg/hbarC << "   " << i*arg/hbarC << "   " << exp(i*arg/hbarC) << endl;
+						//err << "CHECKCOMPLEX " << arg/hbarC << "   " << i*arg/hbarC << "   " << exp(i*arg/hbarC) << endl;
 
 						sum1[index6D] += complex_num_term;
 						sum2[index6D] += 1.0 / (num_bin_factor*num_bin_factor);
@@ -171,7 +175,10 @@ err << "CHECKCOMPLEX " << arg/hbarC << "   " << i*arg/hbarC << "   " << exp(i*ar
 				//double pa_phi = atan2(pay,pax), pb_phi = atan2(pby,pbx);
 
 				// rapidity cuts
-				if ( ( 2.0*Kz/(Ea+Eb) < Kz_over_K0_min ) or ( 2.0*Kz/(Ea+Eb) > Kz_over_K0_max ) )
+				if ( impose_pair_rapidity_cuts
+						and ( ( 2.0*Kz/(Ea+Eb) < Kz_over_K0_min )
+						or ( 2.0*Kz/(Ea+Eb) > Kz_over_K0_max ) )
+					)
 					continue;
 
 				// Sum over particles for pa bin
@@ -369,7 +376,8 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 	double average_Npair_numerator = 0.0;
 	double average_Nmixed_denominator = 0.0;
 
-	const double KYmin = -0.5, KYmax = 0.5;
+	constexpr bool impose_pair_rapidity_cuts = false;
+	const double KYmin = -0.1, KYmax = 0.1;
 	const double Kz_over_K0_min = tanh( KYmin );
 	const double Kz_over_K0_max = tanh( KYmax );
 
@@ -416,7 +424,10 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 			double q0 = Ei-Ej, qx = pix-pjx, qy = piy-pjy, qz = piz-pjz;
 
 			// rapidity cuts
-			if ( ( Kz / K0 < Kz_over_K0_min ) or ( Kz / K0 > Kz_over_K0_max ) )
+			if ( impose_pair_rapidity_cuts
+					and ( ( 2.0*Kz/(Ei+Ej) < Kz_over_K0_min )
+					or ( 2.0*Kz/(Ei+Ej) > Kz_over_K0_max ) )
+				)
 				continue;
 
 			double KT = sqrt(Kx*Kx+Ky*Ky);
@@ -510,8 +521,6 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 			double c_rand_phi = cos_rand_angles[jEvent],
 					s_rand_phi = sin_rand_angles[jEvent];
 
-			//c_rand_phi = 1.0, s_rand_phi = 0.0;
-
 			// Sum over pairs of particles
 			for (int iParticle = 0; iParticle < event.particles.size(); ++iParticle)
 			for (int jParticle = 0; jParticle < mixedEvent.particles.size(); ++jParticle)
@@ -533,7 +542,10 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 				double q0 = Ei-Ej, qx = pix-pjx, qy = piy-pjy, qz = piz-pjz;
 
 				// rapidity cuts
-				if ( ( Kz / K0 < Kz_over_K0_min ) or ( Kz / K0 > Kz_over_K0_max ) )
+				if ( impose_pair_rapidity_cuts
+						and ( ( 2.0*Kz/(Ei+Ej) < Kz_over_K0_min )
+						or ( 2.0*Kz/(Ei+Ej) > Kz_over_K0_max ) )
+					)
 					continue;
 
 				double KT = sqrt(Kx*Kx+Ky*Ky);

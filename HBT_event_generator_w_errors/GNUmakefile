@@ -45,9 +45,7 @@ SRC		=	main.cpp \
 			$(SRCDIR)/NumeratorAndDenominator.cpp \
 			$(SRCDIR)/NumeratorAndDenominator1D.cpp \
 			$(SRCDIR)/HBT_event_generator.cpp
-			#$(SRCDIR)/SingleParticleSpectra.cpp \
-			#$(SRCDIR)/Numerator.cpp \
-			#$(SRCDIR)/Denominator.cpp
+			#$(SRCDIR)/SingleParticleSpectra.cpp
 
 INC		= 	main.h \
 			$(SRCDIR)/EventRecord.h \
