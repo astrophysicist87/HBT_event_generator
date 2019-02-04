@@ -211,7 +211,7 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 				//		<< event.particles.size() << endl;
 			}
 		}
-		cout << "\t - finished this loop!" << endl;
+		//cout << "\t - finished this loop!" << endl;
 
 		previous_eventID = current_eventID;
 		++count;

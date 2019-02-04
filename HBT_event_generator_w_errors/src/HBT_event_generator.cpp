@@ -535,9 +535,14 @@ void HBT_event_generator::Output_correlation_function_q_mode_3D()
 			<< 0.5*(qo_pts[iqo]+qo_pts[iqo+1]) << setw(prec+extrawidth)
 			<< 0.5*(qs_pts[iqs]+qs_pts[iqs+1]) << setw(prec+extrawidth)
 			<< 0.5*(ql_pts[iql]+ql_pts[iql+1]) << setw(prec+16)
+			//<< real(numerator[idx] / static_cast<double>(total_N_events)) << setw(prec+16)
+			//<< imag(numerator[idx] / static_cast<double>(total_N_events)) << setw(prec+16)
+			//<< denominator[idx] / static_cast<double>(total_N_events) << setw(prec+36)
+			<< scientific
 			<< real(numerator[idx] / static_cast<double>(total_N_events)) << setw(prec+16)
 			<< imag(numerator[idx] / static_cast<double>(total_N_events)) << setw(prec+16)
 			<< denominator[idx] / static_cast<double>(total_N_events) << setw(prec+36)
+			<< fixed
 			<< setprecision(16) << correlation_function[idx] << setw(prec+36)
 			<< setprecision(16) << correlation_function_error[idx] << endl;
 

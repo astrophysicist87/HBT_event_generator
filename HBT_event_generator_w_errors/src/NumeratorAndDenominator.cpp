@@ -76,6 +76,10 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 				ParticleRecord pi = event.particles[iParticle];
 
 				double ti = pi.t, xi = pi.x, yi = pi.y, zi = pi.z;
+err << "made it here: "
+	<< Kx << "   " << pi.px << "   " << 0.5*px_bin_width << "   "
+	<< Ky << "   " << pi.py << "   " << 0.5*py_bin_width << "   "
+	<< Kz << "   " << pi.pz << "   " << 0.5*pz_bin_width << endl;
 
 				bool num_bin_true = 	abs( Kx - pi.px ) <= 0.5*px_bin_width
 									and abs( Ky - pi.py ) <= 0.5*py_bin_width
@@ -85,7 +89,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 				{
 					double num_bin_factor =
 							px_bin_width*py_bin_width*pz_bin_width;
-
+err << "and also here" << endl;
 					for (int iqo = 0; iqo < n_qo_bins; iqo++)
 					for (int iqs = 0; iqs < n_qs_bins; iqs++)
 					for (int iql = 0; iql < n_ql_bins; iql++)
