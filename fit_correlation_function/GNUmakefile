@@ -30,6 +30,7 @@ SRC		=	main.cpp \
 			$(SRCDIR)/Arsenal.cpp \
 			$(SRCDIR)/ParameterReader.cpp \
 			$(SRCDIR)/fit.cpp \
+			$(SRCDIR)/fit1D.cpp \
 			$(SRCDIR)/correlation_function.cpp
 
 INC		= 	main.h \

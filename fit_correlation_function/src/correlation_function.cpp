@@ -19,7 +19,7 @@ void Correlation_function::initialize_all(
 	ParameterReader * paraRdr_in,
 	string filepath_in )
 {
-	err << "Starting initializiations:" << endl;
+	err << "Starting initializations:" << endl;
 	// Load parameters
 	paraRdr = paraRdr_in;
 
@@ -28,27 +28,7 @@ void Correlation_function::initialize_all(
 	particle_mass 	= paraRdr->getVal("mass");
 	// - some parameters
 	bin_mode 		= paraRdr->getVal("bin_mode");
-	//Define various grid sizes
-	// - SP momentum points at which to evaluate correlation function
-	n_pT_pts 		= paraRdr->getVal("n_pT_pts");
-	pT_min 			= paraRdr->getVal("pTmin");
-	pT_max 			= paraRdr->getVal("pTmax");
-	n_pphi_pts 		= paraRdr->getVal("n_pphi_pts");
-	pphi_min 		= -M_PI;
-	pphi_max 		= M_PI;
-	n_pY_pts 		= paraRdr->getVal("n_pY_pts");
-	pY_min 			= paraRdr->getVal("pYmin");
-	pY_max 			= paraRdr->getVal("pYmax");
-//
-	n_px_pts 		= paraRdr->getVal("n_px_pts");
-	n_py_pts 		= paraRdr->getVal("n_py_pts");
-	n_pz_pts 		= paraRdr->getVal("n_pz_pts");
-	px_min 			= paraRdr->getVal("pxmin");
-	px_max 			= paraRdr->getVal("pxmax");
-	py_min 			= paraRdr->getVal("pymin");
-	py_max 			= paraRdr->getVal("pymax");
-	pz_min 			= paraRdr->getVal("pzmin");
-	pz_max 			= paraRdr->getVal("pzmax");
+	q_mode 			= paraRdr->getVal("q_mode");
 	// - pair momenta points at which to interpolate HBT results
 	n_KT_pts 		= paraRdr->getVal("n_KT_pts");
 	KT_min 			= paraRdr->getVal("KTmin");
@@ -80,20 +60,9 @@ void Correlation_function::initialize_all(
 	n_qs_bins 		= n_qs_pts - 1;
 	n_ql_bins 		= n_ql_pts - 1;
 
-	n_pT_bins 		= n_pT_pts - 1;
-	n_pphi_bins 	= n_pphi_pts - 1;
-	n_pY_bins 		= n_pY_pts - 1;
-
 	n_KT_bins 		= n_KT_pts - 1;
 	n_Kphi_bins 	= n_Kphi_pts - 1;
 	n_KL_bins 		= n_KL_pts - 1;
-
-	pT_pts 			= vector<double> (n_pT_pts);
-	pphi_pts 		= vector<double> (n_pphi_pts);
-	pY_pts 			= vector<double> (n_pY_pts);
-	px_pts 			= vector<double> (n_px_pts);
-	py_pts 			= vector<double> (n_py_pts);
-	pz_pts 			= vector<double> (n_pz_pts);
 
 	KT_pts 			= vector<double> (n_KT_pts);
 	Kphi_pts 		= vector<double> (n_Kphi_pts);
@@ -103,15 +72,6 @@ void Correlation_function::initialize_all(
 	qs_pts 			= vector<double> (n_qs_pts);
 	ql_pts 			= vector<double> (n_ql_pts);
 
-	dN_pTdpTdpphidpY = vector<double> (n_pT_bins*n_pphi_bins*n_pY_pts);
-
-	linspace(pT_pts, pT_min, pT_max);
-	linspace(pphi_pts, pphi_min, pphi_max);
-	linspace(pY_pts, pY_min, pY_max);
-	linspace(px_pts, px_min, px_max);
-	linspace(py_pts, py_min, py_max);
-	linspace(pz_pts, pz_min, pz_max);
-
 	linspace(KT_pts, KT_min, KT_max);
 	linspace(Kphi_pts, Kphi_min, Kphi_max);
 	linspace(KL_pts, KL_min, KL_max);
@@ -120,37 +80,37 @@ void Correlation_function::initialize_all(
 	linspace(qs_pts, init_qs, -init_qs);
 	linspace(ql_pts, init_ql, -init_ql);
 
-	pT_bin_width 	= pT_pts[1]-pT_pts[0];
-	pphi_bin_width 	= pphi_pts[1]-pphi_pts[0];
-	pY_bin_width 	= pY_pts[1]-pY_pts[0];
-	px_bin_width 	= px_pts[1]-px_pts[0];
-	py_bin_width 	= py_pts[1]-py_pts[0];
-	pz_bin_width 	= pz_pts[1]-pz_pts[0];
-
 	KT_bin_width 	= KT_pts[1]-KT_pts[0];
 	Kphi_bin_width 	= Kphi_pts[1]-Kphi_pts[0];
 	KL_bin_width 	= KL_pts[1]-KL_pts[0];
 
 	// Vectors for HBT radii and intercept parameters (values and errors)
-	lambda_Correl 		= vector<double> (n_KT_bins*n_Kphi_bins*n_KL_bins);
-	R2_out				= vector<double> (n_KT_bins*n_Kphi_bins*n_KL_bins);
-	R2_side				= vector<double> (n_KT_bins*n_Kphi_bins*n_KL_bins);
-	R2_long				= vector<double> (n_KT_bins*n_Kphi_bins*n_KL_bins);
-	R2_outside			= vector<double> (n_KT_bins*n_Kphi_bins*n_KL_bins);
-	R2_outlong			= vector<double> (n_KT_bins*n_Kphi_bins*n_KL_bins);
-	R2_sidelong			= vector<double> (n_KT_bins*n_Kphi_bins*n_KL_bins);
+	const int K_space_size = n_KT_bins*n_Kphi_bins*n_KL_bins;
+	const int q_space_size = ( q_mode == 0 ) ?
+								n_qo_bins*n_qs_bins*n_ql_bins
+								: n_Q_bins;
 
-	lambda_Correl_err	= vector<double> (n_KT_bins*n_Kphi_bins*n_KL_bins);
-	R2_out_err			= vector<double> (n_KT_bins*n_Kphi_bins*n_KL_bins);
-	R2_side_err			= vector<double> (n_KT_bins*n_Kphi_bins*n_KL_bins);
-	R2_long_err			= vector<double> (n_KT_bins*n_Kphi_bins*n_KL_bins);
-	R2_outside_err		= vector<double> (n_KT_bins*n_Kphi_bins*n_KL_bins);
-	R2_outlong_err		= vector<double> (n_KT_bins*n_Kphi_bins*n_KL_bins);
-	R2_sidelong_err		= vector<double> (n_KT_bins*n_Kphi_bins*n_KL_bins);
+	lambda_Correl 		= vector<double> (K_space_size);
+	R2					= vector<double> (K_space_size);
+	R2_out				= vector<double> (K_space_size);
+	R2_side				= vector<double> (K_space_size);
+	R2_long				= vector<double> (K_space_size);
+	R2_outside			= vector<double> (K_space_size);
+	R2_outlong			= vector<double> (K_space_size);
+	R2_sidelong			= vector<double> (K_space_size);
+
+	lambda_Correl_err	= vector<double> (K_space_size);
+	R2_err				= vector<double> (K_space_size);
+	R2_out_err			= vector<double> (K_space_size);
+	R2_side_err			= vector<double> (K_space_size);
+	R2_long_err			= vector<double> (K_space_size);
+	R2_outside_err		= vector<double> (K_space_size);
+	R2_outlong_err		= vector<double> (K_space_size);
+	R2_sidelong_err		= vector<double> (K_space_size);
 
 	// For the correlation function (and related error) itself
-	correlation_function 		= vector<double> (n_KT_bins*n_Kphi_bins*n_KL_bins*n_qo_bins*n_qs_bins*n_ql_bins);
-	correlation_function_error 	= vector<double> (n_KT_bins*n_Kphi_bins*n_KL_bins*n_qo_bins*n_qs_bins*n_ql_bins);
+	correlation_function 		= vector<double> (K_space_size*q_space_size);
+	correlation_function_error 	= vector<double> (K_space_size*q_space_size);
 
 	err << " --> all vectors initialized." << endl;
 
@@ -192,20 +152,44 @@ void Correlation_function::Load_correlation_function( string filepath )
 	// Load correlation function itself
 	int idx = 0;
 	double dummy = 0.0;
-	for (int iKT = 0; iKT < n_KT_bins; iKT++)
-	for (int iKphi = 0; iKphi < n_Kphi_bins; iKphi++)
-	for (int iKL = 0; iKL < n_KL_bins; iKL++)
-	for (int iqo = 0; iqo < n_qo_bins; iqo++)
-	for (int iqs = 0; iqs < n_qs_bins; iqs++)
-	for (int iql = 0; iql < n_ql_bins; iql++)
+	if ( q_mode == 0 )
 	{
-		infile >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy
-				>> dummy >> dummy >> dummy
-				>> correlation_function[idx]
-				>> correlation_function_error[idx];
+		for (int iKT = 0; iKT < n_KT_bins; iKT++)
+		for (int iKphi = 0; iKphi < n_Kphi_bins; iKphi++)
+		for (int iKL = 0; iKL < n_KL_bins; iKL++)
+		for (int iqo = 0; iqo < n_qo_bins; iqo++)
+		for (int iqs = 0; iqs < n_qs_bins; iqs++)
+		for (int iql = 0; iql < n_ql_bins; iql++)
+		{
+			infile >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy
+					>> dummy >> dummy >> dummy
+					>> correlation_function[idx]
+					>> correlation_function_error[idx];
 
-		++idx;
+			++idx;
+		}
 	}
+	else if ( q_mode == 0 )
+	{
+		for (int iKT = 0; iKT < n_KT_bins; iKT++)
+		for (int iKphi = 0; iKphi < n_Kphi_bins; iKphi++)
+		for (int iKL = 0; iKL < n_KL_bins; iKL++)
+		for (int iQ = 0; iQ < n_Q_bins; iQ++)
+		{
+			infile >> dummy >> dummy >> dummy >> dummy
+					>> dummy >> dummy >> dummy
+					>> correlation_function[idx]
+					>> correlation_function_error[idx];
+
+			++idx;
+		}
+	}
+	else
+	{
+		err << "fit_correlation_function(): q_mode = " << q_mode << " not supported!" << endl;
+		exit(8);
+	}
+
 
 	err << "  --> Finished loading the correlation function from " << filepath << endl;
 
@@ -221,39 +205,73 @@ void Correlation_function::Output_HBTradii( string outHBT_filename )
 
 	FILE * pFile = fopen ( outHBT_filename.c_str(), "w" );
 
-	// Print header inforamtion
-	fprintf ( pFile, "# K_T      K_phi      K_L      lambda      ");
-	fprintf ( pFile, "R2o      R2s      R2l      R2os      R2ol      ");
-	fprintf ( pFile, "R2sl      lambda(err)      R2o(err)      ");
-	fprintf ( pFile, "R2s(err)      R2l(err)      R2os(err)      ");
-	fprintf ( pFile, "R2ol(err)      R2sl(err)\n" );
-
-	fprintf ( pFile, "#----------------------------------------" );
-	fprintf ( pFile, "----------------------------------------" );
-	fprintf ( pFile, "----------------------------------------" );
-	fprintf ( pFile, "----------------------------------------" );
-	fprintf ( pFile, "----------------------------------------\n" );
-
-	int idx = 0;
-	for (int iKT = 0; iKT < n_KT_bins; iKT++)
-	for (int iKphi = 0; iKphi < n_Kphi_bins; iKphi++)
-	for (int iKL = 0; iKL < n_KL_bins; iKL++)
+	// Print header information
+	if ( q_mode == 0 )
 	{
-			fprintf (  pFile,  "%f      %f      %f      ",
-						0.5*(KT_pts[iKT]+KT_pts[iKT+1]),
-						0.5*(Kphi_pts[iKphi]+Kphi_pts[iKphi+1]),
-						0.5*(KL_pts[iKL]+KL_pts[iKL+1]) );
-			fprintf (  pFile,  "%f      %f      %f      %f      %f      %f      %f      ",
-						lambda_Correl[idx],
-						R2_out[idx], R2_side[idx], R2_long[idx],
-						R2_outside[idx], R2_outlong[idx], R2_sidelong[idx] );
-			fprintf (  pFile,  "%f      %f      %f      %f      %f      %f      %f\n",
-						lambda_Correl_err[idx],
-						R2_out_err[idx], R2_side_err[idx], R2_long_err[idx],
-						R2_outside_err[idx], R2_outlong_err[idx], R2_sidelong_err[idx] );
+		fprintf ( pFile, "# K_T      K_phi      K_L      lambda      ");
+		fprintf ( pFile, "R2o      R2s      R2l      R2os      R2ol      ");
+		fprintf ( pFile, "R2sl      lambda(err)      R2o(err)      ");
+		fprintf ( pFile, "R2s(err)      R2l(err)      R2os(err)      ");
+		fprintf ( pFile, "R2ol(err)      R2sl(err)\n" );
+
+		fprintf ( pFile, "#----------------------------------------" );
+		fprintf ( pFile, "----------------------------------------" );
+		fprintf ( pFile, "----------------------------------------" );
+		fprintf ( pFile, "----------------------------------------" );
+		fprintf ( pFile, "----------------------------------------\n" );
+
+		int idx = 0;
+		for (int iKT = 0; iKT < n_KT_bins; iKT++)
+		for (int iKphi = 0; iKphi < n_Kphi_bins; iKphi++)
+		for (int iKL = 0; iKL < n_KL_bins; iKL++)
+		{
+				fprintf (  pFile,  "%f      %f      %f      ",
+							0.5*(KT_pts[iKT]+KT_pts[iKT+1]),
+							0.5*(Kphi_pts[iKphi]+Kphi_pts[iKphi+1]),
+							0.5*(KL_pts[iKL]+KL_pts[iKL+1]) );
+				fprintf (  pFile,  "%f      %f      %f      %f      %f      %f      %f      ",
+							lambda_Correl[idx],
+							R2_out[idx], R2_side[idx], R2_long[idx],
+							R2_outside[idx], R2_outlong[idx], R2_sidelong[idx] );
+				fprintf (  pFile,  "%f      %f      %f      %f      %f      %f      %f\n",
+							lambda_Correl_err[idx],
+							R2_out_err[idx], R2_side_err[idx], R2_long_err[idx],
+							R2_outside_err[idx], R2_outlong_err[idx], R2_sidelong_err[idx] );
 
 
-		++idx;
+			++idx;
+		}
+
+	}
+	else if ( q_mode == 1 )
+	{
+		fprintf ( pFile, "# K_T      K_phi      K_L      lambda      ");
+		fprintf ( pFile, "R2      lambda(err)      R2o(err)\n" );
+
+		fprintf ( pFile, "#----------------------------------------" );
+		fprintf ( pFile, "----------------------------------------\n" );
+
+		int idx = 0;
+		for (int iKT = 0; iKT < n_KT_bins; iKT++)
+		for (int iKphi = 0; iKphi < n_Kphi_bins; iKphi++)
+		for (int iKL = 0; iKL < n_KL_bins; iKL++)
+		{
+				fprintf (  pFile,  "%f      %f      %f      ",
+							0.5*(KT_pts[iKT]+KT_pts[iKT+1]),
+							0.5*(Kphi_pts[iKphi]+Kphi_pts[iKphi+1]),
+							0.5*(KL_pts[iKL]+KL_pts[iKL+1]) );
+				fprintf (  pFile,  "%f      %f      %f      %f\n",
+							lambda_Correl[idx], R2_out[idx],
+							lambda_Correl_err[idx], R2_out_err[idx] );
+
+			++idx;
+		}
+
+	}
+	else
+	{
+		err << "fit_correlation_function(): q_mode = " << q_mode << " not supported!" << endl;
+		exit(8);
 	}
 
 	return;

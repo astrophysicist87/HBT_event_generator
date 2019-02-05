@@ -15,7 +15,7 @@ CC := g++
 #running with icpc
 #CFLAGS= $(shell ../../crank/configure_compiler_C++_Flags.sh)
 #running with g++
-CFLAGS= -O3 -fopenmp -std=c++11 -g -pg
+CFLAGS= -O3 -fopenmp -std=c++11 -g
 #CFLAGS += -Wall
 #CFLAGS += -lgsl -lgslcblas -g -Wall -Warray-bounds -Wchar-subscripts -Wcomment \
 #						-Wenum-compare -Wformat -Wuninitialized -Wmaybe-uninitialized \

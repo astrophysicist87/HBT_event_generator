@@ -115,31 +115,6 @@ class HBT_event_generator
 
 		////////////////////
 		// Library functions
-		//inline int bin_function( double datapoint, const vector<double> & points )
-		//{
-		//	int result = (int)( ( datapoint - points[0] )
-		//					* double( points.size()-1 )
-		//					/ ( points[points.size()-1] - points[0] ) );
-		//
-		//	// Assume uniform bin-widths for now
-		//	return ( result );
-		//}
-		////////////////////
-		//inline double bin_function( double p, double q, double bw, int mode )
-		//{
-		//	return (
-		//			/*double(mode==0) **/ double(abs(p-q) <= 0.5*bw) / bw
-		//			// mode==1 too slow for now
-		//			//+ double(mode==1) * exp( -(p-q)*(p-q) / (bw*bw) ) / ( sqrt(M_PI)*bw )
-		//			);
-		//}
-		////////////////////
-		//inline int indexerp(int ipT, int ipphi, int ipY)
-		//{
-		//	return ( ( ipT * n_pphi_bins + ipphi )
-		//					* n_pY_bins + ipY );
-		//}
-		////////////////////
 		inline int indexerK(int iKT, int iKphi, int iKL)
 		{
 			return ( ( iKT * n_Kphi_bins + iKphi )

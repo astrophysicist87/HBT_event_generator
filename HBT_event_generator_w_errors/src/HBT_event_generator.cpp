@@ -39,27 +39,7 @@ void HBT_event_generator::initialize_all(
 	// - bin parameters
 	bin_epsilon		= paraRdr->getVal("bin_epsilon");
 	//Define various grid sizes
-	// - SP momentum points at which to evaluate correlation function
-	//n_pT_pts 		= paraRdr->getVal("n_pT_pts");
-	//pT_min 			= paraRdr->getVal("pTmin");
-	//pT_max 			= paraRdr->getVal("pTmax");
-	//n_pphi_pts 		= paraRdr->getVal("n_pphi_pts");
-	//pphi_min 		= -M_PI;
-	//pphi_max 		= M_PI;
-	//n_pY_pts 		= paraRdr->getVal("n_pY_pts");
-	//pY_min 			= paraRdr->getVal("pYmin");
-	//pY_max 			= paraRdr->getVal("pYmax");
-	//
-	//n_px_pts 		= paraRdr->getVal("n_px_pts");
-	//n_py_pts 		= paraRdr->getVal("n_py_pts");
-	//n_pz_pts 		= paraRdr->getVal("n_pz_pts");
-	//px_min 			= paraRdr->getVal("pxmin");
-	//px_max 			= paraRdr->getVal("pxmax");
-	//py_min 			= paraRdr->getVal("pymin");
-	//py_max 			= paraRdr->getVal("pymax");
-	//pz_min 			= paraRdr->getVal("pzmin");
-	//pz_max 			= paraRdr->getVal("pzmax");
-	// - pair momenta points at which to interpolate HBT results
+	// - pair momenta points at which to evaluate correlation function
 	n_KT_pts 		= paraRdr->getVal("n_KT_pts");
 	KT_min 			= paraRdr->getVal("KTmin");
 	KT_max 			= paraRdr->getVal("KTmax");
@@ -101,20 +81,9 @@ void HBT_event_generator::initialize_all(
 	n_ql_bins 		= n_ql_pts - 1;
 	n_Q_bins 		= n_Q_pts - 1;
 
-	//n_pT_bins 		= n_pT_pts  - 1;
-	//n_pphi_bins 	= n_pphi_pts  - 1;
-	//n_pY_bins 		= n_pY_pts  - 1;
-
 	n_KT_bins 		= n_KT_pts - 1;
 	n_Kphi_bins 	= n_Kphi_pts - 1;
 	n_KL_bins 		= n_KL_pts - 1;
-
-	//pT_pts 			= vector<double> (n_pT_pts);
-	//pphi_pts 		= vector<double> (n_pphi_pts);
-	//pY_pts 			= vector<double> (n_pY_pts);
-	//px_pts 			= vector<double> (n_px_pts);
-	//py_pts 			= vector<double> (n_py_pts);
-	//pz_pts 			= vector<double> (n_pz_pts);
 
 	KT_pts 			= vector<double> (n_KT_pts);
 	Kphi_pts 		= vector<double> (n_Kphi_pts);
@@ -125,15 +94,6 @@ void HBT_event_generator::initialize_all(
 	ql_pts 			= vector<double> (n_ql_pts);
 	Q_pts 			= vector<double> (n_Q_pts);
 
-	//dN_pTdpTdpphidpY = vector<double> (n_pT_bins*n_pphi_bins*n_pY_pts);
-
-	//linspace(pT_pts, pT_min, pT_max);
-	//linspace(pphi_pts, pphi_min, pphi_max);
-	//linspace(pY_pts, pY_min, pY_max);
-	//linspace(px_pts, px_min, px_max);
-	//linspace(py_pts, py_min, py_max);
-	//linspace(pz_pts, pz_min, pz_max);
-
 	linspace(KT_pts, KT_min, KT_max);
 	linspace(Kphi_pts, Kphi_min, Kphi_max);
 	linspace(KL_pts, KL_min, KL_max);
@@ -143,20 +103,14 @@ void HBT_event_generator::initialize_all(
 	linspace(ql_pts, ql_min, ql_max);
 	linspace(Q_pts, Q_min, Q_max);
 
-	//pT_bin_width 	= pT_pts[1]-pT_pts[0];
-	//pphi_bin_width 	= pphi_pts[1]-pphi_pts[0];
-	//pY_bin_width 	= pY_pts[1]-pY_pts[0];
-	//px_bin_width 	= px_pts[1]-px_pts[0];
-	//py_bin_width 	= py_pts[1]-py_pts[0];
-	//pz_bin_width 	= pz_pts[1]-pz_pts[0];
 	px_bin_width 	= bin_epsilon;
 	py_bin_width 	= bin_epsilon;
 	pz_bin_width 	= bin_epsilon;
 
-	// assume uniform grid spacing for now
-	//KT_bin_width 	= KT_pts[1]-KT_pts[0];
-	//Kphi_bin_width 	= Kphi_pts[1]-Kphi_pts[0];
-	//KL_bin_width 	= KL_pts[1]-KL_pts[0];
+	// need to know these for binning particle pairs efficiently
+	KT_bin_width 	= KT_pts[1]-KT_pts[0];
+	Kphi_bin_width 	= Kphi_pts[1]-Kphi_pts[0];
+	KL_bin_width 	= KL_pts[1]-KL_pts[0];
 
 	const int q_space_size = ( q_mode == 0 ) ?
 								n_qo_bins*n_qs_bins*n_ql_bins :
@@ -245,6 +199,8 @@ void HBT_event_generator::Compute_correlation_function()
 
 void HBT_event_generator::Compute_correlation_function_q_mode_3D()
 {
+	bool verbose = false;
+
 	const double prefactor
 					= static_cast<double>(total_N_events)
 						/ static_cast<double>(total_N_events-1);
@@ -262,9 +218,9 @@ void HBT_event_generator::Compute_correlation_function_q_mode_3D()
 	for (int iqs = 0; iqs < n_qs_bins; iqs++)
 	for (int iql = 0; iql < n_ql_bins; iql++)
 	{
-		err << "Computing correlation function, loop: "
-			<< iKT << "   " << iKphi << "   " << iKL << "   "
-			<< iqo << "   " << iqs << "   " << iql << endl;
+		//err << "Computing correlation function, loop: "
+		//	<< iKT << "   " << iKphi << "   " << iKL << "   "
+		//	<< iqo << "   " << iqs << "   " << iql << endl;
 
 		double num = numerator[idx];
 		double den = denominator[idx];
@@ -299,52 +255,33 @@ void HBT_event_generator::Compute_correlation_function_q_mode_3D()
 		}
 		else if ( denominator_cell_was_filled[idx] )
 		{
-bool verbose = (idx==1) or (idx==9);
-verbose = true;
 
-if (verbose) err << setprecision(8);
-			// average of numerator in this q-K cell
+			// numerator, denominator, and (covariances) in this q-K cell
 			double EA = num / static_cast<double>(total_N_events);
-if (verbose) err << "\t\t EA = " << EA << endl;
-			// average of denominator in this q-K cell
 			double EB = den / static_cast<double>(total_N_events);
-if (verbose) err << "\t\t EB = " << EB << endl;
-			// average of numerator^2 in this q-K cell
 			double EA2 = num2 / static_cast<double>(total_N_events);
-if (verbose) err << "\t\t EA2 = " << EA2 << endl;
-			// average of denominator^2 in this q-K cell
 			double EB2 = den2 / static_cast<double>(total_N_events);
-if (verbose) err << "\t\t EB2 = " << EB2 << endl;
-			// average of numerator*denominator in this q-K cell
 			double EAB = numden / static_cast<double>(total_N_events);
-if (verbose) err << "\t\t EAB = " << EAB << endl;
+
 			// set variances and covariance
 			double sigA2 = prefactor * (EA2 - EA*EA);
 			double sigB2 = prefactor * (EB2 - EB*EB);
 			double sigAB = prefactor * (EAB - EA*EB);
-if (verbose) err << "\t\t sigA2 = " << sigA2 << endl;
-if (verbose) err << "\t\t sigB2 = " << sigB2 << endl;
-if (verbose) err << "\t\t sigAB = " << sigAB << endl;
 
 			// want standard error, not variance itself
 			sigA2 /= static_cast<double>(total_N_events);
 			sigB2 /= static_cast<double>(total_N_events);
 			sigAB /= static_cast<double>(total_N_events);
-if (verbose) err << "\t\t sigA2 / total_N_events = " << sigA2 << endl;
-if (verbose) err << "\t\t sigB2 / total_N_events = " << sigB2 << endl;
-if (verbose) err << "\t\t sigAB / total_N_events = " << sigAB << endl;
 
 			// set relative widths
 			double cA = sigA2 / ( EA*EA+1.e-100 );
 			double cB = sigB2 / ( EB*EB+1.e-100 );
 			double cAB = sigAB / ( EA*EB+1.e-100 );
-if (verbose) err << "\t\t cA = " << cA << endl;
-if (verbose) err << "\t\t cB = " << cB << endl;
-if (verbose) err << "\t\t cAB = " << cAB << endl;
 
 			double disc = cA + cB - 2.0*cAB;
-if (verbose) err << "\t\t disc = " << disc << endl;
-if (verbose and disc < -1.e-6) err << "disc < 0!" << endl;
+			if (verbose and disc < -1.e-6)
+				err << "Warning in Compute_correlation_function_q_mode_3D(): "
+					<< "disc < 0!" << endl;
 
 			// N.B.: R2 == EA / EB
 
@@ -352,18 +289,37 @@ if (verbose and disc < -1.e-6) err << "disc < 0!" << endl;
 				( disc < 0.0 )
 				? 1.e-6
 				: abs(R2) * sqrt( cA + cB - 2.0*cAB );
-if (verbose) err << "\t\t Finally, check bin counts:" << endl;
-if (verbose) err << "\t\t num. BC = " << numerator_bin_count[idx] << endl;
-if (verbose) err << "\t\t den. BC = " << denominator_bin_count[idx] << endl;
-if (verbose) err << "\t\t finished without difficulty" << endl;
+
+			if (verbose)
+			{
+				err << setprecision(8);
+				err << "\t\t EA = " << EA << endl;
+				err << "\t\t EB = " << EB << endl;
+				err << "\t\t EA2 = " << EA2 << endl;
+				err << "\t\t EB2 = " << EB2 << endl;
+				err << "\t\t EAB = " << EAB << endl;
+
+				//err << "\t\t sigA2 = " << sigA2 << endl;
+				//err << "\t\t sigB2 = " << sigB2 << endl;
+				//err << "\t\t sigAB = " << sigAB << endl;
+				err << "\t\t sigA2 / total_N_events = " << sigA2 << endl;
+				err << "\t\t sigB2 / total_N_events = " << sigB2 << endl;
+				err << "\t\t sigAB / total_N_events = " << sigAB << endl;
+
+				err << "\t\t cA = " << cA << endl;
+				err << "\t\t cB = " << cB << endl;
+				err << "\t\t cAB = " << cAB << endl;
+
+				err << "\t\t disc = " << disc << endl;
+
+				err << "\t\t Finally, check bin counts:" << endl;
+				err << "\t\t num. BC = " << numerator_bin_count[idx] << endl;
+				err << "\t\t den. BC = " << denominator_bin_count[idx] << endl;
+				err << "\t\t finished without difficulty" << endl;
+
+			}
+
 		}
-		/*else if ( iqo == iqoC
-					and iqs == iqsC
-					and iql == iqlC )
-		{
-			correlation_function_error[idx]
-						= 0.0;		// no error at origin, by definition
-		}*/
 		else
 		{
 			correlation_function_error[idx]

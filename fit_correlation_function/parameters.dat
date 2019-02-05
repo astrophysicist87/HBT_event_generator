@@ -1,34 +1,6 @@
 #===========
-# single-particle momenta
-# pT grid
-n_pT_pts = 6
-pTmin = 0.0
-pTmax = 1.0
-
-# pphi grid
-n_pphi_pts = 6
-#pphimax, pphimin
-#determined automatically
-
-# pY grid
-n_pY_pts = 2
-pYmin = -1.0
-pYmax = 1.0
-
-#===========
-# also include XYZ
-# px,py,pz grid
-n_px_pts = 11
-n_py_pts = 11
-n_pz_pts = 3
-pxmin = -1.0
-pxmax =  1.0
-pymin = -1.0
-pymax =  1.0
-pzmin = -0.2
-pzmax =  0.2
-
-
+# width of binning delta (GeV)
+bin_epsilon = 0.2
 
 #===========
 # pair momenta
@@ -44,22 +16,23 @@ n_Kphi_pts = 2
 
 # KL grid
 n_KL_pts = 2
-KLmin = -0.1
-KLmax = 0.1
+KLmin = -1.0
+KLmax = 1.0
 
 
 
 #===========
-# relative momenta
-n_qo_pts = 24
-n_qs_pts = 24
-n_ql_pts = 24
-delta_qo = 0.004
-delta_qs = 0.004
-delta_ql = 0.004
+# relative momenta (3D)
+n_qo_pts = 20
+n_qs_pts = 20
+n_ql_pts = 20
+delta_qo = 0.01
+delta_qs = 0.01
+delta_ql = 0.01
 
-n_Q_pts = 24
-delta_Q = 0.02
+# relative momentum (1D)
+n_Q_pts = 200
+delta_Q = 0.01
 
 #===========
 # misc. and ensemble parameters
@@ -68,7 +41,7 @@ bin_mode = 0
 q_mode = 0
 BE_mode = 0
 
-# include all events by default
+# minimum bias by default
 centrality_minimum = 0
 centrality_maximum = 100
 

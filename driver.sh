@@ -37,7 +37,7 @@ runPythia=true
 projectile="p"
 target="p"
 beamEnergy="13000.0"	#GeV
-Nevents="1000"
+Nevents="1000000"
 QRefValue="0.2"			#GeV
 #PythiaExecutableToUse=""
 
@@ -83,7 +83,7 @@ do
 
 			# time and run
 			./run_mainHIC.sh $projectile $target $beamEnergy \
-								$Nevents$PYTHIA_RESULTS_DIRECTORY
+								$Nevents $PYTHIA_RESULTS_DIRECTORY
 			#./run_testBEeffects.sh $projectile $target $beamEnergy \
 			#					$Nevents $PYTHIA_RESULTS_DIRECTORY \
 			#					$QRefValue

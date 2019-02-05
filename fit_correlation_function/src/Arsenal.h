@@ -70,4 +70,7 @@ double interpolate3D(double * x, double * y, double * z, double *** f, double x0
 			long x_size, long y_size, long z_size, int kind, bool uniform_spacing,
 			bool returnflag = false, double default_return_value = 0.0);
 
+// Matrix routines below this line
+void gsl_matrix_invert(double ** A, double ** Ainv, int dim);
+
 #endif

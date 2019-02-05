@@ -11,6 +11,9 @@
 #include<gsl/gsl_sf_bessel.h>
 #include<gsl/gsl_rng.h>
 #include<gsl/gsl_randist.h>
+#include <gsl/gsl_blas.h>
+#include <gsl/gsl_linalg.h>
+#include <gsl/gsl_sf_gamma.h>
 
 #include "Arsenal.h"
 
@@ -1299,5 +1302,37 @@ double interpolate3D(double * x, double * y, double * z, double *** f, double x0
 	}
 	return default_return_value;
 }
+
+//=================================================================
+// Matrix routines below this line
+//=================================================================
+void gsl_matrix_invert(double ** A, double ** Ainv, int dim)
+{
+    int s_gsl;
+
+	gsl_matrix * A_gsl = gsl_matrix_alloc (dim, dim);
+	gsl_matrix * A_inverse_gsl = gsl_matrix_alloc (dim, dim);
+	gsl_permutation * perm = gsl_permutation_alloc (dim);
+
+	for(int i = 0; i < dim; i++)
+	for(int j = 0; j < dim; j++)
+		gsl_matrix_set(A_gsl, i, j, A[i][j]);
+
+    // Make LU decomposition of matrix A_gsl
+    gsl_linalg_LU_decomp (A_gsl, perm, &s_gsl);
+    // Invert the matrix
+    gsl_linalg_LU_invert (A_gsl, perm, A_inverse_gsl);
+
+	for(int i = 0; i < dim; i++)
+	for(int j = 0; j < dim; j++)
+		Ainv[i][j] = gsl_matrix_get(A_inverse_gsl, i, j);
+
+    gsl_matrix_free (A_gsl);
+    gsl_matrix_free (A_inverse_gsl);
+    gsl_permutation_free (perm);
+
+	return;
+}
+
 
 // End of file

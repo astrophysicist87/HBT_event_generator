@@ -25,11 +25,13 @@ int main(int argc, char *argv[])
 
 	//===================================
 	// Read-in free parameters
-	ParameterReader * paraRdr = new ParameterReader;
+	ParameterReader * paraRdr
+		= new ParameterReader;
 	paraRdr->readFromFile("./parameters.dat");
 
 	// Read-in HBT particle information
-	string particle_info_filename = read_file_catalogue("./particle_catalogue.dat");
+	string particle_info_filename
+		= read_file_catalogue("./particle_catalogue.dat");
 	paraRdr->readFromFile(particle_info_filename);
 
 	// Read-in command-line arguments
@@ -37,7 +39,8 @@ int main(int argc, char *argv[])
 	paraRdr->echo();
 
 	// Read in name of file(s) to process
-	string input_filename = read_file_catalogue("./catalogue.dat");
+	string input_filename
+		= read_file_catalogue("./catalogue.dat");
 
 	//===================================
 	// Main calculation starts here
@@ -50,8 +53,10 @@ int main(int argc, char *argv[])
 	feenableexcept(FE_INVALID | FE_OVERFLOW);
 
 	// Set-up output files
-	string path = dirname( input_filename );	// make sure this directory exists
-	string base_filename = basename( input_filename );
+	string path
+		= dirname( input_filename );	// make sure this directory exists
+	string base_filename
+		= basename( input_filename );
 	ostringstream out_filename_stream, err_filename_stream;
 	out_filename_stream << path << "fit_" << base_filename;
 	err_filename_stream << path << "fit_"
@@ -68,17 +73,18 @@ int main(int argc, char *argv[])
 	// (loading and fitting correlation function
 	//  performed automatically)
 	Correlation_function
-			HBT_event_ensemble( paraRdr, input_filename,
-								outmain, errmain );
+		HBT_event_ensemble( paraRdr, input_filename,
+							outmain, errmain );
 	
-	string HBTradii_filename = "./results/HBTradii.dat";
+	string HBTradii_filename
+		= "./results/HBTradii.dat";
 	HBT_event_ensemble.Output_HBTradii( HBTradii_filename );
+
 
 	// Print out run-time
 	sw.Stop();
 	cout 	<< "Finished everything in "
 			<< sw.printTime() << " seconds." << endl;
-
 
 	// Wrap it up!
 	return (0);
