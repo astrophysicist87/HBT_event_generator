@@ -10,4 +10,6 @@ if [ ! -d "$DIRECTORY" ]; then
 fi
 
 # time and run
-nohup time ./run.e 1> run.out 2> run.err &
+nohup time ./run_fit_correlation_function.e \
+				1> fit_correlation_function.out \
+				2> fit_correlation_function.err
