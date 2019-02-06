@@ -1,6 +1,6 @@
 #===========
 # width of binning delta (GeV)
-bin_epsilon = 0.2
+bin_epsilon = 0.1
 
 #===========
 # pair momenta
@@ -23,22 +23,30 @@ KLmax = 1.0
 
 #===========
 # relative momenta (3D)
-n_qo_pts = 20
-n_qs_pts = 20
-n_ql_pts = 20
+n_qo_pts = 22
+n_qs_pts = 22
+n_ql_pts = 22
 delta_qo = 0.01
 delta_qs = 0.01
 delta_ql = 0.01
 
 # relative momentum (1D)
-n_Q_pts = 200
+n_Q_pts = 22
 delta_Q = 0.01
 
 #===========
 # misc. and ensemble parameters
 
+# delta function or something else
 bin_mode = 0
-q_mode = 0
+
+# whether to use qo-qs-ql (0: 3D) or Q (1: 1D)
+q_mode = 1
+
+# whether to use GEHW method (0) or Chun's method (1)
+method_mode = 1
+
+# whether or not BE effects are pre-included
 BE_mode = 0
 
 # minimum bias by default

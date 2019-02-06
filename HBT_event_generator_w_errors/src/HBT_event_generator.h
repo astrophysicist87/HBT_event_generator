@@ -32,28 +32,22 @@ class HBT_event_generator
 
 		double bin_epsilon;
 
-		int bin_mode, q_mode, BE_mode;
+		int bin_mode, q_mode, method_mode, BE_mode;
 		int total_N_events, number_of_completed_events;
 
-		//int n_pT_pts, n_pphi_pts, n_pY_pts;
 		int n_KT_pts, n_Kphi_pts, n_KL_pts;
 		int n_qo_pts, n_qs_pts, n_ql_pts;
-		//int n_px_pts, n_py_pts, n_pz_pts;
 		int n_Kx_pts, n_Ky_pts, n_Kz_pts;
 		int n_qx_pts, n_qy_pts, n_qz_pts;
 		int n_Q_pts;
 
-		//int n_pT_bins, n_pphi_bins, n_pY_bins;
 		int n_KT_bins, n_Kphi_bins, n_KL_bins;
 		int n_qo_bins, n_qs_bins, n_ql_bins;
-		//int n_px_bins, n_py_bins, n_pz_bins;
 		int n_Kx_bins, n_Ky_bins, n_Kz_bins;
 		int n_qx_bins, n_qy_bins, n_qz_bins;
 		int n_Q_bins;
 
-		//double pT_min, pT_max, pphi_min, pphi_max, pY_min, pY_max;
 		double KT_min, KT_max, Kphi_min, Kphi_max, KL_min, KL_max;
-		//double px_min, px_max, py_min, py_max, pz_min, pz_max;
 		double Kx_min, Kx_max, Ky_min, Ky_max, Kz_min, Kz_max;
 		double qx_min, qx_max, qy_min, qy_max, qz_min, qz_max;
 
@@ -62,7 +56,6 @@ class HBT_event_generator
 		double delta_qo, delta_qs, delta_ql;
 		double Q_min, Q_max, delta_Q;
 
-		//double pT_bin_width, pphi_bin_width, pY_bin_width;
 		double KT_bin_width, Kphi_bin_width, KL_bin_width;
 		double px_bin_width, py_bin_width, pz_bin_width;
 		double Kx_bin_width, Ky_bin_width, Kz_bin_width;
@@ -71,15 +64,11 @@ class HBT_event_generator
 		vector<string> all_file_names;
 		vector<EventRecord> allEvents;
 
-		//vector<double> pT_pts, pphi_pts, pY_pts;
 		vector<double> KT_pts, Kphi_pts, KL_pts;
 		vector<double> qo_pts, qs_pts, ql_pts;
-		//vector<double> px_pts, py_pts, pz_pts;
 		vector<double> Kx_pts, Ky_pts, Kz_pts;
 		vector<double> qx_pts, qy_pts, qz_pts;
 		vector<double> Q_pts;
-
-		//vector<double> dN_pTdpTdpphidpY;
 		
 		//miscellaneous
 		string path;
@@ -90,7 +79,7 @@ class HBT_event_generator
 		vector<double> numerator, numerator2, denominator2, numerator_denominator;
 		vector<double> numPair, numPair2, denPair, denPair2;
 		vector<double> numerator_numPair, denominator_denPair;
-		vector<double> qo_mean_diff, qs_mean_diff, ql_mean_diff, diff_numPair_count;
+		//vector<double> qo_mean_diff, qs_mean_diff, ql_mean_diff, diff_numPair_count;
 		vector<bool> denominator_cell_was_filled;
 		vector<int> numerator_bin_count, denominator_bin_count;
 
@@ -154,25 +143,7 @@ class HBT_event_generator
 
 		void get_random_angles(int n_mixed_events, vector<double> & random_angles);
 
-		// Functions to compute single-particle spectra
-		//void Compute_spectra();
-		// Sub-methods
-		//void Compute_dN_pTdpTdpphidpY();
-		//
-		//void Compute_dN_pTdpTdpphi();
-		//void Compute_dN_2pipTdpTdpY();
-		//void Compute_dN_dpphidpY();
-		//
-		//void Compute_dN_2pipTdpT();
-		//void Compute_dN_dpphi();
-		//void Compute_dN_2pidpY();
-		// total multiplicity
-		//void Compute_N();
-
-
 		// Separate parts of correlation function
-		//void Compute_numerator(vector<complex<double> > & in_numerator);
-		//void Compute_denominator(vector<double> & in_denominator);
 		void Compute_numerator_and_denominator_with_errors(
 							vector<double> & in_numerator, 				vector<double> & in_numerator2,
 							vector<double> & in_denominator, 			vector<double> & in_denominator2,
@@ -212,12 +183,28 @@ class HBT_event_generator
 							vector<double> & in_denPair, 			vector<double> & in_denPair2,
 							vector<double> & in_numerator_numPair, 	vector<double> & in_denominator_denPair
 							);
+		void Compute_numerator_and_denominator_with_errors_binPairsMode_qmode3D(
+							vector<double> & in_numerator, vector<double> & in_numerator2,
+							vector<double> & in_numPair, vector<double> & in_numPair2,
+							vector<double> & in_denominator, vector<double> & in_denominator2,
+							vector<double> & in_denPair, vector<double> & in_denPair2,
+							vector<double> & in_numerator_numPair, vector<double> & in_denominator_denPair
+							);
+		void Compute_numerator_and_denominator_with_errors_binPairsMode_qmode1D(
+							vector<double> & in_numerator, vector<double> & in_numerator2,
+							vector<double> & in_numPair, vector<double> & in_numPair2,
+							vector<double> & in_denominator, vector<double> & in_denominator2,
+							vector<double> & in_denPair, vector<double> & in_denPair2,
+							vector<double> & in_numerator_numPair, vector<double> & in_denominator_denPair
+							);
 
 
 		// Correlation function itself
 		void Compute_correlation_function();
 		void Compute_correlation_function_q_mode_3D();
 		void Compute_correlation_function_q_mode_1D();
+		void Compute_correlation_function_methodMode1_q_mode_3D();
+		void Compute_correlation_function_methodMode1_q_mode_1D();
 
 
 		// Input/output
