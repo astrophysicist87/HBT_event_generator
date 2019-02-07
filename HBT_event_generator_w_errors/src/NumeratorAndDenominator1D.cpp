@@ -106,7 +106,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 						double qo = 0.5*(qo_pts[iqo]+qo_pts[iqo+1]);
 						double ql = 0.5*(ql_pts[iql]+ql_pts[iql+1]);
 
-						int index4D = indexer(iKT, iKphi, iKL, iQ);
+						int index4D = indexer_qmode_1(iKT, iKphi, iKL, iQ);
 		
 						const double xi0 = particle_mass*particle_mass + KT*KT + KL*KL + 0.25*(qo*qo+ql*ql);
 						const double xi1 = qo*KT+ql*KL;
@@ -186,7 +186,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 				double qo = 0.5*(qo_pts[iqo]+qo_pts[iqo+1]);
 				double ql = 0.5*(ql_pts[iql]+ql_pts[iql+1]);
 
-				int index4D = indexer(iKT, iKphi, iKL, iQ);
+				int index4D = indexer_qmode_1(iKT, iKphi, iKL, iQ);
 	
 				const double xi0 = particle_mass*particle_mass + KT*KT + KL*KL + 0.25*(qo*qo+ql*ql);
 				const double xi1 = qo*KT+ql*KL;
@@ -297,14 +297,15 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 				const double weight_den = qs0*( (4.0*xi0+xi3)*(4.0*xi0+xi3) + 4.0*xi1*xi1 + weight_num );
 				const double weight_factor = weight_num / weight_den;
 
+				const int index4D = indexer_qmode_1(iKT, iKphi, iKL, iQ);
 
-				double abs_sum1 = abs(sum1[idx]);
+				double abs_sum1 = abs(sum1[index4D]);
 				double numerator_contribution_from_this_event
-						= weight_factor*( abs_sum1*abs_sum1 - sum2[idx] );
+						= weight_factor
+							* ( abs_sum1*abs_sum1 - sum2[index4D] );
 				double denominator_contribution_from_this_event
-						= weight_factor*( sum3[idx]*sum4[idx] - sum5[idx] );
-
-				const int index4D = indexer_q_mode_1(iKT, iKphi, iKl, iQ);
+						= weight_factor
+							* ( sum3[index4D]*sum4[index4D] - sum5[index4D] );
 
 				// first moments
 				in_numerator[index4D]
@@ -324,8 +325,8 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 						* denominator_contribution_from_this_event;
 
 				// track number of events where bin count was non-vanishing
-				in_numerator_bin_count[index4D] += int(private_ABC[idx] > 0);
-				in_denominator_bin_count[index4D] += int(private_DBC[idx] > 0);
+				in_numerator_bin_count[index4D] += int(private_ABC[index4D] > 0);
+				in_denominator_bin_count[index4D] += int(private_DBC[index4D] > 0);
 
 			}
 
