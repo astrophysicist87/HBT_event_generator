@@ -28,8 +28,8 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 	//int number_of_completed_events = 0;
 	//err << "  * Computing numerator and denominator of correlation function with errors" << endl;
 
-	const int q_space_size = n_qo_bins*n_qs_bins*n_ql_bins;
-	const int K_space_size = n_KT_bins*n_Kphi_bins*n_KL_bins;
+	//const int q_space_size = n_qo_bins*n_qs_bins*n_ql_bins;
+	//const int K_space_size = n_KT_bins*n_Kphi_bins*n_KL_bins;
 
 	constexpr bool impose_pair_rapidity_cuts = false;
 	const double KYmin = -0.1, KYmax = 0.1;
@@ -51,20 +51,20 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 		EventRecord event = allEvents[iEvent];
 
 		//let these be fully six-dimensional
-		vector<complex<double> > sum1(K_space_size*q_space_size);
-		vector<double> sum2(K_space_size*q_space_size);
-		vector<double> sum3(K_space_size*q_space_size);
-		vector<double> sum4(K_space_size*q_space_size);
-		vector<double> sum5(K_space_size*q_space_size);
+		vector<complex<double> > sum1(in_numerator.size());
+		vector<double> sum2(in_numerator.size());
+		vector<double> sum3(in_denominator.size());
+		vector<double> sum4(in_denominator.size());
+		vector<double> sum5(in_denominator.size());
 
-		vector<int> private_ABC(K_space_size*q_space_size);
-		vector<int> private_DBC(K_space_size*q_space_size);
+		vector<int> private_ABC(in_numerator_bin_count.size());
+		vector<int> private_DBC(in_denominator_bin_count.size());
 
 		//===================================
 		//======== Doing numerator ==========
 		//===================================
 
-		// Loop over q and K bins first
+		// Loop over K-bins
 		for (int iKT 	= 0; iKT 	< n_KT_bins; 	iKT++)
 		for (int iKphi 	= 0; iKphi 	< n_Kphi_bins; 	iKphi++)
 		for (int iKL 	= 0; iKL 	< n_KL_bins; 	iKL++)
@@ -86,75 +86,67 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 
 				double ti = pi.t, xi = pi.x, yi = pi.y, zi = pi.z;
 
-
-				/*#pragma omp critical
-                {
-                        //if (iqo == iqoC and iqs == iqsC and iql == iqlC)
-                                err << "CHECKPOINT #0: "
-                                        << Kx << "   " << Ky << "   " << Kz << "   "
-                                        << pi.px << "   " << pi.py << "   " << pi.pz << "   "
-                                        << Kx - pi.px << "   "
-					<< Ky - pi.py << "   "
-					<< Kz - pi.pz << endl;
-                }*/
-
-
 				bool num_bin_true = 	abs( Kx - pi.px ) <= 0.5*px_bin_width
 									and abs( Ky - pi.py ) <= 0.5*py_bin_width
 									and abs( Kz - pi.pz ) <= 0.5*pz_bin_width;
 
+				// If particle contributes to this K-bin
 				if ( num_bin_true )
 				{
 					double num_bin_factor =
 							px_bin_width*py_bin_width*pz_bin_width;
 
+					// Loop over q-bins;
+					// qs-integral performed with delta-function
 					for (int iQ = 0; iQ < n_Q_bins; iQ++)
 					for (int iqo = 0; iqo < n_qo_bins; iqo++)
-					//for (int iqs = 0; iqs < n_qs_bins; iqs++)	//integral over qs now done analytically
 					for (int iql = 0; iql < n_ql_bins; iql++)
 					{
-						int index6D = indexer(iKT, iKphi, iKL, iqo, iqs, iql);
-
+						double Q0 = 0.5*(Q_pts[iQ]+Q_pts[iQ+1]);
 						double qo = 0.5*(qo_pts[iqo]+qo_pts[iqo+1]);
-						//double qs = 0.5*(qs_pts[iqs]+qs_pts[iqs+1]);
 						double ql = 0.5*(ql_pts[iql]+ql_pts[iql+1]);
-						double qx = qo * cKphi - qs * sKphi;
-						double qy = qs * cKphi + qo * sKphi;
-						double qz = ql;
 
-						double pax = Kx + 0.5 * qx, pay = Ky + 0.5 * qy, paz = Kz + 0.5 * qz;
-						double pbx = Kx - 0.5 * qx, pby = Ky - 0.5 * qy, pbz = Kz - 0.5 * qz;
-						double Ea = sqrt(particle_mass*particle_mass+pax*pax+pay*pay+paz*paz);
-						double Eb = sqrt(particle_mass*particle_mass+pbx*pbx+pby*pby+pbz*pbz);
+						int index4D = indexer(iKT, iKphi, iKL, iQ);
+		
+						const double xi0 = particle_mass*particle_mass + KT*KT + KL*KL + 0.25*(qo*qo+ql*ql);
+						const double xi1 = qo*KT+ql*KL;
+						const double xi3 = Q0*Q0 - qo*qo - ql*ql;
+		
+						// set the positive root first
+						double qs0 = sqrt( ( 4.0*xi1*xi1 + 4.0*xi0*xi3 + xi3*xi3 )
+											/ ( 4.0*xi0 + xi3 ) );
+		
+						// instead, have to do sum over +/- roots in q_s direction
+						for (int i_qs_root = 0; i_qs_root <= 1; i_qs_root++)
+						{
 
-						// rapidity cuts
-						if ( impose_pair_rapidity_cuts
-								and ( ( 2.0*Kz/(Ea+Eb) < Kz_over_K0_min )
-								or ( 2.0*Kz/(Ea+Eb) > Kz_over_K0_max ) )
-							)
-							continue;
+							double qx = qo * cKphi - qs0 * sKphi;
+							double qy = qs0 * cKphi + qo * sKphi;
+							double qz = ql;
 
-						double q0 = get_q0(particle_mass, qo, qs, ql, KT, KL);
+							double pax = Kx + 0.5 * qx, pay = Ky + 0.5 * qy, paz = Kz + 0.5 * qz;
+							double pbx = Kx - 0.5 * qx, pby = Ky - 0.5 * qy, pbz = Kz - 0.5 * qz;
+							double Ea = sqrt(particle_mass*particle_mass+pax*pax+pay*pay+paz*paz);
+							double Eb = sqrt(particle_mass*particle_mass+pbx*pbx+pby*pby+pbz*pbz);
 
-						double arg =  q0 * ti - qx * xi - qy * yi - qz * zi;
+							// rapidity cuts
+							if ( impose_pair_rapidity_cuts
+									and ( ( 2.0*Kz/(Ea+Eb) < Kz_over_K0_min )
+									or ( 2.0*Kz/(Ea+Eb) > Kz_over_K0_max ) )
+								)
+								continue;
 
-						complex<double> complex_num_term = exp(i*arg/hbarC) / num_bin_factor;
+							double q0 = Ea - Eb;
+							double arg =  q0 * ti - qx * xi - qy * yi - qz * zi;
 
-						sum1[index6D] += complex_num_term;
-						sum2[index6D] += 1.0 / (num_bin_factor*num_bin_factor);
-						private_ABC[index6D]++;
+							complex<double> complex_num_term = exp(i*arg/hbarC) / num_bin_factor;
 
-		/*#pragma omp critical
-		{
-			if (iqo == iqoC and iqs == iqsC and iql == iqlC)
-				err << "CHECKPOINT #1: "
-					<< KT << "   " << 0.5*(Kphi_pts[iKphi]+Kphi_pts[iKphi+1]) << "   " << KL << "   " 
-					<< qo << "   " << qs << "   " << ql << "   " 
-					<< q0 << "   " << index6D << "   "
-					<< complex_num_term << "   " << 1.0 / (num_bin_factor*num_bin_factor) << "   "
-					<< sum1[index6D] << "   " << sum2[index6D] << endl;
-		}*/
+							sum1[index4D] += complex_num_term;
+							sum2[index4D] += 1.0 / (num_bin_factor*num_bin_factor);
+							private_ABC[index4D]++;
 
+							qs0 *= -1.0;	//loop back and do negative root
+						}
 
 					}	// end of q loops
 
@@ -162,7 +154,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 
 			}			// end of particle loop
 
-		}				// end of K loops
+		} 				// end of K loops
 
 
 
@@ -171,7 +163,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 		//======== Doing denominator ==========
 		//=====================================
 
-		// Loop over q and K bins first
+		// Loop over K-bins
 		for (int iKT 	= 0; iKT 	< n_KT_bins; 	iKT++)
 		for (int iKphi 	= 0; iKphi 	< n_Kphi_bins; 	iKphi++)
 		for (int iKL 	= 0; iKL 	< n_KL_bins; 	iKL++)
@@ -184,156 +176,95 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 			double Ky = KT * sKphi;
 			double Kz = KL;
 
+			// Loop over q-bins;
+			// qs-integral performed with delta-function
+			for (int iQ = 0; iQ < n_Q_bins; iQ++)
 			for (int iqo = 0; iqo < n_qo_bins; iqo++)
-			for (int iqs = 0; iqs < n_qs_bins; iqs++)
 			for (int iql = 0; iql < n_ql_bins; iql++)
 			{
-
+				double Q0 = 0.5*(Q_pts[iQ]+Q_pts[iQ+1]);
 				double qo = 0.5*(qo_pts[iqo]+qo_pts[iqo+1]);
-				double qs = 0.5*(qs_pts[iqs]+qs_pts[iqs+1]);
 				double ql = 0.5*(ql_pts[iql]+ql_pts[iql+1]);
-				double qx = qo * cKphi - qs * sKphi;
-				double qy = qs * cKphi + qo * sKphi;
-				double qz = ql;
 
-				double pax = Kx + 0.5 * qx, pay = Ky + 0.5 * qy, paz = Kz + 0.5 * qz;
-				double pbx = Kx - 0.5 * qx, pby = Ky - 0.5 * qy, pbz = Kz - 0.5 * qz;
-				double Ea = sqrt(particle_mass*particle_mass+pax*pax+pay*pay+paz*paz);
-				double Eb = sqrt(particle_mass*particle_mass+pbx*pbx+pby*pby+pbz*pbz);
+				int index4D = indexer(iKT, iKphi, iKL, iQ);
+	
+				const double xi0 = particle_mass*particle_mass + KT*KT + KL*KL + 0.25*(qo*qo+ql*ql);
+				const double xi1 = qo*KT+ql*KL;
+				const double xi3 = Q0*Q0 - qo*qo - ql*ql;
 
-				//===================================
-				// checking Qbar cell in denominator
-				int index4D_pos = -1, index4D_neg = -1;	//make sure they get set
+				// set the positive root first
+				double qs0 = sqrt( ( 4.0*xi1*xi1 + 4.0*xi0*xi3 + xi3*xi3 )
+									/ ( 4.0*xi0 + xi3 ) );
+
+				// instead, have to do sum over +/- roots in q_s direction
+				for (int i_qs_root = 0; i_qs_root <= 1; i_qs_root++)
 				{
-					double q0 = get_q0(particle_mass, qo, qs, ql, KT, KL);
-					double Q2bar = qo*qo + qs*qs + ql*ql - q0*q0;	// Q2bar>=0
-					if (Q2bar < -1.e-6)
-					{
-						err << "Compute_numerator_and_denominator_with_errors_q_mode_1D(warning): "
-							<< "Q2bar = " << Q2bar << " < 0.0!" << endl;
+
+					double qx = qo * cKphi - qs0 * sKphi;
+					double qy = qs0 * cKphi + qo * sKphi;
+					double qz = ql;
+
+					double pax = Kx + 0.5 * qx, pay = Ky + 0.5 * qy, paz = Kz + 0.5 * qz;
+					double pbx = Kx - 0.5 * qx, pby = Ky - 0.5 * qy, pbz = Kz - 0.5 * qz;
+					double Ea = sqrt(particle_mass*particle_mass+pax*pax+pay*pay+paz*paz);
+					double Eb = sqrt(particle_mass*particle_mass+pbx*pbx+pby*pby+pbz*pbz);
+
+					// rapidity cuts
+					if ( impose_pair_rapidity_cuts
+							and ( ( 2.0*Kz/(Ea+Eb) < Kz_over_K0_min )
+							or ( 2.0*Kz/(Ea+Eb) > Kz_over_K0_max ) )
+						)
 						continue;
-					}
-					double Qbar = sqrt(abs(Q2bar));
 
-					//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					// N.B. - these vectors have different dimensions!!!
-					//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					int iQ_pos = floor((Qbar - Q_min)/delta_Q);
-					if ( iQ_pos < 0 or iQ_pos >= n_Q_bins )
-						continue;
-					index4D_pos = indexer_qmode_1(iKT, iKphi, iKL, iQ_pos);
+					double den_bin_factor =
+						px_bin_width*py_bin_width*pz_bin_width;
 
-					// note that both fail or neither fails, by symmetry
-					Qbar *= -1.0;
-					int iQ_neg = floor((Qbar - Q_min)/delta_Q);
-					if ( iQ_neg < 0 or iQ_neg >= n_Q_bins )
-						continue;
-					index4D_neg = indexer_qmode_1(iKT, iKphi, iKL, iQ_neg);
-				}
-				//===================================
+					double den_term = 1.0 / den_bin_factor;	//no phase factor in denominator
 
-				// rapidity cuts
-				if ( impose_pair_rapidity_cuts
-						and ( ( 2.0*Kz/(Ea+Eb) < Kz_over_K0_min )
-						or ( 2.0*Kz/(Ea+Eb) > Kz_over_K0_max ) )
-					)
-					continue;
-
-				// Sum over particles for pa bin
-				for (int iParticle = 0; iParticle < event.particles.size(); ++iParticle)
-				{
-					ParticleRecord pi = event.particles[iParticle];
-
-					bool den_bin_true = 	abs(pi.px-pax) <= 0.5*px_bin_width
-										and abs(pi.py-pay) <= 0.5*py_bin_width
-										and abs(pi.pz-paz) <= 0.5*pz_bin_width;
-
-					if ( den_bin_true )
+					// Sum over particles for denominator
+					for (int iParticle = 0; iParticle < event.particles.size(); ++iParticle)
 					{
+						ParticleRecord pi = event.particles[iParticle];
 
-						int index6D = indexer(iKT, iKphi, iKL, iqo, iqs, iql);
+						// Check if in pa-bin
+						bool in_den_pa_bin = 	abs(pi.px-pax) <= 0.5*px_bin_width
+											and abs(pi.py-pay) <= 0.5*py_bin_width
+											and abs(pi.pz-paz) <= 0.5*pz_bin_width;
 
-						double den_bin_factor =
-							px_bin_width*py_bin_width*pz_bin_width;
+						// Check if in pb-bin
+						bool in_den_pb_bin = 	abs(pi.px-pbx) <= 0.5*px_bin_width
+											and abs(pi.py-pby) <= 0.5*py_bin_width
+											and abs(pi.pz-pbz) <= 0.5*pz_bin_width;
 
-						denominator_cell_was_filled[index4D_pos] = true;
-						denominator_cell_was_filled[index4D_neg] = true;
+						if ( in_den_pa_bin )
+						{
+							sum3[index4D] += den_term;
+							private_DBC[index4D]++;
+						}
 
-						double den_term = 1.0 / den_bin_factor;	//no phase factor in denominator
+						if ( in_den_pb_bin )
+						{
+							sum4[index4D] += den_term;
+							private_DBC[index4D]++;
+						}
 
-						sum3[index6D] += den_term;
-						private_DBC[index6D]++;
+						if ( in_den_pa_bin and in_den_pb_bin )
+						{
+							// N.B. - use (bin volume)^2, here
+							sum5[index4D] += den_term*den_term;
+							private_DBC[index4D]++;
+						}
 
-					}	// end of if block
+					}		// end of denominator particle loops
 
-				}		// end of sum3 particle loop
+					// go back and do negative root
+					qs0 *= -1.0;
 
-				// Sum over particles for pb bin
-				for (int iParticle = 0; iParticle < event.particles.size(); ++iParticle)
-				{
-					ParticleRecord pi = event.particles[iParticle];
+				}			// end of loop over qs-roots
 
-					bool den_bin_true = 	abs(pi.px-pbx) <= 0.5*px_bin_width
-										and abs(pi.py-pby) <= 0.5*py_bin_width
-										and abs(pi.pz-pbz) <= 0.5*pz_bin_width;
+			}				// end of q loops
 
-					if ( den_bin_true )
-					{
-
-						int index6D = indexer(iKT, iKphi, iKL, iqo, iqs, iql);
-
-						double den_bin_factor =
-							px_bin_width*py_bin_width*pz_bin_width;
-
-						//denominator_cell_was_filled[index4D_pos] = true;
-						//denominator_cell_was_filled[index4D_neg] = true;
-
-						double den_term = 1.0 / den_bin_factor;	//no phase factor in denominator
-
-						sum4[index6D] += den_term;
-						private_DBC[index6D]++;
-
-					}	// end of if block
-
-				}		// end of sum4 particle loop
-
-				// Sum over particles for pa and pb bins simultaneously
-				for (int iParticle = 0; iParticle < event.particles.size(); ++iParticle)
-				{
-					ParticleRecord pi = event.particles[iParticle];
-
-					bool den_bin_true = 	abs(pi.px-pax) <= 0.5*px_bin_width
-										and abs(pi.py-pay) <= 0.5*py_bin_width
-										and abs(pi.pz-paz) <= 0.5*pz_bin_width
-										and abs(pi.px-pbx) <= 0.5*px_bin_width
-										and abs(pi.py-pby) <= 0.5*py_bin_width
-										and abs(pi.pz-pbz) <= 0.5*pz_bin_width;
-
-					if ( den_bin_true )
-					{
-
-						int index6D = indexer(iKT, iKphi, iKL, iqo, iqs, iql);
-
-						// N.B. - use (bin volume)^2, here
-						double den_bin_factor =
-							px_bin_width*py_bin_width*pz_bin_width
-							*px_bin_width*py_bin_width*pz_bin_width;
-
-						//denominator_cell_was_filled[index4D_pos] = true;
-						//denominator_cell_was_filled[index4D_neg] = true;
-
-						double den_term = 1.0 / den_bin_factor;	//no phase factor in denominator
-
-						sum5[index6D] += den_term;
-						private_DBC[index6D]++;
-
-					}	// end of if block
-
-				}		// end of sum5 particle loop
-
-			}			// end of q loops
-
-		}				// end of K loops
+		}					// end of K loops
 
 		// Need this to avoid race conditions
 		#pragma omp critical
@@ -341,100 +272,60 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 			for (int iKT = 0; iKT < n_KT_bins; iKT++)
 			for (int iKphi = 0; iKphi < n_Kphi_bins; iKphi++)
 			for (int iKL = 0; iKL < n_KL_bins; iKL++)
+			for (int iQ = 0; iQ < n_Q_bins; iQ++)
 			for (int iqo = 0; iqo < n_qo_bins; iqo++)
-			for (int iqs = 0; iqs < n_qs_bins; iqs++)
 			for (int iql = 0; iql < n_ql_bins; iql++)
 			{
-				int idx = indexer(iKT, iKphi, iKL, iqo, iqs, iql);
 
 				double KT = 0.5*(KT_pts[iKT]+KT_pts[iKT+1]);
 				double KL = 0.5*(KL_pts[iKL]+KL_pts[iKL+1]);
+				double Q0 = 0.5*(Q_pts[iQ]+Q_pts[iQ+1]);
 				double qo = 0.5*(qo_pts[iqo]+qo_pts[iqo+1]);
-				double qs = 0.5*(qs_pts[iqs]+qs_pts[iqs+1]);
 				double ql = 0.5*(ql_pts[iql]+ql_pts[iql+1]);
-				double q0 = get_q0(particle_mass, qo, qs, ql, KT, KL);
-				double Q2bar = qo*qo + qs*qs + ql*ql - q0*q0;	// Q2bar>=0
-				if (Q2bar < -1.e-6)
-				{
-					err << "Compute_numerator_and_denominator_with_errors_q_mode_1D(warning): "
-						<< "Q2bar = " << Q2bar << " < 0.0!" << endl;
-					continue;
-				}
-				double Qbar = sqrt(abs(Q2bar));
+
+				const double xi0 = particle_mass*particle_mass + KT*KT + KL*KL + 0.25*(qo*qo+ql*ql);
+				const double xi1 = qo*KT+ql*KL;
+				const double xi3 = Q0*Q0 - qo*qo - ql*ql;
+
+				// set the positive root first
+				double qs0 = sqrt( ( 4.0*xi1*xi1 + 4.0*xi0*xi3 + xi3*xi3 )
+									/ ( 4.0*xi0 + xi3 ) );
+
+				// weight factor from delta-function identities
+				// to get the normalization right
+				const double weight_num = abs( (4.0*xi0+xi3)*(4.0*xi0+xi3) - 4.0*xi1*xi1 );
+				const double weight_den = qs0*( (4.0*xi0+xi3)*(4.0*xi0+xi3) + 4.0*xi1*xi1 + weight_num );
+				const double weight_factor = weight_num / weight_den;
+
 
 				double abs_sum1 = abs(sum1[idx]);
 				double numerator_contribution_from_this_event
-						= abs_sum1*abs_sum1 - sum2[idx];
+						= weight_factor*( abs_sum1*abs_sum1 - sum2[idx] );
 				double denominator_contribution_from_this_event
-						= sum3[idx]*sum4[idx] - sum5[idx];
+						= weight_factor*( sum3[idx]*sum4[idx] - sum5[idx] );
 
-				//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-				// N.B. - these vectors have different dimensions!!!
-				//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-				int iQ_pos = floor((Qbar - Q_min)/delta_Q);
-				if ( iQ_pos < 0 or iQ_pos >= n_Q_bins )
-					continue;
-				int index4D_pos = indexer_qmode_1(iKT, iKphi, iKL, iQ_pos);
-
-if (iqo == iqoC and iqs == iqsC and iql == iqlC)
-	err << KT << "   " << 0.5*(Kphi_pts[iKphi]+Kphi_pts[iKphi+1]) << "   " << KL << "   " 
-		<< qo << "   " << qs << "   " << ql << "   " 
-		<< q0 << "   " << Qbar << "   " << iQ_pos << "   " << index4D_pos << "   "
-		<< abs_sum1 << "   " << sum2[idx] << "   " << sum3[idx] << "   " << sum4[idx] << "   " << sum5[idx] << "   "
-		<< numerator_contribution_from_this_event << "   "
-		<< denominator_contribution_from_this_event << endl;
+				const int index4D = indexer_q_mode_1(iKT, iKphi, iKl, iQ);
 
 				// first moments
-				in_numerator[index4D_pos]
+				in_numerator[index4D]
 					+= numerator_contribution_from_this_event;
-				in_denominator[index4D_pos]
+				in_denominator[index4D]
 					+= denominator_contribution_from_this_event;
 
 				// second moments
-				in_numerator2[index4D_pos]
+				in_numerator2[index4D]
 					+= numerator_contribution_from_this_event
 						* numerator_contribution_from_this_event;
-				in_denominator2[index4D_pos]
+				in_denominator2[index4D]
 					+= denominator_contribution_from_this_event
 						* denominator_contribution_from_this_event;
-				in_numerator_denominator[index4D_pos]
+				in_numerator_denominator[index4D]
 					+= numerator_contribution_from_this_event
 						* denominator_contribution_from_this_event;
 
 				// track number of events where bin count was non-vanishing
-				in_numerator_bin_count[index4D_pos] += int(private_ABC[idx] > 0);
-				in_denominator_bin_count[index4D_pos] += int(private_DBC[idx] > 0);
-
-				// don't count zero point twice
-				//if ( Qbar < 1.e-6 )
-				//	continue;
-
-				Qbar *= -1.0;
-				int iQ_neg = floor((Qbar - Q_min)/delta_Q);
-				if ( iQ_neg < 0 or iQ_neg >= n_Q_bins )
-					continue;
-				int index4D_neg = indexer_qmode_1(iKT, iKphi, iKL, iQ_neg);
-
-				// first moments
-				in_numerator[index4D_neg]
-					+= numerator_contribution_from_this_event;
-				in_denominator[index4D_neg]
-					+= denominator_contribution_from_this_event;
-
-				// second moments
-				in_numerator2[index4D_neg]
-					+= numerator_contribution_from_this_event
-						* numerator_contribution_from_this_event;
-				in_denominator2[index4D_neg]
-					+= denominator_contribution_from_this_event
-						* denominator_contribution_from_this_event;
-				in_numerator_denominator[index4D_neg]
-					+= numerator_contribution_from_this_event
-						* denominator_contribution_from_this_event;
-
-				// track number of events where bin count was non-vanishing
-				in_numerator_bin_count[index4D_neg] += int(private_ABC[idx] > 0);
-				in_denominator_bin_count[index4D_neg] += int(private_DBC[idx] > 0);
+				in_numerator_bin_count[index4D] += int(private_ABC[idx] > 0);
+				in_denominator_bin_count[index4D] += int(private_DBC[idx] > 0);
 
 			}
 
@@ -449,6 +340,68 @@ if (iqo == iqoC and iqs == iqsC and iql == iqlC)
 
 	return;
 }
+
+
+
+
+/*
+	for (int iQ = 0; iQ < n_Q_bins; iQ++)
+	for (int iqo = 0; iqo < n_qo_bins; iqo++)
+	for (int iql = 0; iql < n_ql_bins; iql++)
+	{
+		double Q0 = 0.5*(Q_pts[iQ]+Q_pts[iQ+1]);
+		double qo = 0.5*(qo_pts[iqo]+qo_pts[iqo+1]);
+		double ql = 0.5*(ql_pts[iql]+ql_pts[iql+1]);
+
+		// rapidity cuts
+		if ( impose_pair_rapidity_cuts
+				and ( ( 2.0*Kz/(Ea+Eb) < Kz_over_K0_min )
+				or ( 2.0*Kz/(Ea+Eb) > Kz_over_K0_max ) )
+			)
+			continue;
+		
+		const double xi0 = particle_mass*particle_mass + KT*KT + KL*KL + 0.25*(qo*qo+ql*ql);
+		const double xi1 = qo*KT+ql*KL;
+		const double xi3 = Q0*Q0 - qo*qo - ql*ql;
+		
+		// set the positive root first
+		double qs0 = sqrt( ( 4.0*xi1*xi1 + 4.0*xi0*xi3 + xi3*xi3 )
+							/ ( 4.0*xi0 + xi3 ) );
+
+		// weight factor from delta-function identities
+		// to get the normalization right
+		const double weight_num = abs( (4.0*xi0+xi3)*(4.0*xi0+xi3) - 4.0*xi1*xi1 );
+		const double weight_den = qs0*( (4.0*xi0+xi3)*(4.0*xi0+xi3) + 4.0*xi1*xi1 + weight_num );
+		const double weight_factor = weight_num / weight_factor;
+		
+		// instead, have to do sum over +/- roots in q_s direction
+		for (int i_qs_root = 0; i_qs_root <= 1; i_qs_root++)
+		{
+
+			double qx = qo * cKphi - qs0 * sKphi;
+			double qy = qs0 * cKphi + qo * sKphi;
+			double qz = ql;
+
+			double pax = Kx + 0.5 * qx, pay = Ky + 0.5 * qy, paz = Kz + 0.5 * qz;
+			double pbx = Kx - 0.5 * qx, pby = Ky - 0.5 * qy, pbz = Kz - 0.5 * qz;
+			double Ea = sqrt(particle_mass*particle_mass+pax*pax+pay*pay+paz*paz);
+			double Eb = sqrt(particle_mass*particle_mass+pbx*pbx+pby*pby+pbz*pbz);
+
+			//double q0 = get_q0(particle_mass, qo, qs, ql, KT, KL);
+
+			double arg =  q0 * ti - qx * xi - qy * yi - qz * zi;
+
+			complex<double> complex_num_term = exp(i*arg/hbarC) / num_bin_factor;
+
+			//sum1[index6D] += complex_num_term;
+			//sum2[index6D] += 1.0 / (num_bin_factor*num_bin_factor);
+			//private_ABC[index6D]++;
+
+			qs0 *= -1.0;	//loop back and do negative root
+		}
+
+	}	// end of q loops
+*/
 
 
 //=====================================================================================
