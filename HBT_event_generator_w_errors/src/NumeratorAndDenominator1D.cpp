@@ -112,11 +112,23 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 						const double xi1 = qo*KT+ql*KL;
 						const double xi3 = Q0*Q0 - qo*qo - ql*ql;
 		
-						// set the positive root first
-						double qs0 = sqrt( ( 4.0*xi1*xi1 + 4.0*xi0*xi3 + xi3*xi3 )
-											/ ( 4.0*xi0 + xi3 ) );
+						// Check if a solution even exists;
+						// if not, we're in a (q,K)-bin which
+						// doesn't contribute to this value of Q0!
+						double disc = 4.0*xi1*xi1 + 4.0*xi0*xi3 + xi3*xi3;
+						if ( disc < 0.0 )
+						{
+							err << "Warning: no qs value solves this combination of Q0 and (q,K)!" << endl
+								<< "\t KT      KL      qo      ql      Q0" << endl
+								<< "\t " << KT << "      " << KL << "      "
+								<< qo << "      " << ql << "      " << Q0 << endl;
+							continue;
+						}
+
+						// Otherwise, set the positive root first
+						double qs0 = sqrt( disc / ( 4.0*xi0 + xi3 ) );
 		
-						// instead, have to do sum over +/- roots in q_s direction
+						// Sum over +/- roots in q_s direction
 						for (int i_qs_root = 0; i_qs_root <= 1; i_qs_root++)
 						{
 
@@ -145,7 +157,9 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 							sum2[index4D] += 1.0 / (num_bin_factor*num_bin_factor);
 							private_ABC[index4D]++;
 
-							qs0 *= -1.0;	//loop back and do negative root
+							// loop back and do negative root
+							qs0 *= -1.0;
+
 						}
 
 					}	// end of q loops
@@ -192,11 +206,23 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 				const double xi1 = qo*KT+ql*KL;
 				const double xi3 = Q0*Q0 - qo*qo - ql*ql;
 
-				// set the positive root first
-				double qs0 = sqrt( ( 4.0*xi1*xi1 + 4.0*xi0*xi3 + xi3*xi3 )
-									/ ( 4.0*xi0 + xi3 ) );
+				// Check if a solution even exists;
+				// if not, we're in a (q,K)-bin which
+				// doesn't contribute to this value of Q0!
+				double disc = 4.0*xi1*xi1 + 4.0*xi0*xi3 + xi3*xi3;
+				if ( disc < 0.0 )
+				{
+					err << "Warning: no qs value solves this combination of Q0 and (q,K)!" << endl
+						<< "\t KT      KL      qo      ql      Q0" << endl
+						<< "\t " << KT << "      " << KL << "      "
+						<< qo << "      " << ql << "      " << Q0 << endl;
+					continue;
+				}
 
-				// instead, have to do sum over +/- roots in q_s direction
+				// Otherwise, set the positive root first
+				double qs0 = sqrt( disc / ( 4.0*xi0 + xi3 ) );
+
+				// Sum over +/- roots in q_s direction
 				for (int i_qs_root = 0; i_qs_root <= 1; i_qs_root++)
 				{
 
@@ -257,7 +283,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 
 					}		// end of denominator particle loops
 
-					// go back and do negative root
+					// loop back and do negative root
 					qs0 *= -1.0;
 
 				}			// end of loop over qs-roots
@@ -287,9 +313,21 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 				const double xi1 = qo*KT+ql*KL;
 				const double xi3 = Q0*Q0 - qo*qo - ql*ql;
 
-				// set the positive root first
-				double qs0 = sqrt( ( 4.0*xi1*xi1 + 4.0*xi0*xi3 + xi3*xi3 )
-									/ ( 4.0*xi0 + xi3 ) );
+				// Check if a solution even exists;
+				// if not, we're in a (q,K)-bin which
+				// doesn't contribute to this value of Q0!
+				double disc = 4.0*xi1*xi1 + 4.0*xi0*xi3 + xi3*xi3;
+				if ( disc < 0.0 )
+				{
+					err << "Warning: no qs value solves this combination of Q0 and (q,K)!" << endl
+						<< "\t KT      KL      qo      ql      Q0" << endl
+						<< "\t " << KT << "      " << KL << "      "
+						<< qo << "      " << ql << "      " << Q0 << endl;
+					continue;
+				}
+
+				// Otherwise, set the positive root first
+				double qs0 = sqrt( disc / ( 4.0*xi0 + xi3 ) );
 
 				// weight factor from delta-function identities
 				// to get the normalization right
@@ -299,7 +337,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 
 				const int index4D = indexer_qmode_1(iKT, iKphi, iKL, iQ);
 
-				double abs_sum1 = abs(sum1[index4D]);
+				double abs_sum1 = abs( sum1[index4D] );
 				double numerator_contribution_from_this_event
 						= weight_factor
 							* ( abs_sum1*abs_sum1 - sum2[index4D] );
