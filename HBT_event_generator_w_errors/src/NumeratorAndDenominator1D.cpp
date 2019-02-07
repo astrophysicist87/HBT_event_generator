@@ -108,14 +108,15 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 					double num_bin_factor =
 							px_bin_width*py_bin_width*pz_bin_width;
 
+					for (int iQ = 0; iQ < n_Q_bins; iQ++)
 					for (int iqo = 0; iqo < n_qo_bins; iqo++)
-					for (int iqs = 0; iqs < n_qs_bins; iqs++)
+					//for (int iqs = 0; iqs < n_qs_bins; iqs++)	//integral over qs now done analytically
 					for (int iql = 0; iql < n_ql_bins; iql++)
 					{
 						int index6D = indexer(iKT, iKphi, iKL, iqo, iqs, iql);
 
 						double qo = 0.5*(qo_pts[iqo]+qo_pts[iqo+1]);
-						double qs = 0.5*(qs_pts[iqs]+qs_pts[iqs+1]);
+						//double qs = 0.5*(qs_pts[iqs]+qs_pts[iqs+1]);
 						double ql = 0.5*(ql_pts[iql]+ql_pts[iql+1]);
 						double qx = qo * cKphi - qs * sKphi;
 						double qy = qs * cKphi + qo * sKphi;
