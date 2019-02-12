@@ -26,7 +26,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 	const int iqlC = (n_ql_pts - 1) / 2;
 
 	//int number_of_completed_events = 0;
-	//err << "  * Computing numerator and denominator of correlation function with errors" << endl;
+	err << "  * Entering Compute_numerator_and_denominator_with_errors_q_mode_1D()" << endl;
 
 	//const int q_space_size = n_qo_bins*n_qs_bins*n_ql_bins;
 	//const int K_space_size = n_KT_bins*n_Kphi_bins*n_KL_bins;
@@ -118,10 +118,10 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 						double disc = 4.0*xi1*xi1 + 4.0*xi0*xi3 + xi3*xi3;
 						if ( disc < 0.0 )
 						{
-							err << "Warning: no qs value solves this combination of Q0 and (q,K)!" << endl
-								<< "\t KT      KL      qo      ql      Q0" << endl
-								<< "\t " << KT << "      " << KL << "      "
-								<< qo << "      " << ql << "      " << Q0 << endl;
+							//err << "Warning: no qs value solves this combination of Q0 and (q,K)!" << endl
+							//	<< "\t KT      KL      qo      ql      Q0" << endl
+							//	<< "\t " << KT << "      " << KL << "      "
+							//	<< qo << "      " << ql << "      " << Q0 << endl;
 							continue;
 						}
 
@@ -212,10 +212,10 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 				double disc = 4.0*xi1*xi1 + 4.0*xi0*xi3 + xi3*xi3;
 				if ( disc < 0.0 )
 				{
-					err << "Warning: no qs value solves this combination of Q0 and (q,K)!" << endl
-						<< "\t KT      KL      qo      ql      Q0" << endl
-						<< "\t " << KT << "      " << KL << "      "
-						<< qo << "      " << ql << "      " << Q0 << endl;
+					//err << "Warning: no qs value solves this combination of Q0 and (q,K)!" << endl
+					//	<< "\t KT      KL      qo      ql      Q0" << endl
+					//	<< "\t " << KT << "      " << KL << "      "
+					//	<< qo << "      " << ql << "      " << Q0 << endl;
 					continue;
 				}
 
@@ -319,21 +319,33 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 				double disc = 4.0*xi1*xi1 + 4.0*xi0*xi3 + xi3*xi3;
 				if ( disc < 0.0 )
 				{
-					err << "Warning: no qs value solves this combination of Q0 and (q,K)!" << endl
-						<< "\t KT      KL      qo      ql      Q0" << endl
-						<< "\t " << KT << "      " << KL << "      "
-						<< qo << "      " << ql << "      " << Q0 << endl;
+					//err << "Warning: no qs value solves this combination of Q0 and (q,K)!" << endl
+					//	<< "\t KT      KL      qo      ql      Q0" << endl
+					//	<< "\t " << KT << "      " << KL << "      "
+					//	<< qo << "      " << ql << "      " << Q0 << endl;
 					continue;
 				}
+				/*else
+				{
+					err << "Found this solution:" << endl
+						<< "\t KT      KL      qo      ql      Q0      +/-qs0" << endl
+						<< "\t " << KT << "      " << KL << "      "
+						<< qo << "      " << ql << "      " << Q0 << "      +/-"
+						<< sqrt( disc / ( 4.0*xi0 + xi3 ) ) << endl;
+				}*/
 
-				// Otherwise, set the positive root first
+				// Otherwise, set the |root|
 				double qs0 = sqrt( disc / ( 4.0*xi0 + xi3 ) );
+				// cut this point out of Riemann sum over qo and ql
+				if (abs(qs0) < 1.e-6)
+					continue;
 
 				// weight factor from delta-function identities
 				// to get the normalization right
 				const double weight_num = abs( (4.0*xi0+xi3)*(4.0*xi0+xi3) - 4.0*xi1*xi1 );
 				const double weight_den = qs0*( (4.0*xi0+xi3)*(4.0*xi0+xi3) + 4.0*xi1*xi1 + weight_num );
-				const double weight_factor = weight_num / weight_den;
+				const double weight_factor = (qs0 < 1.e-6) ? 0.0 : weight_num / weight_den;
+				//err << "Check: weight_factor = " << qs0*weight_factor << endl;
 
 				const int index4D = indexer_qmode_1(iKT, iKphi, iKL, iQ);
 
@@ -383,64 +395,6 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 
 
 
-/*
-	for (int iQ = 0; iQ < n_Q_bins; iQ++)
-	for (int iqo = 0; iqo < n_qo_bins; iqo++)
-	for (int iql = 0; iql < n_ql_bins; iql++)
-	{
-		double Q0 = 0.5*(Q_pts[iQ]+Q_pts[iQ+1]);
-		double qo = 0.5*(qo_pts[iqo]+qo_pts[iqo+1]);
-		double ql = 0.5*(ql_pts[iql]+ql_pts[iql+1]);
-
-		// rapidity cuts
-		if ( impose_pair_rapidity_cuts
-				and ( ( 2.0*Kz/(Ea+Eb) < Kz_over_K0_min )
-				or ( 2.0*Kz/(Ea+Eb) > Kz_over_K0_max ) )
-			)
-			continue;
-		
-		const double xi0 = particle_mass*particle_mass + KT*KT + KL*KL + 0.25*(qo*qo+ql*ql);
-		const double xi1 = qo*KT+ql*KL;
-		const double xi3 = Q0*Q0 - qo*qo - ql*ql;
-		
-		// set the positive root first
-		double qs0 = sqrt( ( 4.0*xi1*xi1 + 4.0*xi0*xi3 + xi3*xi3 )
-							/ ( 4.0*xi0 + xi3 ) );
-
-		// weight factor from delta-function identities
-		// to get the normalization right
-		const double weight_num = abs( (4.0*xi0+xi3)*(4.0*xi0+xi3) - 4.0*xi1*xi1 );
-		const double weight_den = qs0*( (4.0*xi0+xi3)*(4.0*xi0+xi3) + 4.0*xi1*xi1 + weight_num );
-		const double weight_factor = weight_num / weight_factor;
-		
-		// instead, have to do sum over +/- roots in q_s direction
-		for (int i_qs_root = 0; i_qs_root <= 1; i_qs_root++)
-		{
-
-			double qx = qo * cKphi - qs0 * sKphi;
-			double qy = qs0 * cKphi + qo * sKphi;
-			double qz = ql;
-
-			double pax = Kx + 0.5 * qx, pay = Ky + 0.5 * qy, paz = Kz + 0.5 * qz;
-			double pbx = Kx - 0.5 * qx, pby = Ky - 0.5 * qy, pbz = Kz - 0.5 * qz;
-			double Ea = sqrt(particle_mass*particle_mass+pax*pax+pay*pay+paz*paz);
-			double Eb = sqrt(particle_mass*particle_mass+pbx*pbx+pby*pby+pbz*pbz);
-
-			//double q0 = get_q0(particle_mass, qo, qs, ql, KT, KL);
-
-			double arg =  q0 * ti - qx * xi - qy * yi - qz * zi;
-
-			complex<double> complex_num_term = exp(i*arg/hbarC) / num_bin_factor;
-
-			//sum1[index6D] += complex_num_term;
-			//sum2[index6D] += 1.0 / (num_bin_factor*num_bin_factor);
-			//private_ABC[index6D]++;
-
-			qs0 *= -1.0;	//loop back and do negative root
-		}
-
-	}	// end of q loops
-*/
 
 
 //=====================================================================================

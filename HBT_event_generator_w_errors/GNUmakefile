@@ -55,6 +55,7 @@ INC		= 	main.h \
 			$(SRCDIR)/Arsenal.h \
 			$(SRCDIR)/ParameterReader.h \
 			$(SRCDIR)/ensemble.h \
+			$(SRCDIR)/random_events.h \
 			$(SRCDIR)/HBT_event_generator.h
 
 # -------------------------------------------------

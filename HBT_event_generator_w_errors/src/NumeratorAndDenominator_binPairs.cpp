@@ -23,7 +23,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_binPairs
 							)
 {
 	bool perform_random_rotation = true;
-	bool perform_random_shuffle = false;
+	bool perform_random_shuffle = true;
 
 	int number_of_completed_events = 0;
 	err << "  * Computing numerator and denominator of correlation function with errors" << endl;
@@ -138,8 +138,8 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_binPairs
 		//=====================================
 
 		// Randomly sample events to mix with
-		const unsigned int n_mixing_events = allEvents.size()-1;
-		//const unsigned int n_mixing_events = 100;
+		//const unsigned int n_mixing_events = allEvents.size()-1;
+		const unsigned int n_mixing_events = 100;
 
 		vector<unsigned int> indices(allEvents.size());
 		iota(indices.begin(), indices.end(), 0);

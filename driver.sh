@@ -37,7 +37,7 @@ runPythia=false
 projectile="p"
 target="p"
 beamEnergy="13000.0"	#GeV
-Nevents="1000000"
+Nevents="10000"
 QRefValue="0.2"			#GeV
 #PythiaExecutableToUse=""
 

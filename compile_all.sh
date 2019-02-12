@@ -32,7 +32,7 @@ echo '#====================================='
 cd $HBT_EVENT_GEN_DIRECTORY
 echo 'In directory='`pwd`':'
 echo '#====================================='
-export OMP_NUM_THREADS=1
+export OMP_NUM_THREADS=10
 gmake distclean
 gmake all
 success=$[success+`echo $?`]

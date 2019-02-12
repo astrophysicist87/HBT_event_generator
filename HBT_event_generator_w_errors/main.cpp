@@ -13,6 +13,7 @@
 #include "src/ParameterReader.h"
 #include "src/EventRecord.h"
 #include "src/ParticleRecord.h"
+#include "src/random_events.h"
 #include "main.h"
 
 using namespace std;
@@ -49,63 +50,13 @@ int main(int argc, char *argv[])
 	// Throws exception if NaNs are encountered
 	feenableexcept(FE_INVALID | FE_OVERFLOW);
 
-
-	// Specify files containing all position-momentum information
-	// from which to construct HBT correlation function
-	vector<string> all_file_names;
-	read_file_catalogue("./catalogue.dat", all_file_names);
-
-	// Process multiplicity and ensemble information
-	vector<string> ensemble_info;
-	read_file_catalogue("./ensemble_catalogue.dat", ensemble_info);
-
-	// allows to give files appropriate names
-	string collision_system_info = ensemble_info[0];
-	string target_name, projectile_name, beam_energy;
-	int Nevents;
-	double centrality_minimum, centrality_maximum;
-	istringstream iss(collision_system_info);
-	iss >> target_name >> projectile_name >> beam_energy >> centrality_minimum >> centrality_maximum >> Nevents;
-
-	cout << "run_HBT_event_generator(): "
-			<< "Using centrality class: "
-			<< centrality_minimum << "-"
-			<< centrality_maximum << "%!" << endl;
-
-	
-	// select only those events falling into specificed centrality range
-	string multiplicity_filename = ensemble_info[1];
-	cout << "Reading in " << multiplicity_filename << endl;
-	get_events_in_centrality_class(
-				multiplicity_filename, ensemble_multiplicites,
-				centrality_minimum, centrality_maximum );
-
-	cout << "run_HBT_event_generator(): "
-			<< "Using " << ensemble_multiplicites.size()
-			<< " events in centrality class "
-			<< centrality_minimum << "-"
-			<< centrality_maximum << "%!" << endl;
-
-	cout << "Check events in this centrality class: " << endl;
-	for (int iEvent = 0; iEvent < ensemble_multiplicites.size(); ++iEvent)
-		cout << ensemble_multiplicites[iEvent].eventID << "   "
-				<< ensemble_multiplicites[iEvent].total_multiplicity << "   "
-				<< ensemble_multiplicites[iEvent].particle_multiplicity << endl;
+	int file_mode = paraRdr->getVal("file_mode");
 
 
 	// Set-up output files
 	string path = "./results/";	// make sure this directory exists
 	string chosen_particle_name = "pi";
-	//string collision_system = "pp_13TeV";
-	//string collision_system = "pPb_5.02TeV";
-	string collision_system = "PbPb_2.760TeV";
 	ostringstream out_filename_stream, err_filename_stream;
-	/*out_filename_stream << path << "HBT_"
-						<< chosen_particle_name << chosen_particle_name
-						<< "CF_" << collision_system << "_100000events.dat";
-	err_filename_stream << path << "HBT_"
-						<< chosen_particle_name << chosen_particle_name
-						<< "CF_" << collision_system << "_100000events.err";*/
 	out_filename_stream << path << "HBT_"
 						<< chosen_particle_name << chosen_particle_name
 						<< "CF.dat";
@@ -116,56 +67,136 @@ int main(int argc, char *argv[])
 	ofstream errmain(err_filename_stream.str().c_str());
 
 
-	// Proceed with HBT calculations
-	string mode = "read stream";
 
-	if ( mode == "default" or mode == "read stream" )
+
+	if ( file_mode == 1 )	// default==1: read-in particles from file
 	{
 
-		// Vector to hold all event information
-		vector<EventRecord> allEvents;
+		// Specify files containing all position-momentum information
+		// from which to construct HBT correlation function
+		vector<string> all_file_names;
+		read_file_catalogue("./catalogue.dat", all_file_names);
+
+		// Process multiplicity and ensemble information
+		vector<string> ensemble_info;
+		read_file_catalogue("./ensemble_catalogue.dat", ensemble_info);
+
+		// allows to give files appropriate names
+		string collision_system_info = ensemble_info[0];
+		string target_name, projectile_name, beam_energy;
+		int Nevents;
+		double centrality_minimum, centrality_maximum;
+		istringstream iss(collision_system_info);
+		iss >> target_name
+			>> projectile_name
+			>> beam_energy
+			>> centrality_minimum
+			>> centrality_maximum
+			>> Nevents;
 
 
-		// Read in the first file
-		int iFile = 0;
-		cout << "Processing " << all_file_names[iFile] << "..." << endl;
+		cout << "run_HBT_event_generator(): "
+				<< "Using centrality class: "
+				<< centrality_minimum << "-"
+				<< centrality_maximum << "%!" << endl;
+	
 
-		get_all_events(all_file_names[iFile], allEvents, paraRdr);
+		// select only those events falling into specificed centrality range
+		string multiplicity_filename = ensemble_info[1];
+		cout << "Reading in " << multiplicity_filename << endl;
+		get_events_in_centrality_class(
+					multiplicity_filename, ensemble_multiplicites,
+					centrality_minimum, centrality_maximum );
+
+		cout << "run_HBT_event_generator(): "
+				<< "Using " << ensemble_multiplicites.size()
+				<< " events in centrality class "
+				<< centrality_minimum << "-"
+				<< centrality_maximum << "%!" << endl;
+
+		cout << "Check events in this centrality class: " << endl;
+		for (int iEvent = 0; iEvent < ensemble_multiplicites.size(); ++iEvent)
+			cout << ensemble_multiplicites[iEvent].eventID << "   "
+					<< ensemble_multiplicites[iEvent].total_multiplicity << "   "
+					<< ensemble_multiplicites[iEvent].particle_multiplicity << endl;
 
 
-		// Create HBT_event_generator object here
-		// note: numerator and denominator computed automatically
-		HBT_event_generator
-			HBT_event_ensemble( paraRdr, allEvents,
-								outmain, errmain );
+		// Proceed with HBT calculations
+		string mode = "read stream";
 
-
-		// Loop over the rest of the files
-		for (iFile = 1; iFile < all_file_names.size(); ++iFile)
+		if ( mode == "default" or mode == "read stream" )
 		{
 
+			// Vector to hold all event information
+			vector<EventRecord> allEvents;
+
+
+			// Read in the first file
+			int iFile = 0;
 			cout << "Processing " << all_file_names[iFile] << "..." << endl;
 
-			// Read in the next file
 			get_all_events(all_file_names[iFile], allEvents, paraRdr);
 
 
-			// - for each file, update numerator and denominator
-			HBT_event_ensemble.Update_records( allEvents );
+			// Create HBT_event_generator object here
+			// note: numerator and denominator computed automatically
+			HBT_event_generator
+				HBT_event_ensemble( paraRdr, allEvents,
+									outmain, errmain );
+
+
+			// Loop over the rest of the files
+			for (iFile = 1; iFile < all_file_names.size(); ++iFile)
+			{
+
+				cout << "Processing " << all_file_names[iFile] << "..." << endl;
+
+				// Read in the next file
+				get_all_events(all_file_names[iFile], allEvents, paraRdr);
+
+
+				// - for each file, update numerator and denominator
+				HBT_event_ensemble.Update_records( allEvents );
+
+			}
+
+			// Compute correlation function itself (after
+			// all events have been read in)
+			HBT_event_ensemble.Compute_correlation_function();
+
+
+			// Output results
+			HBT_event_ensemble.Output_correlation_function();
 
 		}
+		else if ( mode == "read all" )
+		{
 
-		// Compute correlation function itself (after
-		// all events have been read in)
-		HBT_event_ensemble.Compute_correlation_function();
-		//HBT_event_ensemble.Compute_correlation_function_mode2();
+			// Vector to hold all event information
+			vector<EventRecord> allEvents;
 
 
-		// Output results
-		HBT_event_ensemble.Output_correlation_function();
+			// Read in the files
+			get_all_events(all_file_names, allEvents, paraRdr);
 
+
+			// Create HBT_event_generator object from allEvents
+			HBT_event_generator
+				HBT_event_ensemble( paraRdr, allEvents,
+									outmain, errmain );
+
+
+			// Compute correlation function itself
+			HBT_event_ensemble.Compute_correlation_function();
+
+
+			// Output correlation function
+			HBT_event_ensemble.Output_correlation_function();
+
+		}
+	
 	}
-	else if ( mode == "read all" )
+	else if ( file_mode == 0 )	//use random number generation
 	{
 
 		// Vector to hold all event information
@@ -173,7 +204,7 @@ int main(int argc, char *argv[])
 
 
 		// Read in the files
-		get_all_events(all_file_names, allEvents, paraRdr);
+		generate_events(allEvents, paraRdr);
 
 
 		// Create HBT_event_generator object from allEvents
@@ -182,9 +213,25 @@ int main(int argc, char *argv[])
 								outmain, errmain );
 
 
+		// Loop a few more times to build up statistics
+		const int nLoops = 1000;  //say
+		for (int iLoop = 1; iLoop <= nLoops; ++iLoop)
+		{
+
+			cout << "Starting iLoop = " << iLoop << endl;
+
+			// Read in the next file
+			generate_events(allEvents, paraRdr);
+
+
+			// - for each file, update numerator and denominator
+			HBT_event_ensemble.Update_records( allEvents );
+
+		}
+
+
 		// Compute correlation function itself
 		HBT_event_ensemble.Compute_correlation_function();
-		//HBT_event_ensemble.Compute_correlation_function_mode2();
 
 
 		// Output correlation function
