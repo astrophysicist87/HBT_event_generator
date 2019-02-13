@@ -214,7 +214,7 @@ int main(int argc, char *argv[])
 
 
 		// Loop a few more times to build up statistics
-		const int nLoops = 1000;  //say
+		const int nLoops = 100;  //say
 		for (int iLoop = 1; iLoop <= nLoops; ++iLoop)
 		{
 

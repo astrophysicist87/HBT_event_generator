@@ -876,11 +876,11 @@ void HBT_event_generator::Output_correlation_function_q_mode_1D()
 			<< 0.5*(KT_pts[iKT]+KT_pts[iKT+1]) << setw(prec+extrawidth)
 			<< 0.5*(Kphi_pts[iKphi]+Kphi_pts[iKphi+1]) << setw(prec+extrawidth)
 			<< 0.5*(KL_pts[iKL]+KL_pts[iKL+1]) << setw(prec+extrawidth)
-			<< 0.5*(Q_pts[iQ]+Q_pts[iQ+1]) << setw(prec+16)
-			<< real(numerator[idx] / static_cast<double>(total_N_events)) << setw(prec+16)
-			<< imag(numerator[idx] / static_cast<double>(total_N_events)) << setw(prec+16)
-			<< denominator[idx] / static_cast<double>(total_N_events) << setw(prec+24)
-			<< setprecision(16) << correlation_function[idx] << setw(prec+24)
+			<< 0.5*(Q_pts[iQ]+Q_pts[iQ+1]) << "   "//setw(prec+24)
+			<< real(numerator[idx] / static_cast<double>(total_N_events)) << "   "//setw(prec+16)
+			<< imag(numerator[idx] / static_cast<double>(total_N_events)) << "   "//setw(prec+16)
+			<< denominator[idx] / static_cast<double>(total_N_events) << "   "//setw(prec+24)
+			<< setprecision(16) << correlation_function[idx] << "   "//setw(prec+24)
 			<< setprecision(16) << correlation_function_error[idx] << endl;
 
 		++idx;

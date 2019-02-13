@@ -1,0 +1,73 @@
+#===========
+# width of binning delta (GeV)
+bin_epsilon = 0.005
+
+#===========
+# pair momenta
+# KT grid
+n_KT_pts = 2
+KTmin = 0.0
+KTmax = 0.01
+
+# Kphi grid
+n_Kphi_pts = 2
+#Kphimax, Kphimin
+#determined automatically
+
+# KL grid
+n_KL_pts = 2
+KLmin = -1.0
+KLmax = 1.0
+
+#===========
+# relative momenta (3D)
+n_qo_pts = 22
+n_qs_pts = 22
+n_ql_pts = 22
+delta_qo = 0.03
+delta_qs = 0.03
+delta_ql = 0.03
+
+# relative momentum (1D)
+n_Q_pts = 22
+delta_Q = 0.03
+
+#===========
+# misc. and ensemble parameters
+
+#===========
+# delta function or something else
+bin_mode = 0
+
+#===========
+# whether to use qo-qs-ql (0: 3D) or Q (1: 1D)
+q_mode = 1
+
+#===========
+# whether to use GEHW method (0) or Chun's method (1)
+method_mode = 0
+
+#===========
+# whether or not BE effects are pre-included
+BE_mode = 0
+
+#===========
+# get particles randomly or from file
+file_mode = 1
+	#=======
+	# sub-model options ( if file_mode == 0 )
+	RNG_R = 10.0	#fm
+	RNG_a = 0.02	#GeV/fm
+	RNG_Nev = 10
+	RNG_mult = 1000000
+	RNG_xDir = 1
+	RNG_yDir = 1
+	RNG_zDir = 1
+	#=======
+
+#===========
+# minimum bias by default
+centrality_minimum = 0
+centrality_maximum = 100
+
+# End of file

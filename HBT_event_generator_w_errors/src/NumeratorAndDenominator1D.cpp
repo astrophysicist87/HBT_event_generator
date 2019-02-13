@@ -127,6 +127,9 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 
 						// Otherwise, set the positive root first
 						double qs0 = sqrt( disc / ( 4.0*xi0 + xi3 ) );
+						// cut this point out of Riemann sum over qo and ql
+						if (abs(qs0) < 1.e-6)
+							continue;
 		
 						// Sum over +/- roots in q_s direction
 						for (int i_qs_root = 0; i_qs_root <= 1; i_qs_root++)
@@ -221,6 +224,9 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 
 				// Otherwise, set the positive root first
 				double qs0 = sqrt( disc / ( 4.0*xi0 + xi3 ) );
+				// cut this point out of Riemann sum over qo and ql
+				if (abs(qs0) < 1.e-6)
+					continue;
 
 				// Sum over +/- roots in q_s direction
 				for (int i_qs_root = 0; i_qs_root <= 1; i_qs_root++)
@@ -351,10 +357,10 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 
 				double abs_sum1 = abs( sum1[index4D] );
 				double numerator_contribution_from_this_event
-						= weight_factor
+						= 0.000000001*weight_factor
 							* ( abs_sum1*abs_sum1 - sum2[index4D] );
 				double denominator_contribution_from_this_event
-						= weight_factor
+						= 0.000000001*weight_factor
 							* ( sum3[index4D]*sum4[index4D] - sum5[index4D] );
 
 				// first moments
