@@ -95,6 +95,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 				{
 					double num_bin_factor =
 							px_bin_width*py_bin_width*pz_bin_width;
+					//double num_bin_factor = 1.0;
 
 					// Loop over q-bins;
 					// qs-integral performed with delta-function
@@ -250,6 +251,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 
 					double den_bin_factor =
 						px_bin_width*py_bin_width*pz_bin_width;
+					//double den_bin_factor = 1.0;
 
 					double den_term = 1.0 / den_bin_factor;	//no phase factor in denominator
 
@@ -357,10 +359,10 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 
 				double abs_sum1 = abs( sum1[index4D] );
 				double numerator_contribution_from_this_event
-						= 0.000000001*weight_factor
+						= weight_factor
 							* ( abs_sum1*abs_sum1 - sum2[index4D] );
 				double denominator_contribution_from_this_event
-						= 0.000000001*weight_factor
+						= weight_factor
 							* ( sum3[index4D]*sum4[index4D] - sum5[index4D] );
 
 				// first moments

@@ -10,7 +10,6 @@
 ##			distclean	remove all objectsfiles and binaries
 ##  
 
-
 CC := g++
 #running with icpc
 #CFLAGS= $(shell ../../crank/configure_compiler_C++_Flags.sh)

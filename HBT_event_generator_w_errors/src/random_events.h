@@ -36,14 +36,11 @@ void generate_events(vector<EventRecord> & allEvents, ParameterReader * paraRdr)
 	//default_random_engine generator;
 	normal_distribution<double> distribution(0.0,RNG_R/sqrt(2.0));
 
-	//allEvents.resize( RNG_Nev );
-
 	// this toy function uses the model of
 	// Zhang, Wiedemann, Slotta, and Heinz (1997)
 	for (int iEvent = 0; iEvent < RNG_Nev; ++iEvent)
 	{
 		EventRecord event;
-		//event.particles.resize( RNG_mult );
 
 		for (int iParticle = 0; iParticle < RNG_mult; ++iParticle)
 		{
@@ -71,12 +68,10 @@ void generate_events(vector<EventRecord> & allEvents, ParameterReader * paraRdr)
 			particle.z 			= zP;
 
 			event.particles.push_back( particle );
-			//event.particles[iParticle] = particle;
 
 		}
 
 		allEvents.push_back( event );
-		//allEvents[iEvent] = event;
 
 	}
 

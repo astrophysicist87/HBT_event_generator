@@ -24,13 +24,13 @@ KLmax = 1.0
 n_qo_pts = 22
 n_qs_pts = 22
 n_ql_pts = 22
-delta_qo = 0.03
-delta_qs = 0.03
-delta_ql = 0.03
+delta_qo = 0.01
+delta_qs = 0.01
+delta_ql = 0.01
 
 # relative momentum (1D)
 n_Q_pts = 22
-delta_Q = 0.03
+delta_Q = 0.01
 
 #===========
 # misc. and ensemble parameters
@@ -59,7 +59,7 @@ file_mode = 1
 	RNG_R = 10.0	#fm
 	RNG_a = 0.02	#GeV/fm
 	RNG_Nev = 10
-	RNG_mult = 1000000
+	RNG_mult = 10000
 	RNG_xDir = 1
 	RNG_yDir = 1
 	RNG_zDir = 1
