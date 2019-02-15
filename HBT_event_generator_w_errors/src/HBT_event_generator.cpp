@@ -56,6 +56,8 @@ void HBT_event_generator::initialize_all(
 	n_qs_pts 		= paraRdr->getVal("n_qs_pts");
 	n_ql_pts 		= paraRdr->getVal("n_ql_pts");
 	n_Q_pts 		= paraRdr->getVal("n_Q_pts");
+	n_qRP_pts		= paraRdr->getVal("n_qRP_pts");
+	n_thq_pts		= paraRdr->getVal("n_thq_pts");
 	// - step size in q directions
 	delta_qo 		= paraRdr->getVal("delta_qo");
 	delta_qs 		= paraRdr->getVal("delta_qs");
@@ -95,6 +97,11 @@ void HBT_event_generator::initialize_all(
 	ql_pts 			= vector<double> (n_ql_pts);
 	Q_pts 			= vector<double> (n_Q_pts);
 
+	x_pts			= vector<double> (n_qRP_pts);
+	x_wts			= vector<double> (n_qRP_pts);
+	ttheta_q_pts	= vector<double> (n_thq_pts);
+	ttheta_q_wts	= vector<double> (n_thq_pts);
+
 	linspace(KT_pts, KT_min, KT_max);
 	linspace(Kphi_pts, Kphi_min, Kphi_max);
 	linspace(KL_pts, KL_min, KL_max);
@@ -103,6 +110,9 @@ void HBT_event_generator::initialize_all(
 	linspace(qs_pts, qs_min, qs_max);
 	linspace(ql_pts, ql_min, ql_max);
 	linspace(Q_pts, Q_min, Q_max);
+
+	gauss_quadrature(n_qRP_pts, 1, 0.0, 0.0, -1.0, 1.0, x_pts, x_wts);
+	gauss_quadrature(n_thq_pts, 1, 0.0, 0.0, -M_PI, M_PI, ttheta_q_pts, ttheta_q_wts);
 
 	px_bin_width 	= bin_epsilon;
 	py_bin_width 	= bin_epsilon;
@@ -407,7 +417,7 @@ void HBT_event_generator::Compute_correlation_function_q_mode_1D()
 
 		double R2 = num / (den+1.e-10); // total_N_events factors cancel
 
-//denominator_cell_was_filled[idx] = true;
+denominator_cell_was_filled[idx] = true;
 
 		//==============================
 		//==== correlation function ====

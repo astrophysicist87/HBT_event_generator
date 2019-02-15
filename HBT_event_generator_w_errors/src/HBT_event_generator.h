@@ -15,6 +15,7 @@
 #include "Arsenal.h"
 #include "EventRecord.h"
 #include "ParticleRecord.h"
+#include "gauss_quadrature.h"
 
 using namespace std;
 
@@ -68,7 +69,7 @@ class HBT_event_generator
 		vector<double> qo_pts, qs_pts, ql_pts;
 		vector<double> Kx_pts, Ky_pts, Kz_pts;
 		vector<double> qx_pts, qy_pts, qz_pts;
-		vector<double> Q_pts;
+		vector<double> Q_pts, x_pts, x_wts, ttheta_q_pts, ttheta_q_wts;
 		
 		//miscellaneous
 		string path;
@@ -127,6 +128,17 @@ class HBT_event_generator
 					( ( iKT * n_Kphi_bins + iKphi )
 								* n_KL_bins + iKL )
 								* n_Q_bins + iQ 
+					);
+		}
+		////////////////////
+		inline int indexer_qmode_1(int iKT, int iKphi, int iKL, int iQ, int iqRP, int ithq)
+		{
+			return (
+					( ( ( ( iKT * n_Kphi_bins + iKphi )
+								* n_KL_bins + iKL )
+								* n_Q_bins + iQ )
+								* n_qRP_pts + iqRP )
+								* n_thq_pts + ithq
 					);
 		}
 		////////////////////

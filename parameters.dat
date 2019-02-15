@@ -32,6 +32,10 @@ delta_ql = 0.01
 n_Q_pts = 22
 delta_Q = 0.01
 
+# for doing integrations for 1D calculation
+n_qRP_pts = 11
+n_thq_pts = 11
+
 #===========
 # misc. and ensemble parameters
 
@@ -59,7 +63,7 @@ file_mode = 1
 	RNG_R = 10.0	#fm
 	RNG_a = 0.02	#GeV/fm
 	RNG_Nev = 10
-	RNG_mult = 10000
+	RNG_mult = 100000
 	RNG_xDir = 1
 	RNG_yDir = 1
 	RNG_zDir = 1

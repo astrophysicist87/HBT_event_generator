@@ -31,9 +31,9 @@ void generate_events(vector<EventRecord> & allEvents, ParameterReader * paraRdr)
 	int RNG_yDir 	= paraRdr->getVal("RNG_yDir");
 	int RNG_zDir 	= paraRdr->getVal("RNG_zDir");
 
-	unsigned seed = chrono::system_clock::now().time_since_epoch().count();
-	default_random_engine generator (seed);
-	//default_random_engine generator;
+	//unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+	//default_random_engine generator (seed);
+	default_random_engine generator;
 	normal_distribution<double> distribution(0.0,RNG_R/sqrt(2.0));
 
 	// this toy function uses the model of
