@@ -29,8 +29,8 @@ delta_qs = 0.03
 delta_ql = 0.03
 
 # relative momentum (1D)
-n_Q_pts = 22
-delta_Q = 0.03
+n_Q_pts = 4
+delta_Q = 0.06
 
 # for doing integrations for 1D calculation
 n_qRP_pts = 5
