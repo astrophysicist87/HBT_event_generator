@@ -142,6 +142,18 @@ class HBT_event_generator
 					);
 		}
 		////////////////////
+		inline int indexer_qmode_1(int iKT, int iKphi, int iKL, int iQ, int iqRP, int ithq, int iqs_root)
+		{
+			return (
+					( ( ( ( ( iKT * n_Kphi_bins + iKphi )
+								* n_KL_bins + iKL )
+								* n_Q_bins + iQ )
+								* n_qRP_pts + iqRP )
+								* n_thq_pts + ithq )
+								* 2 + iqs_root
+					);
+		}
+		////////////////////
 		inline double get_q0(double m, double qo, double qs, double ql, double KT, double KL)
 		{
 			double xi2 = m*m + KT*KT + KL*KL + 0.25*(qo*qo + qs*qs + ql*ql);

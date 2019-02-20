@@ -29,8 +29,8 @@ delta_qs = 0.03
 delta_ql = 0.03
 
 # relative momentum (1D)
-n_Q_pts = 4
-delta_Q = 0.1
+n_Q_pts = 22
+delta_Q = 0.03
 
 # for doing integrations for 1D calculation
 n_qRP_pts = 5
@@ -45,7 +45,7 @@ bin_mode = 0
 
 #===========
 # whether to use qo-qs-ql (0: 3D) or Q (1: 1D)
-q_mode = 0
+q_mode = 1
 
 #===========
 # whether to use GEHW method (0) or Chun's method (1)

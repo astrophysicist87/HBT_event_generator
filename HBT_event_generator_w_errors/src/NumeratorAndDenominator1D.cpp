@@ -453,12 +453,12 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 	{
 		EventRecord event = allEvents[iEvent];
 
-		//let these be fully six-dimensional
-		vector<complex<double> > sum1(q_space_size*K_space_size);
-		vector<double> sum2(q_space_size*K_space_size);
-		vector<double> sum3(q_space_size*K_space_size);
-		vector<double> sum4(q_space_size*K_space_size);
-		vector<double> sum5(q_space_size*K_space_size);
+		//let these be fully six-dimensional (factor of 2 for +/- roots in qs)
+		vector<complex<double> > sum1(2*q_space_size*K_space_size);
+		vector<double> sum2(2*q_space_size*K_space_size);
+		vector<double> sum3(2*q_space_size*K_space_size);
+		vector<double> sum4(2*q_space_size*K_space_size);
+		vector<double> sum5(2*q_space_size*K_space_size);
 
 		//===================================
 		//======== Doing numerator ==========
@@ -507,9 +507,6 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 					for (int ithq = 0; ithq < n_thq_pts; ithq++)	//using points, not bins!
 					{
 						double Q0 = 0.5*(Q_pts[iQ]+Q_pts[iQ+1]);
-						//double qo = 0.5*(qo_pts[iqo]+qo_pts[iqo+1]);
-						//double ql = 0.5*(ql_pts[iql]+ql_pts[iql+1]);
-						//double qRP = q_RP_pts[iqRP];
 						if (abs(Q0)<1.e-20)
 							Q0 = 1.e-20;
 						double loc_alpha = 4.0*(particle_mass*particle_mass + KT*KT + KL*KL) + Q0*Q0;
@@ -517,8 +514,6 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 						double costthetaq = cos(ttheta_q_pts[ithq]);
 						double sintthetaq = sin(ttheta_q_pts[ithq]);
 						double qRP_min = 0.0;
-						//double mod = 2.0*Kmag*costthetaq/loc_alpha;
-						//double qRP_max = mod + sqrt(Q0*Q0 + mod*mod);
 						double num_loc = 4.0*(particle_mass*particle_mass + KT*KT + KL*KL) + Q0*Q0;
 						double den_loc = 4.0*(particle_mass*particle_mass + sintthetaq*sintthetaq*(KT*KT + KL*KL)) + Q0*Q0;
 						double qRP_max = abs(Q0)*sqrt(num_loc/den_loc);
@@ -529,16 +524,13 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 						double costhetaq = cos(thetaq);
 						double sinthetaq = sin(thetaq);
 
-						//double qo = qRP * costhetaq;
-						//double ql = qRP * sinthetaq;
 						double qo = qRP * sinthetaq;
 						double ql = qRP * costhetaq;
 
-						int index6D = indexer_qmode_1(iKT, iKphi, iKL, iQ, iqRP, ithq);
+						//int index6D = indexer_qmode_1(iKT, iKphi, iKL, iQ, iqRP, ithq);
 		
 						const double xi0 = particle_mass*particle_mass + KT*KT + KL*KL + 0.25*(qo*qo+ql*ql);
 						const double xi1 = qo*KT+ql*KL;
-//err << "check xi1: " << xi1 << "   " << qRP*Kmag*costthetaq << endl;
 						const double xi3 = Q0*Q0 - qo*qo - ql*ql;
 		
 						// Check if a solution even exists;
@@ -550,13 +542,13 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 
 						// Otherwise, set the positive root first
 						double qs0 = sqrt( disc / ( 4.0*xi0 + xi3 ) );
-						// cut this point out of Riemann sum over qo and ql
 						//if (abs(qs0) < 1.e-6)
 						//	continue;
 		
-						// Sum over +/- roots in q_s direction
+						// Record +/- roots in q_s direction
 						for (int i_qs_root = 0; i_qs_root <= 1; i_qs_root++)
 						{
+							int index7D = indexer_qmode_1(iKT, iKphi, iKL, iQ, iqRP, ithq, i_qs_root);
 
 							double qx = qo * cKphi - qs0 * sKphi;
 							double qy = qs0 * cKphi + qo * sKphi;
@@ -579,8 +571,8 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 
 							complex<double> complex_num_term = exp(i*arg/hbarC) / num_bin_factor;
 
-							sum1[index6D] += complex_num_term;
-							sum2[index6D] += 1.0 / (num_bin_factor*num_bin_factor);
+							sum1[index7D] += complex_num_term;
+							sum2[index7D] += 1.0 / (num_bin_factor*num_bin_factor);
 
 							// loop back and do negative root
 							qs0 *= -1.0;
@@ -624,22 +616,17 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 			for (int iqRP = 0; iqRP < n_qRP_pts; iqRP++)	//using points, not bins!
 			for (int ithq = 0; ithq < n_thq_pts; ithq++)	//using points, not bins!
 			{
-				int index6D = indexer_qmode_1(iKT, iKphi, iKL, iQ, iqRP, ithq);
+				//int index6D = indexer_qmode_1(iKT, iKphi, iKL, iQ, iqRP, ithq);
 
 				double Q0 = 0.5*(Q_pts[iQ]+Q_pts[iQ+1]);
 				if (abs(Q0)<1.e-20)
 					Q0 = 1.e-20;
 
-				//double qo = 0.5*(qo_pts[iqo]+qo_pts[iqo+1]);
-				//double ql = 0.5*(ql_pts[iql]+ql_pts[iql+1]);
-				//double qRP = q_RP_pts[iqRP];
 				double loc_alpha = 4.0*(particle_mass*particle_mass + KT*KT + KL*KL) + Q0*Q0;
 
 				double costthetaq = cos(ttheta_q_pts[ithq]);
 				double sintthetaq = sin(ttheta_q_pts[ithq]);
 				double qRP_min = 0.0;
-				//double mod = 2.0*Kmag*costthetaq/loc_alpha;
-				//double qRP_max = mod + sqrt(Q0*Q0 + mod*mod);
 				double num_loc = 4.0*(particle_mass*particle_mass + KT*KT + KL*KL) + Q0*Q0;
 				double den_loc = 4.0*(particle_mass*particle_mass + sintthetaq*sintthetaq*(KT*KT + KL*KL)) + Q0*Q0;
 				double qRP_max = abs(Q0)*sqrt(num_loc/den_loc);
@@ -650,14 +637,11 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 				double costhetaq = cos(thetaq);
 				double sinthetaq = sin(thetaq);
 
-				//double qo = qRP * costhetaq;
-				//double ql = qRP * sinthetaq;
 				double qo = qRP * sinthetaq;
 				double ql = qRP * costhetaq;
 
 				const double xi0 = particle_mass*particle_mass + KT*KT + KL*KL + 0.25*(qo*qo+ql*ql);
 				const double xi1 = qo*KT+ql*KL;
-//err << "check xi1: " << xi1 << "   " << qRP*Kmag*costthetaq << endl;
 				const double xi3 = Q0*Q0 - qo*qo - ql*ql;
 
 				// Check if a solution even exists;
@@ -669,13 +653,13 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 
 				// Otherwise, set the positive root first
 				double qs0 = sqrt( disc / ( 4.0*xi0 + xi3 ) );
-				// cut this point out of Riemann sum over qo and ql
 				//if (abs(qs0) < 1.e-6)
 				//	continue;
 
-				// Sum over +/- roots in q_s direction
+				// Record +/- roots in q_s direction
 				for (int i_qs_root = 0; i_qs_root <= 1; i_qs_root++)
 				{
+					int index7D = indexer_qmode_1(iKT, iKphi, iKL, iQ, iqRP, ithq, i_qs_root);
 
 					double qx = qo * cKphi - qs0 * sKphi;
 					double qy = qs0 * cKphi + qo * sKphi;
@@ -715,13 +699,13 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 											and abs(pi.pz-pbz) <= 0.5*pz_bin_width;
 
 						if ( in_den_pa_bin )
-							sum3[index6D] += den_term;
+							sum3[index7D] += den_term;
 
 						if ( in_den_pb_bin )
-							sum4[index6D] += den_term;
+							sum4[index7D] += den_term;
 
 						if ( in_den_pa_bin and in_den_pb_bin )
-							sum5[index6D] += den_term*den_term;	// N.B. - use (bin volume)^2, here
+							sum5[index7D] += den_term*den_term;	// N.B. - use (bin volume)^2, here
 
 					}		// end of denominator particle loops
 
@@ -771,8 +755,6 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 					const double costhetaq = cos(thetaq);
 					const double sinthetaq = sin(thetaq);
 					const double qRP_min = 0.0;
-					//double mod = 2.0*Kmag*costthetaq/loc_alpha;
-					//double qRP_max = mod + sqrt(Q0*Q0 + mod*mod);
 					double num_loc = 4.0*(particle_mass*particle_mass + KT*KT + KL*KL) + Q0*Q0;
 					double den_loc = 4.0*(particle_mass*particle_mass + sintthetaq*sintthetaq*(KT*KT + KL*KL)) + Q0*Q0;
 					double qRP_max = abs(Q0)*sqrt(num_loc/den_loc);
@@ -780,19 +762,13 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 
 					for (int iqRP = 0; iqRP < n_qRP_pts; iqRP++)	//using points, not bins!
 					{
-						//double qo = 0.5*(qo_pts[iqo]+qo_pts[iqo+1]);
-						//double ql = 0.5*(ql_pts[iql]+ql_pts[iql+1]);
-						//double qRP = q_RP_pts[iqRP];
 						const double qRP = qRP_cen + qRP_hw * x_pts[iqRP];
 						const double qRPwt = qRP_hw * x_wts[iqRP];
-						//const double qo = qRP * costhetaq;
-						//const double ql = qRP * sinthetaq;
 						const double qo = qRP * sinthetaq;
 						const double ql = qRP * costhetaq;
 
 						const double xi0 = particle_mass*particle_mass + KT*KT + KL*KL + 0.25*(qo*qo+ql*ql);
 						const double xi1 = qo*KT+ql*KL;
-//err << "check xi1: " << xi1 << "   " << qRP*Kmag*costthetaq << endl;
 						const double xi3 = Q0*Q0 - qo*qo - ql*ql;
 
 						// Check if a solution even exists;
@@ -807,7 +783,6 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 
 						// Otherwise, set the |root|
 						const double qs0 = sqrt( disc / ( 4.0*xi0 + xi3 ) );
-						// cut this point out of Riemann sum over qo and ql
 						//if (abs(qs0) < 1.e-6)
 						//	continue;
 
@@ -816,20 +791,23 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 						const double weight_num = abs( (4.0*xi0+xi3)*(4.0*xi0+xi3) - 4.0*xi1*xi1 );
 						const double weight_den = 1.e-100+qs0*( (4.0*xi0+xi3)*(4.0*xi0+xi3) + 4.0*xi1*xi1 + weight_num );
 						const double weight_factor = /*(qs0 < 1.e-6) ? 0.0 :*/ weight_num / weight_den;
-
-						const int index6D = indexer_qmode_1(iKT, iKphi, iKL, iQ, iqRP, ithq);
-
-						// temporary sum* vectors have length of 6D space
 						const double integration_weight = qRP * qRPwt * ttheta_q_wts[ithq];
-						const double abs_sum1 = abs( sum1[index6D] );
-						numerator_contribution_from_this_event
-								+= integration_weight * weight_factor
-									* ( abs_sum1*abs_sum1 - sum2[index6D] );
-						denominator_contribution_from_this_event
-								+= integration_weight * weight_factor
-									* ( sum3[index6D]*sum4[index6D] - sum5[index6D] );
 
+						// Sum over +/- roots in q_s direction
+						for (int i_qs_root = 0; i_qs_root <= 1; i_qs_root++)
+						{
+							const int index7D = indexer_qmode_1(iKT, iKphi, iKL, iQ, iqRP, ithq, i_qs_root);
 
+							// temporary sum* vectors have length of 7D space
+							const double abs_sum1 = abs( sum1[index7D] );
+							numerator_contribution_from_this_event
+									+= integration_weight * weight_factor
+										* ( abs_sum1*abs_sum1 - sum2[index7D] );
+							denominator_contribution_from_this_event
+									+= integration_weight * weight_factor
+										* ( sum3[index7D]*sum4[index7D] - sum5[index7D] );
+
+						}
 
 /*err << "Check: weight_factor(etc.) = "
 << qo << "   " << qs0 << "   " << ql << "   " << Q0 << "   "
