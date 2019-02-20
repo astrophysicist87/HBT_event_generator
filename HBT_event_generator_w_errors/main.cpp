@@ -214,8 +214,8 @@ int main(int argc, char *argv[])
 
 
 		// Loop a few more times to build up statistics
-		const int nLoops = 10;  //say
-		for (int iLoop = 0; iLoop < nLoops; ++iLoop)
+		const int nLoops = 1000;  //say
+		for (int iLoop = 1; iLoop < nLoops - 1; ++iLoop)
 		{
 
 			cout << "Starting iLoop = " << iLoop << endl;

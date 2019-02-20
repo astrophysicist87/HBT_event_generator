@@ -31,10 +31,18 @@ void generate_events(vector<EventRecord> & allEvents, ParameterReader * paraRdr)
 	int RNG_yDir 	= paraRdr->getVal("RNG_yDir");
 	int RNG_zDir 	= paraRdr->getVal("RNG_zDir");
 
-	//unsigned seed = chrono::system_clock::now().time_since_epoch().count();
-	//default_random_engine generator (seed);
-	default_random_engine generator;
+	unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+	default_random_engine generator (seed);
+	//default_random_engine generator;
 	normal_distribution<double> distribution(0.0,RNG_R/sqrt(2.0));
+
+	/*const double binwidth = 0.005;
+	const double particle_mass = 0.13957;
+	const double KTmax = 0.000001+0.005;
+	const double KLmax = 0.0+0.005;
+	const double Q_max = 0.1;
+	double max_pT = 1.01*(KTmax + Q_max);
+	double max_pz = 1.01*(KLmax + Q_max);*/
 
 	// this toy function uses the model of
 	// Zhang, Wiedemann, Slotta, and Heinz (1997)
@@ -54,6 +62,18 @@ void generate_events(vector<EventRecord> & allEvents, ParameterReader * paraRdr)
 			double py = RNG_a * yP;
 			double pz = RNG_a * zP;
 			double Ep = sqrt( mass*mass + px*px + py*py + pz*pz );
+
+			/*
+			// do momentum-space cuts to speed things up
+			bool does_not_contribute_to_numerator 	= ( px*px+py*py > KTmax*KTmax
+														or pz*pz > KLmax*KLmax );
+			bool does_not_contribute_to_denominator = ( abs(px) > max_pT
+														or abs(py) > max_pT
+														or abs(pz) > max_pz );
+			if ( does_not_contribute_to_numerator
+					and does_not_contribute_to_denominator )
+				continue;
+			*/
 
 			ParticleRecord particle;
 			particle.eventID 	= iEvent;

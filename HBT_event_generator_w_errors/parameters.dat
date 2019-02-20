@@ -7,7 +7,7 @@ bin_epsilon = 0.005
 # KT grid
 n_KT_pts = 2
 KTmin = 0.0
-KTmax = 0.01
+KTmax = 0.00001
 
 # Kphi grid
 n_Kphi_pts = 2
@@ -21,16 +21,20 @@ KLmax = 1.0
 
 #===========
 # relative momenta (3D)
-n_qo_pts = 22
-n_qs_pts = 22
+n_qo_pts = 2
+n_qs_pts = 2
 n_ql_pts = 22
-delta_qo = 0.01
-delta_qs = 0.01
-delta_ql = 0.01
+delta_qo = 0.03
+delta_qs = 0.03
+delta_ql = 0.03
 
 # relative momentum (1D)
-n_Q_pts = 22
-delta_Q = 0.01
+n_Q_pts = 4
+delta_Q = 0.1
+
+# for doing integrations for 1D calculation
+n_qRP_pts = 5
+n_thq_pts = 5
 
 #===========
 # misc. and ensemble parameters
@@ -41,7 +45,7 @@ bin_mode = 0
 
 #===========
 # whether to use qo-qs-ql (0: 3D) or Q (1: 1D)
-q_mode = 1
+q_mode = 0
 
 #===========
 # whether to use GEHW method (0) or Chun's method (1)
@@ -59,7 +63,7 @@ file_mode = 1
 	RNG_R = 10.0	#fm
 	RNG_a = 0.02	#GeV/fm
 	RNG_Nev = 10
-	RNG_mult = 100000
+	RNG_mult = 1000000
 	RNG_xDir = 1
 	RNG_yDir = 1
 	RNG_zDir = 1

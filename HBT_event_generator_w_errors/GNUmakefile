@@ -41,6 +41,7 @@ endif
 SRC		=	main.cpp \
 			$(SRCDIR)/Arsenal.cpp \
 			$(SRCDIR)/ParameterReader.cpp \
+			$(SRCDIR)/gauss_quadrature.cpp \
 			$(SRCDIR)/NumeratorAndDenominator.cpp \
 			$(SRCDIR)/NumeratorAndDenominator1D.cpp \
 			$(SRCDIR)/NumeratorAndDenominator_binPairs.cpp \
@@ -53,6 +54,7 @@ INC		= 	main.h \
 			$(SRCDIR)/Stopwatch.h \
 			$(SRCDIR)/Arsenal.h \
 			$(SRCDIR)/ParameterReader.h \
+			$(SRCDIR)/gauss_quadrature.h \
 			$(SRCDIR)/ensemble.h \
 			$(SRCDIR)/random_events.h \
 			$(SRCDIR)/HBT_event_generator.h

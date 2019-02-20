@@ -40,7 +40,7 @@ class HBT_event_generator
 		int n_qo_pts, n_qs_pts, n_ql_pts;
 		int n_Kx_pts, n_Ky_pts, n_Kz_pts;
 		int n_qx_pts, n_qy_pts, n_qz_pts;
-		int n_Q_pts;
+		int n_Q_pts, n_qRP_pts, n_thq_pts;
 
 		int n_KT_bins, n_Kphi_bins, n_KL_bins;
 		int n_qo_bins, n_qs_bins, n_ql_bins;

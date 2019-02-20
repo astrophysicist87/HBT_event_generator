@@ -111,7 +111,8 @@ void HBT_event_generator::initialize_all(
 	linspace(ql_pts, ql_min, ql_max);
 	linspace(Q_pts, Q_min, Q_max);
 
-	gauss_quadrature(n_qRP_pts, 1, 0.0, 0.0, -1.0, 1.0, x_pts, x_wts);
+	//gauss_quadrature(n_qRP_pts, 1, 0.0, 0.0, -1.0, 1.0, x_pts, x_wts);
+	gauss_quadrature(n_qRP_pts, 2, 0.0, 0.0, -1.0, 1.0, x_pts, x_wts);	//chebyshev distribution works better
 	gauss_quadrature(n_thq_pts, 1, 0.0, 0.0, -M_PI, M_PI, ttheta_q_pts, ttheta_q_wts);
 
 	px_bin_width 	= bin_epsilon;
@@ -865,13 +866,14 @@ void HBT_event_generator::Output_correlation_function_q_mode_1D()
 		<< left << "# K_T" << setw(prec+extrawidth)
 		<< left << "K_phi" << setw(prec+extrawidth)
 		<< left << "K_L" << setw(prec+extrawidth)
-		<< left << "Q" << setw(prec+16)
-		<< left << "re(N)" << setw(prec+16)
-		<< left << "im(N)" << setw(prec+16)
-		<< left << "D" << setw(prec+36)
-		<< left << "C" << endl;
+		<< left << "Q" << setw(prec+extrawidth)
+		<< left << "re(N)" << setw(prec+extrawidth)
+		<< left << "im(N)" << setw(prec+extrawidth)
+		<< left << "D" << setw(prec+3*extrawidth)
+		<< left << "C" << setw(prec+3*extrawidth)
+		<< left << "C(err)" << endl;
 
-	out << "# " << setfill('-') << setw(150) << " " << endl;
+	out << "# " << setfill('-') << setw(130) << " " << endl;
 
 	out.copyfmt(oldState);
 
