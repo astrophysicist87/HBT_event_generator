@@ -1,16 +1,16 @@
 #===========
 # width of binning delta (GeV)
-bin_epsilon = 0.05
+bin_epsilon = 0.04
 
 #===========
 # pair momenta
 # KT grid
-n_KT_pts = 2
+n_KT_pts = 6
 KTmin = 0.0
-KTmax = 0.2
+KTmax = 1.0
 
 # Kphi grid
-n_Kphi_pts = 2
+n_Kphi_pts = 8
 #Kphimax, Kphimin
 #determined automatically
 
@@ -19,38 +19,72 @@ n_KL_pts = 2
 KLmin = -1.0
 KLmax = 1.0
 
-
-
 #===========
 # relative momenta (3D)
 n_qo_pts = 22
 n_qs_pts = 22
 n_ql_pts = 22
-delta_qo = 0.01
-delta_qs = 0.01
-delta_ql = 0.01
+delta_qo = 0.1
+delta_qs = 0.1
+delta_ql = 0.1
 
 # relative momentum (1D)
-n_Q_pts = 22
-delta_Q = 0.1
+n_Q_pts = 42
+delta_Q = 0.05
+
+# for doing integrations for 1D calculation
+n_qRP_pts = 7
+n_thq_pts = 8
 
 #===========
 # misc. and ensemble parameters
 
+#===========
 # delta function or something else
 bin_mode = 0
 
+#===========
 # whether to use qo-qs-ql (0: 3D) or Q (1: 1D)
-q_mode = 0
+q_mode = 1
 
+#===========
 # whether to use GEHW method (0) or Chun's method (1)
 method_mode = 0
 
-# whether or not BE effects are pre-included
+#===========
+# whether or not BE effects are pre-included from Pythia
 BE_mode = 0
 
+#===========
+# whether to compute "exact" CF (0)
+# or CF averaged over K bins (1)
+bin_averaging_mode = 0
+
+#===========
+# get particles randomly or from file
+file_mode = 1
+	#=======
+	# sub-model options ( if file_mode == 0 )
+	RNG_R = 10.0	#fm
+	RNG_a = 0.02	#GeV/fm
+	RNG_Nev = 10
+	RNG_mult = 1000000
+	RNG_xDir = 1
+	RNG_yDir = 1
+	RNG_zDir = 1
+	#=======
+
+#===========
 # minimum bias by default
 centrality_minimum = 0
 centrality_maximum = 100
+
+#===========
+# functional form for fitting correlation
+# function: Gaussian (0) or exponential (1)
+fit_mode = 0
+
+
+
 
 # End of file

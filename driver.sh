@@ -6,7 +6,7 @@ HOME_DIRECTORY=~/HBT_event_generator
 # Pythia
 PYTHIA_DIRECTORY=~/pythia8235/examples
 ALT_PYTHIA_DIRECTORY=/scratch/blixen/plumberg
-PYTHIA_RESULTS_DIRECTORY=$ALT_PYTHIA_DIRECTORY/results
+PYTHIA_RESULTS_DIRECTORY=$ALT_PYTHIA_DIRECTORY/MinBias_results
 # HBT event generator
 HBT_EVENT_GEN_DIRECTORY=$HOME_DIRECTORY/HBT_event_generator_w_errors
 # Fit correlation function
@@ -37,14 +37,14 @@ runPythia=false
 projectile="p"
 target="p"
 beamEnergy="13000.0"	#GeV
-Nevents="10000"
+Nevents="10000000"
 QRefValue="0.2"			#GeV
 #PythiaExecutableToUse=""
 
 echo 'Processing Nevents =' $Nevents $projectile'+'$target 'collisions at' $beamEnergy 'GeV'
 
 nCC=0
-for centralityCutString in "0-100%"
+for centralityCutString in "0-1%" "0-10%" "10-30%" "30-50%" "50-100%"
 do
 	success=0
 	echo '  -- analyzing centrality class' $centralityCutString
@@ -82,11 +82,14 @@ do
 			fi
 
 			# time and run
-			./run_mainHIC.sh $projectile $target $beamEnergy \
-								$Nevents $PYTHIA_RESULTS_DIRECTORY
+			#./run_mainHIC.sh $projectile $target $beamEnergy \
+			#					$Nevents $PYTHIA_RESULTS_DIRECTORY
 			#./run_testBEeffects.sh $projectile $target $beamEnergy \
 			#					$Nevents $PYTHIA_RESULTS_DIRECTORY \
 			#					$QRefValue
+			./run_BEeffects.sh $projectile $target $beamEnergy \
+								$Nevents $PYTHIA_RESULTS_DIRECTORY \
+								$QRefValue $lowerLimit $upperLimit
 
 			# check and report whether run was successful
 			runSuccess=`echo $?`
@@ -109,6 +112,7 @@ do
 		readlink -f $PYTHIA_RESULTS_DIRECTORY/HBT_particle.dat > $HBT_FITCF_DIRECTORY/particle_catalogue.dat
 		# Set ensemble catalogue
 		echo $projectile $target $beamEnergy $lowerLimit $upperLimit $Nevents > $HBT_EVENT_GEN_DIRECTORY/ensemble_catalogue.dat
+		#echo $projectile $target $beamEnergy 0 100 $Nevents > $HBT_EVENT_GEN_DIRECTORY/ensemble_catalogue.dat
 		readlink -f $PYTHIA_RESULTS_DIRECTORY/`cat $recordOfOutputFilename_mult` >> $HBT_EVENT_GEN_DIRECTORY/ensemble_catalogue.dat
 
 		#exit $runSuccess
@@ -137,6 +141,7 @@ do
 				centrality_maximum=$upperLimit \
 				1> HBT_event_generator.out \
 				2> HBT_event_generator.err
+		# N.B. - centralities now determined in Pythia
 
 		# check and report whether run was successful
 		runSuccess=`echo $?`

@@ -1,16 +1,16 @@
 #===========
 # width of binning delta (GeV)
-bin_epsilon = 0.005
+bin_epsilon = 0.04
 
 #===========
 # pair momenta
 # KT grid
-n_KT_pts = 2
+n_KT_pts = 6
 KTmin = 0.0
-KTmax = 0.00001
+KTmax = 1.0
 
 # Kphi grid
-n_Kphi_pts = 2
+n_Kphi_pts = 8
 #Kphimax, Kphimin
 #determined automatically
 
@@ -21,20 +21,20 @@ KLmax = 1.0
 
 #===========
 # relative momenta (3D)
-n_qo_pts = 2
-n_qs_pts = 2
+n_qo_pts = 22
+n_qs_pts = 22
 n_ql_pts = 22
-delta_qo = 0.03
-delta_qs = 0.03
-delta_ql = 0.03
+delta_qo = 0.1
+delta_qs = 0.1
+delta_ql = 0.1
 
 # relative momentum (1D)
-n_Q_pts = 4
-delta_Q = 0.06
+n_Q_pts = 42
+delta_Q = 0.05
 
 # for doing integrations for 1D calculation
-n_qRP_pts = 5
-n_thq_pts = 5
+n_qRP_pts = 7
+n_thq_pts = 8
 
 #===========
 # misc. and ensemble parameters
@@ -52,8 +52,13 @@ q_mode = 1
 method_mode = 0
 
 #===========
-# whether or not BE effects are pre-included
+# whether or not BE effects are pre-included from Pythia
 BE_mode = 0
+
+#===========
+# whether to compute "exact" CF (0)
+# or CF averaged over K bins (1)
+bin_averaging_mode = 0
 
 #===========
 # get particles randomly or from file
@@ -73,5 +78,13 @@ file_mode = 1
 # minimum bias by default
 centrality_minimum = 0
 centrality_maximum = 100
+
+#===========
+# functional form for fitting correlation
+# function: Gaussian (0) or exponential (1)
+fit_mode = 0
+
+
+
 
 # End of file

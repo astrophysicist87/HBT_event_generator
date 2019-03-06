@@ -212,7 +212,7 @@ HBT_event_generator::~HBT_event_generator()
 
 void HBT_event_generator::Compute_correlation_function()
 {
-	if ( method_mode == 1 )
+	if ( method_mode == 1 or BE_mode == 1 )
 	{
 		switch(q_mode)
 		{
@@ -630,7 +630,7 @@ void HBT_event_generator::Compute_correlation_function_methodMode1_q_mode_1D()
 			double CF_num = numerator[idx] / numPair[idxK];
 			double CF_den = denominator[idx] / denPair[idxK];
 
-			double R2 = CF_num / CF_den;
+			double R2 = CF_num / (CF_den+1.e-100);
 
 			//==============================
 			//==== correlation function ====
@@ -743,9 +743,9 @@ void HBT_event_generator::Compute_correlation_function_methodMode1_q_mode_1D()
 				// equivalent version which is stable if CF_num = 0
 				correlation_function_error[idx] =
 					sqrt(
-							( CF_num_err * CF_num_err / ( CF_den * CF_den ) )
+							( CF_num_err * CF_num_err / ( CF_den * CF_den+1.e-100 ) )
 								+ ( CF_num * CF_num * CF_den_err * CF_den_err
-									/ ( CF_den * CF_den * CF_den * CF_den )
+									/ ( CF_den * CF_den * CF_den * CF_den+1.e-100 )
 								   )
 						);
 

@@ -18,7 +18,7 @@ using namespace std;
 
 //this is just to give this file a reason to exist for the moment...
 const double plumbergtest = 0.;
-const bool CONVERT_MM_TO_FM = false;	// needs to be true if running on Pythia output, false for Vishnu output
+const bool CONVERT_MM_TO_FM = true;	// needs to be true if running on Pythia output, false for Vishnu output
 const double MmPerFm = ( CONVERT_MM_TO_FM ) ? 1.e-12 : 1.0;	//mm-to-fm conversion
 
 vector<EventMultiplicity> ensemble_multiplicites;

@@ -30,7 +30,7 @@ class Correlation_function
 		string particle_name;
 		double particle_mass;
 
-		int bin_mode, q_mode;
+		int bin_mode, q_mode, fit_mode;
 
 		int n_Q_pts;
 		int n_KT_pts, n_Kphi_pts, n_KL_pts;

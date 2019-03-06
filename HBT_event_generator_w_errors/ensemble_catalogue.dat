@@ -1,2 +1,2 @@
-p p 13000.0 0 100 10000
-/home/blixen/plumberg/HBT_event_generator/HBT_event_generator_w_errors/checks/toyOSCAR_mult.dat
+p p 13000.0 10 30 10000000
+/scratch/blixen/plumberg/MinBias_results/pp_13000.0GeV_Nev10000000_mult.dat

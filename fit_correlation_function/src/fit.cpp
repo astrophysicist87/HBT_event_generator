@@ -21,7 +21,7 @@ using namespace std;
 
 void Correlation_function::Fit_correlation_function()
 {
-	err << "--> Getting HBT radii by Gaussian fit method" << endl;
+	out << "--> Getting HBT radii by Gaussian fit method" << endl;
 	for (int iKT = 0; iKT < n_KT_bins; ++iKT)
 	for (int iKphi = 0; iKphi < n_Kphi_bins; ++iKphi)
 	for (int iKL = 0; iKL < n_KL_bins; ++iKL)
@@ -34,7 +34,7 @@ void Correlation_function::Fit_correlation_function()
 		find_minimum_chisq_correlationfunction_full( iKT, iKphi, iKL );
 	}
 
-	err << "--> Finished getting HBT radii by Gaussian fit method" << endl;
+	out << "--> Finished getting HBT radii by Gaussian fit method" << endl;
 
 	return;
 }
@@ -77,7 +77,7 @@ void Correlation_function::find_minimum_chisq_correlationfunction_full( int iKT,
 		double correl_local = correlation_function[idx]-1.0;
 		double correl_err_local = correlation_function_error[idx];
 
-		if(correl_local < 1.0e-15) continue;
+		if (correl_local < 1.0e-15) continue;
 
 		bool ignore_central_point = true;
 		if ( 	ignore_central_point
@@ -163,7 +163,7 @@ void Correlation_function::find_minimum_chisq_correlationfunction_full( int iKT,
 		double correl_local = correlation_function[idx]-1.0;
 		double correl_err_local = correlation_function_error[idx];
 
-		if(correl_local < 1.0e-15) continue;
+		if (correl_local < 1.0e-15) continue;
 
 		bool ignore_central_point = true;
 		if ( 	ignore_central_point
@@ -186,11 +186,11 @@ void Correlation_function::find_minimum_chisq_correlationfunction_full( int iKT,
     }
 
     double chi_sq_per_dof = chi_sq/(data_length - dim);
-    cout << "chi_sq = " << chi_sq << endl;
-    cout << "Number d.o.f. = " << data_length - dim << endl;
-    cout << "chi_sq/d.o.f. = " << chi_sq_per_dof << endl;
-	cout << "Goodness-of-fit parameter Q = "
-			<< gsl_sf_gamma_inc_Q (0.5*(data_length - dim), 0.5*chi_sq) << endl;
+    out << "chi_sq = " << chi_sq << endl;
+    out << "Number d.o.f. = " << data_length - dim << endl;
+    out << "chi_sq/d.o.f. = " << chi_sq_per_dof << endl;
+	out << "Goodness-of-fit parameter Q = "
+		<< gsl_sf_gamma_inc_Q (0.5*(data_length - dim), 0.5*chi_sq) << endl;
 
 	//============================================
 	// compute curvature and covariance matrices

@@ -19,7 +19,7 @@ void Correlation_function::initialize_all(
 	ParameterReader * paraRdr_in,
 	string filepath_in )
 {
-	err << "Starting initializations:" << endl;
+	out << "Starting initializations:" << endl;
 	// Load parameters
 	paraRdr = paraRdr_in;
 
@@ -29,6 +29,7 @@ void Correlation_function::initialize_all(
 	// - some parameters
 	bin_mode 		= paraRdr->getVal("bin_mode");
 	q_mode 			= paraRdr->getVal("q_mode");
+	fit_mode		= paraRdr->getVal("fit_mode");
 	// - pair momenta points at which to interpolate HBT results
 	n_KT_pts 		= paraRdr->getVal("n_KT_pts");
 	KT_min 			= paraRdr->getVal("KTmin");
@@ -44,21 +45,25 @@ void Correlation_function::initialize_all(
 	n_qo_pts 		= paraRdr->getVal("n_qo_pts");
 	n_qs_pts 		= paraRdr->getVal("n_qs_pts");
 	n_ql_pts 		= paraRdr->getVal("n_ql_pts");
+	n_Q_pts 		= paraRdr->getVal("n_Q_pts");
 	// - step size in q directions
 	delta_qo 		= paraRdr->getVal("delta_qo");
 	delta_qs 		= paraRdr->getVal("delta_qs");
 	delta_ql 		= paraRdr->getVal("delta_ql");
+	delta_Q 		= paraRdr->getVal("delta_Q");
 
-	err << " --> all parameters read in." << endl;
+	out << " --> all parameters read in." << endl;
 
 	// - minimum value in each q direction
 	init_qo 		= -0.5*double(n_qo_pts-1)*delta_qo;
 	init_qs 		= -0.5*double(n_qs_pts-1)*delta_qs;
 	init_ql 		= -0.5*double(n_ql_pts-1)*delta_ql;
+	init_Q 		= -0.5*double(n_Q_pts-1)*delta_Q;
 
 	n_qo_bins 		= n_qo_pts - 1;
 	n_qs_bins 		= n_qs_pts - 1;
 	n_ql_bins 		= n_ql_pts - 1;
+	n_Q_bins 		= n_Q_pts - 1;
 
 	n_KT_bins 		= n_KT_pts - 1;
 	n_Kphi_bins 	= n_Kphi_pts - 1;
@@ -71,6 +76,7 @@ void Correlation_function::initialize_all(
 	qo_pts 			= vector<double> (n_qo_pts);
 	qs_pts 			= vector<double> (n_qs_pts);
 	ql_pts 			= vector<double> (n_ql_pts);
+	Q_pts 			= vector<double> (n_Q_pts);
 
 	linspace(KT_pts, KT_min, KT_max);
 	linspace(Kphi_pts, Kphi_min, Kphi_max);
@@ -79,6 +85,7 @@ void Correlation_function::initialize_all(
 	linspace(qo_pts, init_qo, -init_qo);
 	linspace(qs_pts, init_qs, -init_qs);
 	linspace(ql_pts, init_ql, -init_ql);
+	linspace(Q_pts, init_Q, -init_Q);
 
 	KT_bin_width 	= KT_pts[1]-KT_pts[0];
 	Kphi_bin_width 	= Kphi_pts[1]-Kphi_pts[0];
@@ -112,13 +119,21 @@ void Correlation_function::initialize_all(
 	correlation_function 		= vector<double> (K_space_size*q_space_size);
 	correlation_function_error 	= vector<double> (K_space_size*q_space_size);
 
-	err << " --> all vectors initialized." << endl;
+	out << " --> all vectors initialized." << endl;
 
 	// Read in correlation function
 	Load_correlation_function( filepath_in );
 
 	// Read in correlation function
-	Fit_correlation_function();
+	if ( q_mode == 0 )
+		Fit_correlation_function();
+	else if ( q_mode == 1 )
+		Fit_correlation_function_Q();
+	else
+	{
+		err << "fit_correlation_function(): q_mode = " << q_mode << " not supported!" << endl;
+		exit(8);
+	}
 
 	return;
 }
@@ -133,7 +148,7 @@ Correlation_function::~Correlation_function()
 
 void Correlation_function::Load_correlation_function( string filepath )
 {
-	err << "  --> Loading the correlation function from " << filepath << endl;
+	out << "  --> Loading the correlation function from " << filepath << endl;
 	// For timebeing, just skip header lines
 	string line;
 	ifstream infile( filepath.c_str() );
@@ -169,7 +184,7 @@ void Correlation_function::Load_correlation_function( string filepath )
 			++idx;
 		}
 	}
-	else if ( q_mode == 0 )
+	else if ( q_mode == 1 )
 	{
 		for (int iKT = 0; iKT < n_KT_bins; iKT++)
 		for (int iKphi = 0; iKphi < n_Kphi_bins; iKphi++)
@@ -191,7 +206,7 @@ void Correlation_function::Load_correlation_function( string filepath )
 	}
 
 
-	err << "  --> Finished loading the correlation function from " << filepath << endl;
+	out << "  --> Finished loading the correlation function from " << filepath << endl;
 
 	return;
 }
@@ -246,7 +261,7 @@ void Correlation_function::Output_HBTradii( string outHBT_filename )
 	else if ( q_mode == 1 )
 	{
 		fprintf ( pFile, "# K_T      K_phi      K_L      lambda      ");
-		fprintf ( pFile, "R2      lambda(err)      R2o(err)\n" );
+		fprintf ( pFile, "R2      lambda(err)      R2(err)\n" );
 
 		fprintf ( pFile, "#----------------------------------------" );
 		fprintf ( pFile, "----------------------------------------\n" );
