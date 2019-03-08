@@ -48,17 +48,17 @@ bin_mode = 0
 q_mode = 1
 
 #===========
-# whether to use GEHW method (0) or Chun's method (1)
-method_mode = 0
+# whether to use GEHW method (0), Chun's method (1), or bin-averaging method (2)
+method_mode = 2
 
 #===========
 # whether or not BE effects are pre-included from Pythia
 BE_mode = 0
 
-#===========
-# whether to compute "exact" CF (0)
-# or CF averaged over K bins (1)
-bin_averaging_mode = 0
+#######===========
+####### whether to compute "exact" CF (0)
+####### or CF averaged over K bins (1)
+#######bin_averaging_mode = 0
 
 #===========
 # get particles randomly or from file

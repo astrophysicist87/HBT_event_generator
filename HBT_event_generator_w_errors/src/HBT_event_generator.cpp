@@ -155,26 +155,7 @@ void HBT_event_generator::initialize_all(
 
 	// Compute numerator and denominator of correlation function,
 	// along with quantities needed to estimate error
-	if ( method_mode == 1 )	//Chun's method
-	{
-		if ( q_mode == 0 )	//3D correlator
-		{
-			Compute_numerator_and_denominator_with_errors_binPairsMode_qmode3D(
-							numerator, numerator2, numPair, numPair2,
-							denominator, denominator2, denPair, denPair2,
-							numerator_numPair, denominator_denPair
-							);
-		}
-		else if ( q_mode == 1 ) //1D correlator
-		{
-			Compute_numerator_and_denominator_with_errors_binPairsMode_qmode1D(
-							numerator, numerator2, numPair, numPair2,
-							denominator, denominator2, denPair, denPair2,
-							numerator_numPair, denominator_denPair
-							);
-		}
-	}
-	else
+	if ( method_mode == 0 )	//GEHW method
 	{
 		if ( BE_mode == 0 )
 		{
@@ -197,6 +178,50 @@ void HBT_event_generator::initialize_all(
 				<< BE_mode << " not supported!" << endl;
 			exit(8);
 		}
+	}
+	else if ( method_mode == 1 )	//Chun's method
+	{
+		if ( q_mode == 0 )	//3D correlator
+		{
+			Compute_numerator_and_denominator_with_errors_binPairsMode_qmode3D(
+							numerator, numerator2, numPair, numPair2,
+							denominator, denominator2, denPair, denPair2,
+							numerator_numPair, denominator_denPair
+							);
+		}
+		else if ( q_mode == 1 ) //1D correlator
+		{
+			Compute_numerator_and_denominator_with_errors_binPairsMode_qmode1D(
+							numerator, numerator2, numPair, numPair2,
+							denominator, denominator2, denPair, denPair2,
+							numerator_numPair, denominator_denPair
+							);
+		}
+	}
+	else if ( method_mode == 2 )	// bin-averaging method
+	{
+		if ( q_mode == 0 )	//3D correlator
+		{
+			Compute_numerator_and_denominator_with_errors_q_mode_3D_wBA(
+							numerator, numerator2, numPair, numPair2,
+							denominator, denominator2, denPair, denPair2,
+							numerator_numPair, denominator_denPair
+							);
+		}
+		else if ( q_mode == 1 ) //1D correlator
+		{
+			Compute_numerator_and_denominator_with_errors_q_mode_1D_wBA(
+							numerator, numerator2, numPair, numPair2,
+							denominator, denominator2, denPair, denPair2,
+							numerator_numPair, denominator_denPair
+							);
+		}
+	}
+	else
+	{
+		err << "HBT_event_generator(): method_mode = "
+			<< method_mode << " not supported!" << endl;
+		exit(8);
 	}
 
 	return;
@@ -913,26 +938,7 @@ void HBT_event_generator::Update_records( const vector<EventRecord> & allEvents_
 
 	// Compute numerator and denominator of correlation function,
 	// along with quantities needed to estimate error
-	if ( method_mode == 1 )	//Chun's method
-	{
-		if ( q_mode == 0 )
-		{
-			Compute_numerator_and_denominator_with_errors_binPairsMode_qmode3D(
-							numerator, numerator2, numPair, numPair2,
-							denominator, denominator2, denPair, denPair2,
-							numerator_numPair, denominator_denPair
-							);
-		}
-		else if ( q_mode == 1 )
-		{
-			Compute_numerator_and_denominator_with_errors_binPairsMode_qmode1D(
-							numerator, numerator2, numPair, numPair2,
-							denominator, denominator2, denPair, denPair2,
-							numerator_numPair, denominator_denPair
-							);
-		}
-	}
-	else
+	if ( method_mode == 0 )	//GEHW method
 	{
 		if ( BE_mode == 0 )
 		{
@@ -955,6 +961,50 @@ void HBT_event_generator::Update_records( const vector<EventRecord> & allEvents_
 				<< BE_mode << " not supported!" << endl;
 			exit(8);
 		}
+	}
+	else if ( method_mode == 1 )	//Chun's method
+	{
+		if ( q_mode == 0 )
+		{
+			Compute_numerator_and_denominator_with_errors_binPairsMode_qmode3D(
+							numerator, numerator2, numPair, numPair2,
+							denominator, denominator2, denPair, denPair2,
+							numerator_numPair, denominator_denPair
+							);
+		}
+		else if ( q_mode == 1 )
+		{
+			Compute_numerator_and_denominator_with_errors_binPairsMode_qmode1D(
+							numerator, numerator2, numPair, numPair2,
+							denominator, denominator2, denPair, denPair2,
+							numerator_numPair, denominator_denPair
+							);
+		}
+	}
+	else if ( method_mode == 2 )	// bin-averaging method
+	{
+		if ( q_mode == 0 )	//3D correlator
+		{
+			Compute_numerator_and_denominator_with_errors_q_mode_3D_wBA(
+							numerator, numerator2, numPair, numPair2,
+							denominator, denominator2, denPair, denPair2,
+							numerator_numPair, denominator_denPair
+							);
+		}
+		else if ( q_mode == 1 ) //1D correlator
+		{
+			Compute_numerator_and_denominator_with_errors_q_mode_1D_wBA(
+							numerator, numerator2, numPair, numPair2,
+							denominator, denominator2, denPair, denPair2,
+							numerator_numPair, denominator_denPair
+							);
+		}
+	}
+	else
+	{
+		err << "HBT_event_generator(): method_mode = "
+			<< method_mode << " not supported!" << endl;
+		exit(8);
 	}
 
 	return;

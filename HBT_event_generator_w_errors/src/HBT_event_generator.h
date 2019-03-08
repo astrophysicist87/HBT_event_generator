@@ -221,6 +221,21 @@ class HBT_event_generator
 							vector<double> & in_denPair, vector<double> & in_denPair2,
 							vector<double> & in_numerator_numPair, vector<double> & in_denominator_denPair
 							);
+		// with bin-averaging (done correctly)
+		void Compute_numerator_and_denominator_with_errors_q_mode_3D_wBA(
+							vector<double> & in_numerator, vector<double> & in_numerator2,
+							vector<double> & in_numPair, vector<double> & in_numPair2,
+							vector<double> & in_denominator, vector<double> & in_denominator2,
+							vector<double> & in_denPair, vector<double> & in_denPair2,
+							vector<double> & in_numerator_numPair, vector<double> & in_denominator_denPair
+							);
+		void Compute_numerator_and_denominator_with_errors_q_mode_1D_wBA(
+							vector<double> & in_numerator, vector<double> & in_numerator2,
+							vector<double> & in_numPair, vector<double> & in_numPair2,
+							vector<double> & in_denominator, vector<double> & in_denominator2,
+							vector<double> & in_denPair, vector<double> & in_denPair2,
+							vector<double> & in_numerator_numPair, vector<double> & in_denominator_denPair
+							);
 
 
 		// Correlation function itself

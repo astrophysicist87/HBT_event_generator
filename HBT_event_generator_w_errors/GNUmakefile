@@ -45,6 +45,8 @@ SRC		=	main.cpp \
 			$(SRCDIR)/NumeratorAndDenominator.cpp \
 			$(SRCDIR)/NumeratorAndDenominator1D.cpp \
 			$(SRCDIR)/NumeratorAndDenominator_binPairs.cpp \
+			$(SRCDIR)/NumeratorAndDenominator_wBA.cpp \
+			$(SRCDIR)/NumeratorAndDenominator1D_wBA.cpp \
 			$(SRCDIR)/HBT_event_generator.cpp
 			#$(SRCDIR)/SingleParticleSpectra.cpp
 
