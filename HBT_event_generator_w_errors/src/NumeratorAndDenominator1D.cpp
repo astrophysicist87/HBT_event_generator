@@ -45,6 +45,10 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 	for (int iEvent = 0; iEvent < allEvents.size(); ++iEvent)
 	{
 		EventRecord event = allEvents[iEvent];
+		#pragma omp critical
+		{
+			cout << "\t -- working on event = " << event.eventID << endl;
+		}
 
 		//let these be fully six-dimensional (factor of 2 for +/- roots in qs)
 		vector<complex<double> > sum1(2*q_space_size*K_space_size);

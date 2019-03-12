@@ -90,9 +90,18 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 	double max_pz = 1.01*(KL_max + max_ql);
 	//=============================================
 
+	if ( ensemble_multiplicites.size() < 1 )
+	{
+		cout << "Finished reading in all necessary files!" << endl;
+		return;
+	}
+
 	// this vector contains events to include (for specific centrality class)
 	int nextEventIndex = 0;
 	int nextEventID = ensemble_multiplicites[nextEventIndex].eventID;
+	//cout << "nextEventID = " << nextEventID << endl;
+	//int countthis = 0;
+	int n_events_read_from_this_file = 0;
 
 	while (getline(infile, line))
 	{
@@ -117,7 +126,12 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 		//cout << "nextEventID = " << nextEventID << endl;
 
 		if ( eventID < nextEventID )
+		{
+			//if (countthis == 0) cout << eventID << " < " << nextEventID << endl;
+			//countthis++;
 			continue;
+		}
+		//countthis = 0;
 
 		// apply momentum-space cuts, if any
 		bool apply_momentum_space_cuts = false;
@@ -181,7 +195,11 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 			else
 			{
 				// push event to eventsInFile
+				event.eventID = previous_eventID;
+				cout << "Pushing previous_eventID = " << previous_eventID << " while reading in " << filename << endl;
+				cout << event.particles.size() << endl;
 				eventsInFile.push_back(event);
+				++n_events_read_from_this_file;
 
 				// reset event
 				event = EventRecord();
@@ -218,7 +236,14 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 	}
 
 	// push final event to eventsInFile
-	eventsInFile.push_back(event);
+	if ( current_eventID > -1 and event.particles.size() > 0 )
+	{
+		event.eventID = current_eventID;
+		cout << "Pushing current_eventID = " << current_eventID << " after reading in " << filename << endl;
+		cout << event.particles.size() << endl;
+		eventsInFile.push_back(event);
+		++n_events_read_from_this_file;
+	}
 
 	// reading in events terminates to here
 	// if all events from specified centrality
@@ -226,6 +251,9 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 	finish:
 
 	infile.close();
+	if ( n_events_read_from_this_file > 0 )
+		ensemble_multiplicites.erase( ensemble_multiplicites.begin()
+									+ n_events_read_from_this_file - 1 );
 
 	return;
 }

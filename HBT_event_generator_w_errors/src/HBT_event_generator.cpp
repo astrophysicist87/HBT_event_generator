@@ -153,6 +153,13 @@ void HBT_event_generator::initialize_all(
 	numerator_numPair 		= vector<double> (K_space_size*q_space_size);
 	denominator_denPair 	= vector<double> (K_space_size*q_space_size);
 
+	// Initializations finished
+	// Check number of events and proceed if non-zero
+	if ( allEvents.size() == 0 )
+		return;
+	else
+		cout << "allEvents.size() = " << allEvents.size() << ": doing this file!" << endl;
+
 	// Compute numerator and denominator of correlation function,
 	// along with quantities needed to estimate error
 	if ( method_mode == 0 )	//GEHW method
@@ -237,7 +244,7 @@ HBT_event_generator::~HBT_event_generator()
 
 void HBT_event_generator::Compute_correlation_function()
 {
-	if ( method_mode == 1 or BE_mode == 1 )
+	if ( method_mode == 1 or method_mode == 2 or BE_mode == 1 )
 	{
 		switch(q_mode)
 		{
@@ -543,17 +550,17 @@ void HBT_event_generator::Compute_correlation_function_methodMode1_q_mode_3D()
 		for (int iql = 0; iql < n_ql_bins; iql++)
 		{
 
-			double CF_num = numerator[idx] / numPair[idxK];
-			double CF_den = denominator[idx] / denPair[idxK];
+			double CF_num = numerator[idx] / (numPair[idxK]+1.e-100);
+			double CF_den = denominator[idx] / (denPair[idxK]+1.e-100);
 
-			double R2 = CF_num / CF_den;
+			double R2 = CF_num / (CF_den+1.e-100);
 
 			//==============================
 			//==== correlation function ====
 			//==============================
 			correlation_function[idx]
 						= ( numPair[idxK] > 0 and denPair[idxK] > 0 )
-							? 1.0 + R2
+							? 1.0 + R2 - static_cast<double>(BE_mode)
 							: 1.0;
 
 			//=========================
@@ -611,9 +618,20 @@ void HBT_event_generator::Compute_correlation_function_methodMode1_q_mode_3D()
 
 				}
 
-				correlation_function_error[idx] =
+				/*correlation_function_error[idx] =
 					abs(R2) * sqrt( ( CF_num_err * CF_num_err / ( CF_num * CF_num ) )
 									+ ( CF_den_err * CF_den_err / ( CF_den * CF_den ) ) );
+				*/
+
+				// equivalent version which is stable if CF_num = 0
+				correlation_function_error[idx] =
+					sqrt(
+							( CF_num_err * CF_num_err / ( CF_den * CF_den+1.e-100 ) )
+								+ ( CF_num * CF_num * CF_den_err * CF_den_err
+									/ ( CF_den * CF_den * CF_den * CF_den+1.e-100 )
+								   )
+						);
+
 			}
 			else
 			{
@@ -662,7 +680,7 @@ void HBT_event_generator::Compute_correlation_function_methodMode1_q_mode_1D()
 			//==============================
 			correlation_function[idx]
 						= ( numPair[idxK] > 0 and denPair[idxK] > 0 )
-							? 1.0 + R2
+							? 1.0 + R2 - static_cast<double>(BE_mode)
 							: 1.0;
 
 			//=========================
@@ -935,6 +953,12 @@ void HBT_event_generator::Update_records( const vector<EventRecord> & allEvents_
 	// (erases old event information)
 	allEvents		= allEvents_in;
 	total_N_events	+= allEvents.size();
+
+	// Check number of events and proceed if non-zero
+	if ( allEvents.size() == 0 )
+		return;
+	else
+		cout << "allEvents.size() = " << allEvents.size() << ": doing this file!" << endl;
 
 	// Compute numerator and denominator of correlation function,
 	// along with quantities needed to estimate error

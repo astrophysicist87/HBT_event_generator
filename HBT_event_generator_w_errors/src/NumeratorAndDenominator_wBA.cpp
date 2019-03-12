@@ -137,8 +137,8 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 		//=====================================
 
 		// Randomly sample events to mix with
-		//const unsigned int n_mixing_events = allEvents.size()-1;
-		const unsigned int n_mixing_events = 100;
+		const unsigned int n_mixing_events = allEvents.size()-1;
+		//const unsigned int n_mixing_events = 100;
 
 		vector<unsigned int> indices(allEvents.size());
 		iota(indices.begin(), indices.end(), 0);
