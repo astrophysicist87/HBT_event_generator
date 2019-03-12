@@ -99,8 +99,8 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 	// this vector contains events to include (for specific centrality class)
 	int nextEventIndex = 0;
 	int nextEventID = ensemble_multiplicites[nextEventIndex].eventID;
-	//cout << "nextEventID = " << nextEventID << endl;
-	//int countthis = 0;
+	cout << "nextEventID = " << nextEventID << endl;
+	int countthis = 0;
 	int n_events_read_from_this_file = 0;
 
 	while (getline(infile, line))
@@ -128,10 +128,10 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 		if ( eventID < nextEventID )
 		{
 			//if (countthis == 0) cout << eventID << " < " << nextEventID << endl;
-			//countthis++;
+			countthis++;
 			continue;
 		}
-		//countthis = 0;
+		countthis = 0;
 
 		// apply momentum-space cuts, if any
 		bool apply_momentum_space_cuts = false;
@@ -196,8 +196,9 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 			{
 				// push event to eventsInFile
 				event.eventID = previous_eventID;
+				//cout << "current_eventID = " << current_eventID << endl;
 				cout << "Pushing previous_eventID = " << previous_eventID << " while reading in " << filename << endl;
-				cout << event.particles.size() << endl;
+				cout << "event.particles.size() = " << event.particles.size() << endl;
 				eventsInFile.push_back(event);
 				++n_events_read_from_this_file;
 
@@ -240,7 +241,7 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 	{
 		event.eventID = current_eventID;
 		cout << "Pushing current_eventID = " << current_eventID << " after reading in " << filename << endl;
-		cout << event.particles.size() << endl;
+		cout << "event.particles.size() = " << event.particles.size() << endl;
 		eventsInFile.push_back(event);
 		++n_events_read_from_this_file;
 	}
@@ -252,8 +253,38 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 
 	infile.close();
 	if ( n_events_read_from_this_file > 0 )
-		ensemble_multiplicites.erase( ensemble_multiplicites.begin()
-									+ n_events_read_from_this_file - 1 );
+	{
+		int n_current_events = ensemble_multiplicites.size();
+
+		/*cout << "Deleting " << n_events_read_from_this_file
+				<< " computed events from list of "
+				<< n_current_events << " events..."
+				<< endl;
+
+		cout << "Before: "
+				<< ensemble_multiplicites[0].eventID << " "
+				<< ensemble_multiplicites[1].eventID << " "
+				<< ensemble_multiplicites[2].eventID << "..."
+				<< ensemble_multiplicites[n_current_events-3].eventID << " "
+				<< ensemble_multiplicites[n_current_events-2].eventID << " "
+				<< ensemble_multiplicites[n_current_events-1].eventID << endl;*/
+
+		ensemble_multiplicites.erase( ensemble_multiplicites.begin(),
+									ensemble_multiplicites.begin()
+									+ n_events_read_from_this_file );
+
+		/*n_current_events = ensemble_multiplicites.size();
+
+		cout << "After: "
+				<< ensemble_multiplicites[0].eventID << " "
+				<< ensemble_multiplicites[1].eventID << " "
+				<< ensemble_multiplicites[2].eventID << "..."
+				<< ensemble_multiplicites[n_current_events-3].eventID << " "
+				<< ensemble_multiplicites[n_current_events-2].eventID << " "
+				<< ensemble_multiplicites[n_current_events-1].eventID << endl;
+
+		cout << "n_current_events = " << n_current_events << endl;*/
+	}
 
 	return;
 }
