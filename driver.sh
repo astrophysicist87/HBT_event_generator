@@ -44,7 +44,7 @@ QRefValue="0.2"			#GeV
 echo 'Processing Nevents =' $Nevents $projectile'+'$target 'collisions at' $beamEnergy 'GeV'
 
 nCC=0
-for centralityCutString in "0-10%" "10-30%" "30-50%" "50-100%"
+for centralityCutString in "0-10%" "10-40%" "40-100%"
 do
 	success=0
 	echo '  -- analyzing centrality class' $centralityCutString

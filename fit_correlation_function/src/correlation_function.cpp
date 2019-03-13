@@ -195,6 +195,7 @@ void Correlation_function::Load_correlation_function( string filepath )
 					>> dummy >> dummy >> dummy
 					>> correlation_function[idx]
 					>> correlation_function_error[idx];
+			//cout << "CHECK: " << idx << "   " << correlation_function[idx] << "   " << correlation_function_error[idx] << endl;
 
 			++idx;
 		}
@@ -276,8 +277,8 @@ void Correlation_function::Output_HBTradii( string outHBT_filename )
 							0.5*(Kphi_pts[iKphi]+Kphi_pts[iKphi+1]),
 							0.5*(KL_pts[iKL]+KL_pts[iKL+1]) );
 				fprintf (  pFile,  "%f      %f      %f      %f\n",
-							lambda_Correl[idx], R2_out[idx],
-							lambda_Correl_err[idx], R2_out_err[idx] );
+							lambda_Correl[idx], R2[idx],
+							lambda_Correl_err[idx], R2_err[idx] );
 
 			++idx;
 		}
