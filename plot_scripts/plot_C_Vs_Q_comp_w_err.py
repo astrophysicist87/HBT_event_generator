@@ -1,0 +1,53 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import argparse
+import sys
+
+# list of files
+files = sys.argv[1:]
+
+# plots styles, etc.
+colors = ['blue', 'red', 'green', 'purple', 'orange', 'yellow']
+
+centralities = ['0-10%', '10-30%', '30-50%', '50-100%']
+
+def make_plot():
+	plotfontsize = 16
+	f, ax = plt.subplots(1)
+
+	for iFile in xrange(len(files)):
+		thisFile = files[iFile]
+		thisColor = colors[iFile]
+		thisCentrality = centralities[iFile]
+		data = np.loadtxt(thisFile)
+		#data = data[( abs(data[:,1])<1.e-6 ) & ( data[:,0]==0.1 ) & ( data[:,3]>1.e-6 )]
+		
+		# note: correct for this in future versions of HBT code
+		ax.plot(data[:,3], 0.0*data[:,7]+1, color='black', linestyle='-')
+		ax.plot(data[:,3], data[:,7], linestyle='-', color=thisColor, label=thisCentrality)
+		
+		# include error bands
+		plt.fill_between(data[:,3],\
+							data[:,7]-data[:,8],\
+							data[:,7]+data[:,8],\
+							alpha=0.5, edgecolor=thisColor,\
+							facecolor=thisColor)
+    
+	lims = [0.0, 0.4, 0.85, 1.3]
+	plt.axis(lims)
+	ax.set_xlabel(r'$Q$ (GeV)', fontsize=plotfontsize)
+	ax.set_ylabel(r'$C(Q)$', fontsize=plotfontsize)
+	ax.legend(loc='best',fontsize=plotfontsize-4)
+    
+	plt.show()
+	outfilename = './out.pdf'
+	#plt.savefig(outfilename)
+	print 'Saving to', outfilename
+    
+	#plt.close()
+    
+if __name__ == "__main__":
+    make_plot()
+    print 'Finished all.'
+
+#End of file

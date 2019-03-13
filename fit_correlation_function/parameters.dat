@@ -4,13 +4,31 @@ bin_epsilon = 0.04
 
 #===========
 # pair momenta
+#=======
 # KT grid
-n_KT_pts = 6
-KTmin = 0.0
-KTmax = 1.0
+# how to set KT points
+KT_grid_mode = 0
+	#=======
+	# 0 - linear spacing
+	# 1 - Gaussian quadrature nodes
+	#     (for integrating correlation function)
 
+# KT points
+n_KT_pts = 2
+KTmin = 0.0
+KTmax = 0.2
+
+#=======
 # Kphi grid
-n_Kphi_pts = 8
+# how to set Kphi points
+Kphi_grid_mode = 0
+	#=======
+	# 0 - linear spacing
+	# 1 - Gaussian quadrature nodes
+	#     (for integrating correlation function)
+
+# Kphi points
+n_Kphi_pts = 2
 #Kphimax, Kphimin
 #determined automatically
 

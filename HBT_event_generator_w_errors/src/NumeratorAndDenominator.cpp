@@ -90,7 +90,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 				{
 					double num_bin_factor =
 							px_bin_width*py_bin_width*pz_bin_width;
-					num_bin_factor = 1.0;
+					//num_bin_factor = 1.0;
 
 					for (int iqo = 0; iqo < n_qo_bins; iqo++)
 					for (int iqs = 0; iqs < n_qs_bins; iqs++)
@@ -198,7 +198,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 
 						double den_bin_factor =
 							px_bin_width*py_bin_width*pz_bin_width;
-						den_bin_factor = 1.0;
+						//den_bin_factor = 1.0;
 
 						denominator_cell_was_filled[index6D] = true;
 
@@ -227,7 +227,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 
 						double den_bin_factor =
 							px_bin_width*py_bin_width*pz_bin_width;
-						den_bin_factor = 1.0;
+						//den_bin_factor = 1.0;
 
 						denominator_cell_was_filled[index6D] = true;
 
@@ -261,7 +261,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 						double den_bin_factor =
 							px_bin_width*py_bin_width*pz_bin_width
 							*px_bin_width*py_bin_width*pz_bin_width;
-						den_bin_factor = 1.0;
+						//den_bin_factor = 1.0;
 
 						denominator_cell_was_filled[index6D] = true;
 
