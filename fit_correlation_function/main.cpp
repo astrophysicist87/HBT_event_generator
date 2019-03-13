@@ -58,7 +58,10 @@ int main(int argc, char *argv[])
 	string base_filename
 		= basename( input_filename );
 	ostringstream out_filename_stream, err_filename_stream;
-	out_filename_stream << path << "fit_" << base_filename;
+	out_filename_stream << path << "fit_"
+						<< change_file_extension(
+								base_filename,
+								"dat", "out" );
 	err_filename_stream << path << "fit_"
 						<< change_file_extension(
 								base_filename,
