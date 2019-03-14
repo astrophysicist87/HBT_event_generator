@@ -1,6 +1,6 @@
 #===========
 # width of binning delta (GeV)
-bin_epsilon = 0.1
+bin_epsilon = 0.08
 
 #===========
 # pair momenta
@@ -14,9 +14,9 @@ KT_grid_mode = 0
 	#     (for integrating correlation function)
 
 # KT points
-n_KT_pts = 2
+n_KT_pts = 6
 KTmin = 0.0
-KTmax = 0.2
+KTmax = 1.0
 
 #=======
 # Kphi grid

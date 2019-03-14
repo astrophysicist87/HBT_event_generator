@@ -1,6 +1,6 @@
 #===========
 # width of binning delta (GeV)
-bin_epsilon = 0.8
+bin_epsilon = 0.08
 
 #===========
 # pair momenta
@@ -39,20 +39,20 @@ KLmax = 1.0
 
 #===========
 # relative momenta (3D)
-n_qo_pts = 22
-n_qs_pts = 22
-n_ql_pts = 22
-delta_qo = 0.1
-delta_qs = 0.1
-delta_ql = 0.1
+n_qo_pts = 32
+n_qs_pts = 32
+n_ql_pts = 32
+delta_qo = 0.02
+delta_qs = 0.02
+delta_ql = 0.02
 
 # relative momentum (1D)
-n_Q_pts = 42
-delta_Q = 0.05
+n_Q_pts = 62
+delta_Q = 0.01
 
 # for doing integrations for 1D calculation
-n_qRP_pts = 7
-n_thq_pts = 8
+n_qRP_pts = 11
+n_thq_pts = 12
 
 #===========
 # misc. and ensemble parameters

@@ -1,6 +1,6 @@
 #===========
 # width of binning delta (GeV)
-bin_epsilon = 0.8
+bin_epsilon = 0.08
 
 #===========
 # pair momenta

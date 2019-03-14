@@ -27,13 +27,13 @@ def make_plot():
 		
 		# note: correct for this in future versions of HBT code
 		ax.plot(data[:,3], 0.0*data[:,7]+1, color='black', linestyle='-')
-		ax.plot(data[:,3], data[:,7], linestyle='-', color=thisColor, label=thisCentrality)
+		ax.plot(data[:,3], data[:,7], linestyle='-', linewidth=2, color=thisColor, label=thisCentrality)
 		
 		# include error bands
 		plt.fill_between(data[:,3],\
 							data[:,7]-data[:,8],\
 							data[:,7]+data[:,8],\
-							alpha=0.5, edgecolor=thisColor,\
+							alpha=0.25, edgecolor=thisColor,\
 							facecolor=thisColor)
     
 	lims = [0.05, 0.4, 0.99, 1.2]
@@ -46,7 +46,7 @@ def make_plot():
 	plt.text(0.175, 1.075, miscAxesText, fontsize=plotfontsize+3)
     
 	#plt.show()
-	outfilename = './pp_at_13TeV_centrality_comparison.pdf'
+	outfilename = './pp_at_13TeV_KT100MeV_centrality_comparison.pdf'
 	plt.savefig(outfilename)
 	print 'Saving to', outfilename
     
