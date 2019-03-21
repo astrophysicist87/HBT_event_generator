@@ -70,12 +70,9 @@ class HBT_event_generator
 		vector<double> Kx_pts, Ky_pts, Kz_pts;
 		vector<double> qx_pts, qy_pts, qz_pts;
 		vector<double> Q_pts, x_pts, x_wts, ttheta_q_pts, ttheta_q_wts;
-		
-		//miscellaneous
-		string path;
-		ostream & out;
-		ostream & err;
 
+		// results
+		double n_pair_numerator, n_pair_denominator;
 		vector<double> denominator, correlation_function, correlation_function_error;
 		vector<double> numerator, numerator2, denominator2, numerator_denominator;
 		vector<double> numPair, numPair2, denPair, denPair2;
@@ -83,6 +80,11 @@ class HBT_event_generator
 		//vector<double> qo_mean_diff, qs_mean_diff, ql_mean_diff, diff_numPair_count;
 		vector<bool> denominator_cell_was_filled;
 		vector<int> numerator_bin_count, denominator_bin_count;
+		
+		// miscellaneous
+		string path;
+		ostream & out;
+		ostream & err;
 
 
 	public:
@@ -223,11 +225,9 @@ class HBT_event_generator
 							);
 		// with bin-averaging (done correctly)
 		void Compute_numerator_and_denominator_with_errors_q_mode_3D_wBA(
-							vector<double> & in_numerator, vector<double> & in_numerator2,
-							vector<double> & in_numPair, vector<double> & in_numPair2,
-							vector<double> & in_denominator, vector<double> & in_denominator2,
-							vector<double> & in_denPair, vector<double> & in_denPair2,
-							vector<double> & in_numerator_numPair, vector<double> & in_denominator_denPair
+							vector<double> & in_numerator, 				vector<double> & in_numerator2,
+							vector<double> & in_denominator, 			vector<double> & in_denominator2,
+							vector<double> & in_numerator_denominator
 							);
 		void Compute_numerator_and_denominator_with_errors_q_mode_1D_wBA(
 							vector<double> & in_numerator, vector<double> & in_numerator2,
@@ -244,6 +244,8 @@ class HBT_event_generator
 		void Compute_correlation_function_q_mode_1D();
 		void Compute_correlation_function_methodMode1_q_mode_3D();
 		void Compute_correlation_function_methodMode1_q_mode_1D();
+		void Compute_correlation_function_methodMode2_q_mode_3D();
+		void Compute_correlation_function_methodMode2_q_mode_1D();
 
 
 		// Input/output

@@ -43,6 +43,7 @@ void generate_events(vector<EventRecord> & allEvents, ParameterReader * paraRdr)
 	const double Q_max = 0.1;
 	double max_pT = 1.01*(KTmax + Q_max);
 	double max_pz = 1.01*(KLmax + Q_max);*/
+	const double KLmax = 0.0025;
 
 	// this toy function uses the model of
 	// Zhang, Wiedemann, Slotta, and Heinz (1997)
@@ -50,7 +51,11 @@ void generate_events(vector<EventRecord> & allEvents, ParameterReader * paraRdr)
 	{
 		EventRecord event;
 
+		//int iParticle = 0;
+		//int particles_in_range = 0;
+
 		for (int iParticle = 0; iParticle < RNG_mult; ++iParticle)
+		//do
 		{
 			
 			double tP = 0.0;	// cf. paper
@@ -65,13 +70,16 @@ void generate_events(vector<EventRecord> & allEvents, ParameterReader * paraRdr)
 
 			/*
 			// do momentum-space cuts to speed things up
-			bool does_not_contribute_to_numerator 	= ( px*px+py*py > KTmax*KTmax
-														or pz*pz > KLmax*KLmax );
-			bool does_not_contribute_to_denominator = ( abs(px) > max_pT
-														or abs(py) > max_pT
-														or abs(pz) > max_pz );
+			bool does_not_contribute_to_numerator 	= ( //px*px+py*py > KTmax*KTmax
+														//or
+														pz*pz > KLmax*KLmax );
+			//bool does_not_contribute_to_denominator = ( abs(px) > max_pT
+			//											or abs(py) > max_pT
+			//											or abs(pz) > max_pz );
 			if ( does_not_contribute_to_numerator
-					and does_not_contribute_to_denominator )
+					//and
+					//does_not_contribute_to_denominator
+				 )
 				continue;
 			*/
 
@@ -87,9 +95,18 @@ void generate_events(vector<EventRecord> & allEvents, ParameterReader * paraRdr)
 			particle.y 			= yP;
 			particle.z 			= zP;
 
-			event.particles.push_back( particle );
+			//if ( pz*pz < KLmax*KLmax )
+			//	++particles_in_range;
 
-		}
+			event.particles.push_back( particle );
+			//iParticle++;
+
+		} //while ( iParticle < RNG_mult );
+
+		//cout << "particles_in_range = " << particles_in_range
+		//		<< " out of " << RNG_mult << " or "
+		//		<< 100.0*double(particles_in_range) / double(RNG_mult) << "%; "
+		//		<< "total pairs = " << particles_in_range*(particles_in_range-1) << endl;
 
 		allEvents.push_back( event );
 

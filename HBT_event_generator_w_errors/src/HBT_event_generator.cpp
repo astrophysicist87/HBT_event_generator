@@ -129,6 +129,9 @@ void HBT_event_generator::initialize_all(
 								n_Q_bins;
 	const int K_space_size = n_KT_bins*n_Kphi_bins*n_KL_bins;
 
+	n_pair_numerator 		= 0.0;
+	n_pair_denominator 		= 0.0;
+
 	// For the correlation function itself
 	numerator 				= vector<double> (K_space_size*q_space_size);
 	denominator 			= vector<double> (K_space_size*q_space_size);
@@ -160,6 +163,23 @@ void HBT_event_generator::initialize_all(
 	else
 		cout << "allEvents.size() = " << allEvents.size() << ": doing this file!" << endl;
 
+	// Compute numerator and denominator of correlation function
+	Compute_numerator_and_denominator();
+
+	return;
+}
+
+HBT_event_generator::~HBT_event_generator()
+{
+	//clear everything
+
+	return;
+}
+
+
+
+void HBT_event_generator::Compute_numerator_and_denominator
+{
 	// Compute numerator and denominator of correlation function,
 	// along with quantities needed to estimate error
 	if ( method_mode == 0 )	//GEHW method
@@ -210,9 +230,8 @@ void HBT_event_generator::initialize_all(
 		if ( q_mode == 0 )	//3D correlator
 		{
 			Compute_numerator_and_denominator_with_errors_q_mode_3D_wBA(
-							numerator, numerator2, numPair, numPair2,
-							denominator, denominator2, denPair, denPair2,
-							numerator_numPair, denominator_denPair
+							numerator, numerator2, denominator, denominator2,
+							numerator_denominator
 							);
 		}
 		else if ( q_mode == 1 ) //1D correlator
@@ -230,21 +249,13 @@ void HBT_event_generator::initialize_all(
 			<< method_mode << " not supported!" << endl;
 		exit(8);
 	}
-
-	return;
 }
 
-HBT_event_generator::~HBT_event_generator()
-{
-	//clear everything
-
-	return;
-}
 
 
 void HBT_event_generator::Compute_correlation_function()
 {
-	if ( method_mode == 1 or method_mode == 2 or BE_mode == 1 )
+	if ( method_mode == 1 or BE_mode == 1 )
 	{
 		switch(q_mode)
 		{
@@ -253,6 +264,23 @@ void HBT_event_generator::Compute_correlation_function()
 				break;
 			case 1:
 				Compute_correlation_function_methodMode1_q_mode_1D();
+				break;
+			default:
+				err << "Compute_correlation_function(): q_mode = "
+					<< q_mode << " not supported!" << endl;
+				exit(8);
+				break;
+		}
+	}
+	else if ( method_mode == 2 )
+	{
+		switch(q_mode)
+		{
+			case 0:
+				Compute_correlation_function_methodMode2_q_mode_3D();
+				break;
+			case 1:
+				Compute_correlation_function_methodMode2_q_mode_1D();
 				break;
 			default:
 				err << "Compute_correlation_function(): q_mode = "
@@ -555,11 +583,15 @@ void HBT_event_generator::Compute_correlation_function_methodMode1_q_mode_3D()
 
 			double R2 = CF_num / (CF_den+1.e-100);
 
+			bool this_bin_is_safe = numPair[idxK] > 0
+									and denPair[idxK] > 0
+									and abs( CF_den ) > 1.e-25;
+
 			//==============================
 			//==== correlation function ====
 			//==============================
 			correlation_function[idx]
-						= ( numPair[idxK] > 0 and denPair[idxK] > 0 )
+						= ( this_bin_is_safe )
 							? 1.0 + R2 - static_cast<double>(BE_mode)
 							: 1.0;
 
@@ -567,7 +599,7 @@ void HBT_event_generator::Compute_correlation_function_methodMode1_q_mode_3D()
 			//==== error estimates ====
 			//=========================
 
-			if ( numPair[idxK] > 0 and denPair[idxK] > 0 )
+			if ( this_bin_is_safe )
 			{
 				double CF_num_err = 0.0, CF_den_err = 0.0;
 
@@ -675,11 +707,15 @@ void HBT_event_generator::Compute_correlation_function_methodMode1_q_mode_1D()
 
 			double R2 = CF_num / (CF_den+1.e-100);
 
+			bool this_bin_is_safe = numPair[idxK] > 0
+									and denPair[idxK] > 0
+									and abs( CF_den ) > 1.e-25;
+
 			//==============================
 			//==== correlation function ====
 			//==============================
 			correlation_function[idx]
-						= ( numPair[idxK] > 0 and denPair[idxK] > 0 )
+						= ( this_bin_is_safe )
 							? 1.0 + R2 - static_cast<double>(BE_mode)
 							: 1.0;
 
@@ -687,7 +723,324 @@ void HBT_event_generator::Compute_correlation_function_methodMode1_q_mode_1D()
 			//==== error estimates ====
 			//=========================
 
-			if ( numPair[idxK] > 0 and denPair[idxK] > 0 )
+			if ( this_bin_is_safe )
+			{
+				double CF_num_err = 0.0, CF_den_err = 0.0;
+
+				// numerator
+				{
+					double EA = numerator[idx] / nev;
+					double EB = numPair[idxK] / nev;
+					double EA2 = numerator2[idx] / nev;
+					double EAB = numerator_numPair[idx] / nev;
+					double EB2 = numPair2[idxK] / nev;
+
+					double sigA2 = prefactor * (EA2 - EA*EA);
+					double sigB2 = prefactor * (EB2 - EB*EB);
+					double sigAB = prefactor * (EAB - EA*EB);
+
+					// set relative widths
+					double cA = sigA2 / ( EA*EA+1.e-100 );
+					double cB = sigB2 / ( EB*EB+1.e-100 );
+					double cAB = sigAB / ( EA*EB+1.e-100 );
+
+					double disc = cA + cB - 2.0*cAB;
+					if (disc < 0.0) err << "WARNING: disc == " << disc << " < 0.0!" << endl;
+
+					/*err << setprecision(8);
+					err << "\t\t EA = " << EA << endl;
+					err << "\t\t EB = " << EB << endl;
+					err << "\t\t EA2 = " << EA2 << endl;
+					err << "\t\t EB2 = " << EB2 << endl;
+					err << "\t\t EAB = " << EAB << endl;
+
+					err << "\t\t sigA2 = " << sigA2 << endl;
+					err << "\t\t sigB2 = " << sigB2 << endl;
+					err << "\t\t sigAB = " << sigAB << endl;
+
+					err << "\t\t cA = " << cA << endl;
+					err << "\t\t cB = " << cB << endl;
+					err << "\t\t cAB = " << cAB << endl;
+
+					err << "\t\t disc = " << disc << endl;*/
+
+					CF_num_err = (EA/EB) * sqrt(abs(disc) / nev);
+				}
+
+				// denominator
+				{
+					double EA = denominator[idx] / nev;
+					double EB = denPair[idxK] / nev;
+					double EA2 = denominator2[idx] / nev;
+					double EAB = denominator_denPair[idx] / nev;
+					double EB2 = denPair2[idxK] / nev;
+
+					double sigA2 = prefactor * (EA2 - EA*EA);
+					double sigB2 = prefactor * (EB2 - EB*EB);
+					double sigAB = prefactor * (EAB - EA*EB);
+
+					// set relative widths
+					double cA = sigA2 / ( EA*EA+1.e-100 );
+					double cB = sigB2 / ( EB*EB+1.e-100 );
+					double cAB = sigAB / ( EA*EB+1.e-100 );
+
+					double disc = cA + cB - 2.0*cAB;
+					if (disc < 0.0) err << "WARNING: disc == " << disc << " < 0.0!" << endl;
+
+					CF_den_err = (EA/EB) * sqrt(abs(disc) / nev);
+
+				}
+
+				if (verbose)
+				{
+
+					double local_KT = 0.5*(KT_pts[iKT]+KT_pts[iKT+1]);
+					double local_Kphi = 0.5*(Kphi_pts[iKphi]+Kphi_pts[iKphi+1]);
+					double local_KL = 0.5*(KL_pts[iKL]+KL_pts[iKL+1]);
+					double local_Q = 0.5*(Q_pts[iQ]+Q_pts[iQ+1]);
+
+					/*err << setprecision(8);
+					err << "\t\t numPair = " << numPair[idxK] << endl;
+					err << "\t\t denPair = " << denPair[idxK] << endl;
+
+					err << "\t\t KT = " << local_KT << endl;
+					err << "\t\t Kphi = " << local_Kphi << endl;
+					err << "\t\t KL = " << local_KL << endl;
+					err << "\t\t Q = " << local_Q << endl;
+
+					err << "\t\t R2 = " << R2 << endl;
+					err << "\t\t CF_num = " << CF_num << endl;
+					err << "\t\t CF_den = " << CF_den << endl;
+					err << "\t\t CF_num_err = " << CF_num_err << endl;
+					err << "\t\t CF_den_err = " << CF_den_err << endl;*/
+				}
+
+				/*correlation_function_error[idx] =
+					abs(R2) * sqrt( ( CF_num_err * CF_num_err / ( CF_num * CF_num ) )
+									+ ( CF_den_err * CF_den_err / ( CF_den * CF_den ) ) );*/
+
+				// equivalent version which is stable if CF_num = 0
+				correlation_function_error[idx] =
+					sqrt(
+							( CF_num_err * CF_num_err / ( CF_den * CF_den+1.e-100 ) )
+								+ ( CF_num * CF_num * CF_den_err * CF_den_err
+									/ ( CF_den * CF_den * CF_den * CF_den+1.e-100 )
+								   )
+						);
+
+			}
+			else
+			{
+				correlation_function_error[idx]
+							= 1.0e6;	// maximal uncertainty?
+			}
+
+
+			++idx;
+		}
+
+		++idxK;
+	}
+
+	return;
+}
+//=============================================================
+//=============================================================
+//=============================================================
+//=============================================================
+//=============================================================
+
+
+
+
+//=============================================================
+//=============================================================
+//=============================================================
+//=============================================================
+//=============================================================
+void HBT_event_generator::Compute_correlation_function_methodMode2_q_mode_3D()
+{
+	bool verbose = false;
+
+	double nev = (double)total_N_events;
+	const double nmix = nev * ( nev - 1.0 );
+	const double prefactor = nev / ( nev - 1.0 );
+
+	const int iqoC = (n_qo_pts - 1) / 2;
+	const int iqsC = (n_qs_pts - 1) / 2;
+	const int iqlC = (n_ql_pts - 1) / 2;
+
+	// Compute correlation function itself
+	// (along with error estimates)
+	int idx = 0, idxK = 0;
+	for (int iKT = 0; iKT < n_KT_bins; iKT++)
+	for (int iKphi = 0; iKphi < n_Kphi_bins; iKphi++)
+	for (int iKL = 0; iKL < n_KL_bins; iKL++)
+	{
+		for (int iqo = 0; iqo < n_qo_bins; iqo++)
+		for (int iqs = 0; iqs < n_qs_bins; iqs++)
+		for (int iql = 0; iql < n_ql_bins; iql++)
+		{
+
+			double CF_num = numerator[idx];
+			double CF_den = denominator[idx];
+			//double CF_num = numerator[idx] / n_pair_numerator;
+			//double CF_den = denominator[idx] / n_pair_denominator;
+
+			double R2 = CF_num / (CF_den+1.e-100);
+
+			bool this_bin_is_safe = ( abs( CF_den ) > 1.e-25 );
+
+			//==============================
+			//==== correlation function ====
+			//==============================
+			correlation_function[idx]
+						= ( this_bin_is_safe )
+							? 1.0 + R2 - static_cast<double>(BE_mode)
+							: 1.0;
+
+			//=========================
+			//==== error estimates ====
+			//=========================
+
+			if ( this_bin_is_safe and false )
+			{
+				double num = numerator[idx];
+				double den = denominator[idx];
+				double num2 = numerator2[idx];
+				double den2 = denominator2[idx];
+				double numden = numerator_denominator[idx];
+
+				// numerator, denominator, and (covariances) in this q-K cell
+				double EA = num / static_cast<double>(total_N_events);
+				double EB = den / static_cast<double>(total_N_events);
+				double EA2 = num2 / static_cast<double>(total_N_events);
+				double EB2 = den2 / static_cast<double>(total_N_events);
+				double EAB = numden / static_cast<double>(total_N_events);
+
+				// set variances and covariance
+				double sigA2 = prefactor * (EA2 - EA*EA);
+				double sigB2 = prefactor * (EB2 - EB*EB);
+				double sigAB = prefactor * (EAB - EA*EB);
+
+				// want standard error, not variance itself
+				sigA2 /= static_cast<double>(total_N_events);
+				sigB2 /= static_cast<double>(total_N_events);
+				sigAB /= static_cast<double>(total_N_events);
+
+				// set relative widths
+				double cA = sigA2 / ( EA*EA+1.e-100 );
+				double cB = sigB2 / ( EB*EB+1.e-100 );
+				double cAB = sigAB / ( EA*EB+1.e-100 );
+
+				double disc = cA + cB - 2.0*cAB;
+				if (verbose and disc < -1.e-6)
+					err << "Warning in Compute_correlation_function_q_mode_3D(): "
+						<< "disc < 0!" << endl;
+
+				// N.B.: R2 == EA / EB
+
+				correlation_function_error[idx] =
+					( disc < 0.0 )
+					? 1.e-6
+					: abs(R2) * sqrt( cA + cB - 2.0*cAB );
+
+				if (verbose)
+				{
+					err << setprecision(8);
+					err << "\t\t EA = " << EA << endl;
+					err << "\t\t EB = " << EB << endl;
+					err << "\t\t EA2 = " << EA2 << endl;
+					err << "\t\t EB2 = " << EB2 << endl;
+					err << "\t\t EAB = " << EAB << endl;
+
+					//err << "\t\t sigA2 = " << sigA2 << endl;
+					//err << "\t\t sigB2 = " << sigB2 << endl;
+					//err << "\t\t sigAB = " << sigAB << endl;
+					err << "\t\t sigA2 / total_N_events = " << sigA2 << endl;
+					err << "\t\t sigB2 / total_N_events = " << sigB2 << endl;
+					err << "\t\t sigAB / total_N_events = " << sigAB << endl;
+
+					err << "\t\t cA = " << cA << endl;
+					err << "\t\t cB = " << cB << endl;
+					err << "\t\t cAB = " << cAB << endl;
+
+					err << "\t\t disc = " << disc << endl;
+
+					err << "\t\t Finally, check bin counts:" << endl;
+					err << "\t\t num. BC = " << numerator_bin_count[idx] << endl;
+					err << "\t\t den. BC = " << denominator_bin_count[idx] << endl;
+					err << "\t\t finished without difficulty" << endl;
+
+				}
+
+			}
+			else
+			{
+				correlation_function_error[idx]
+							= 1.0e6;	// maximal uncertainty?
+			}
+
+
+			++idx;
+		}
+
+		++idxK;
+	}
+
+	return;
+}
+
+
+
+void HBT_event_generator::Compute_correlation_function_methodMode2_q_mode_1D()
+{
+	bool verbose = true;
+
+	double nev = (double)total_N_events;
+	const double nmix = nev * ( nev - 1.0 );
+	const double prefactor = nev / ( nev - 1.0 );
+
+	const int iQC = (n_Q_pts - 1) / 2;
+
+	// Compute correlation function itself
+	// (along with error estimates)
+	int idx = 0, idxK = 0;
+	for (int iKT = 0; iKT < n_KT_bins; iKT++)
+	for (int iKphi = 0; iKphi < n_Kphi_bins; iKphi++)
+	for (int iKL = 0; iKL < n_KL_bins; iKL++)
+	{
+		for (int iQ = 0; iQ < n_Q_bins; iQ++)
+		{
+
+			/*double CF_num = numerator[idx] / nev;
+			double CF_den = denominator[idx] / nmix;
+
+			double R2 = CF_num / (CF_den+1.e-100);
+
+			bool this_bin_is_safe = ( abs( CF_den ) > 1.e-25 );*/
+			double CF_num = numerator[idx] / numPair[idxK];
+			double CF_den = denominator[idx] / denPair[idxK];
+
+			double R2 = CF_num / (CF_den+1.e-100);
+
+			bool this_bin_is_safe = numPair[idxK] > 0
+									and denPair[idxK] > 0
+									and abs( CF_den ) > 1.e-25;
+
+			//==============================
+			//==== correlation function ====
+			//==============================
+			correlation_function[idx]
+						= ( this_bin_is_safe )
+							? 1.0 + R2 - static_cast<double>(BE_mode)
+							: 1.0;
+
+			//=========================
+			//==== error estimates ====
+			//=========================
+
+			if ( this_bin_is_safe and false )
 			{
 				double CF_num_err = 0.0, CF_den_err = 0.0;
 
@@ -960,76 +1313,8 @@ void HBT_event_generator::Update_records( const vector<EventRecord> & allEvents_
 	else
 		cout << "allEvents.size() = " << allEvents.size() << ": doing this file!" << endl;
 
-	// Compute numerator and denominator of correlation function,
-	// along with quantities needed to estimate error
-	if ( method_mode == 0 )	//GEHW method
-	{
-		if ( BE_mode == 0 )
-		{
-			Compute_numerator_and_denominator_with_errors(
-							numerator, numerator2, denominator, denominator2,
-							numerator_denominator, numerator_bin_count, denominator_bin_count
-							);
-		}
-		else if ( BE_mode == 1 )
-		{
-			Compute_numerator_and_denominator_with_errors_momentum_space_only(
-								numerator, numerator2, numPair, numPair2,
-								denominator, denominator2, denPair, denPair2,
-								numerator_numPair, denominator_denPair
-								);
-		}
-		else
-		{
-			err << "HBT_event_generator(): BE_mode = "
-				<< BE_mode << " not supported!" << endl;
-			exit(8);
-		}
-	}
-	else if ( method_mode == 1 )	//Chun's method
-	{
-		if ( q_mode == 0 )
-		{
-			Compute_numerator_and_denominator_with_errors_binPairsMode_qmode3D(
-							numerator, numerator2, numPair, numPair2,
-							denominator, denominator2, denPair, denPair2,
-							numerator_numPair, denominator_denPair
-							);
-		}
-		else if ( q_mode == 1 )
-		{
-			Compute_numerator_and_denominator_with_errors_binPairsMode_qmode1D(
-							numerator, numerator2, numPair, numPair2,
-							denominator, denominator2, denPair, denPair2,
-							numerator_numPair, denominator_denPair
-							);
-		}
-	}
-	else if ( method_mode == 2 )	// bin-averaging method
-	{
-		if ( q_mode == 0 )	//3D correlator
-		{
-			Compute_numerator_and_denominator_with_errors_q_mode_3D_wBA(
-							numerator, numerator2, numPair, numPair2,
-							denominator, denominator2, denPair, denPair2,
-							numerator_numPair, denominator_denPair
-							);
-		}
-		else if ( q_mode == 1 ) //1D correlator
-		{
-			Compute_numerator_and_denominator_with_errors_q_mode_1D_wBA(
-							numerator, numerator2, numPair, numPair2,
-							denominator, denominator2, denPair, denPair2,
-							numerator_numPair, denominator_denPair
-							);
-		}
-	}
-	else
-	{
-		err << "HBT_event_generator(): method_mode = "
-			<< method_mode << " not supported!" << endl;
-		exit(8);
-	}
+	// Compute numerator and denominator of correlation function
+	Compute_numerator_and_denominator();
 
 	return;
 }

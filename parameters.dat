@@ -1,6 +1,6 @@
 #===========
 # width of binning delta (GeV)
-bin_epsilon = 0.08
+bin_epsilon = 0.005
 
 #===========
 # pair momenta
@@ -14,9 +14,9 @@ KT_grid_mode = 0
 	#     (for integrating correlation function)
 
 # KT points
-n_KT_pts = 6
+n_KT_pts = 2
 KTmin = 0.0
-KTmax = 1.0
+KTmax = 0.000001
 
 #=======
 # Kphi grid
@@ -33,26 +33,26 @@ n_Kphi_pts = 2
 #determined automatically
 
 # KL grid
-n_KL_pts = 2
-KLmin = -1.0
-KLmax = 1.0
+n_KL_pts = 12
+KLmin = -0.55
+KLmax = 0.55
 
 #===========
 # relative momenta (3D)
-n_qo_pts = 32
-n_qs_pts = 32
-n_ql_pts = 32
-delta_qo = 0.02
-delta_qs = 0.02
+n_qo_pts = 2
+n_qs_pts = 2
+n_ql_pts = 2
+delta_qo = 0.005
+delta_qs = 0.005
 delta_ql = 0.02
 
 # relative momentum (1D)
-n_Q_pts = 62
-delta_Q = 0.01
+n_Q_pts = 42
+delta_Q = 0.05
 
 # for doing integrations for 1D calculation
-n_qRP_pts = 11
-n_thq_pts = 12
+n_qRP_pts = 7
+n_thq_pts = 8
 
 #===========
 # misc. and ensemble parameters
@@ -63,11 +63,11 @@ bin_mode = 0
 
 #===========
 # whether to use qo-qs-ql (0: 3D) or Q (1: 1D)
-q_mode = 1
+q_mode = 0
 
 #===========
 # whether to use GEHW method (0) or Chun's method (1)
-method_mode = 0
+method_mode = 2
 
 #===========
 # whether or not BE effects are pre-included from Pythia
@@ -86,9 +86,9 @@ file_mode = 1
 	RNG_R = 10.0	#fm
 	RNG_a = 0.02	#GeV/fm
 	RNG_Nev = 10
-	RNG_mult = 1000000
-	RNG_xDir = 1
-	RNG_yDir = 1
+	RNG_mult = 1000
+	RNG_xDir = 0
+	RNG_yDir = 0
 	RNG_zDir = 1
 	#=======
 
