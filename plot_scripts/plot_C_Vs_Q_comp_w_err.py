@@ -36,7 +36,7 @@ def make_plot():
 							alpha=0.25, edgecolor=thisColor,\
 							facecolor=thisColor)
     
-	lims = [0.05, 0.4, 0.99, 1.2]
+	lims = [0.05, 0.3, 0.99, 1.2]
 	plt.axis(lims)
 	ax.set_xlabel(r'$Q$ (GeV)', fontsize=plotfontsize)
 	ax.set_ylabel(r'$C(Q)$', fontsize=plotfontsize)
@@ -45,9 +45,9 @@ def make_plot():
 	miscAxesText = r'$K_T = 100$ MeV, $\Phi_K = 0$, $K_L = 0$'
 	plt.text(0.175, 1.075, miscAxesText, fontsize=plotfontsize+3)
     
-	#plt.show()
+	plt.show()
 	outfilename = './pp_at_13TeV_KT100MeV_centrality_comparison.pdf'
-	plt.savefig(outfilename)
+	#plt.savefig(outfilename)
 	print 'Saving to', outfilename
     
 	plt.close()
