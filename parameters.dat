@@ -66,7 +66,7 @@ bin_mode = 0
 q_mode = 0
 
 #===========
-# whether to use GEHW method (0) or Chun's method (1)
+# whether to use GEHW method (0), Chun's method (1), or bin-averaged method (2)
 method_mode = 2
 
 #===========

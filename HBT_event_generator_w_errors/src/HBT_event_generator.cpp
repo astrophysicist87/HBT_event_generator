@@ -478,7 +478,7 @@ void HBT_event_generator::Compute_correlation_function_q_mode_1D()
 
 		double R2 = num / (den+1.e-10); // total_N_events factors cancel
 
-denominator_cell_was_filled[idx] = true;
+		denominator_cell_was_filled[idx] = true;
 
 		//==============================
 		//==== correlation function ====

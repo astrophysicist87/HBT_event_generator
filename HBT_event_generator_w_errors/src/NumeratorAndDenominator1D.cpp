@@ -151,6 +151,9 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 							double qy = qs0 * cKphi + qo * sKphi;
 							double qz = ql;
 
+							// loop back and do negative root
+							qs0 *= -1.0;
+
 							double pax = Kx + 0.5 * qx, pay = Ky + 0.5 * qy, paz = Kz + 0.5 * qz;
 							double pbx = Kx - 0.5 * qx, pby = Ky - 0.5 * qy, pbz = Kz - 0.5 * qz;
 							double Ea = sqrt(particle_mass*particle_mass+pax*pax+pay*pay+paz*paz);
@@ -170,9 +173,6 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 
 							sum1[index7D] += complex_num_term;
 							sum2[index7D] += 1.0 / (num_bin_factor*num_bin_factor);
-
-							// loop back and do negative root
-							qs0 *= -1.0;
 
 						}
 
@@ -262,6 +262,9 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 					double qy = qs0 * cKphi + qo * sKphi;
 					double qz = ql;
 
+					// loop back and do negative root
+					qs0 *= -1.0;
+
 					double pax = Kx + 0.5 * qx, pay = Ky + 0.5 * qy, paz = Kz + 0.5 * qz;
 					double pbx = Kx - 0.5 * qx, pby = Ky - 0.5 * qy, pbz = Kz - 0.5 * qz;
 					double Ea = sqrt(particle_mass*particle_mass+pax*pax+pay*pay+paz*paz);
@@ -305,9 +308,6 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 							sum5[index7D] += den_term*den_term;	// N.B. - use (bin volume)^2, here
 
 					}		// end of denominator particle loops
-
-					// loop back and do negative root
-					qs0 *= -1.0;
 
 				}			// end of loop over qs-roots
 
@@ -771,65 +771,6 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 				double KT = 0.5*(KT_pts[iKT]+KT_pts[iKT+1]);
 				double KL = 0.5*(KL_pts[iKL]+KL_pts[iKL+1]);
 
-				/*
-				for (int iqo = 0; iqo < n_qo_bins; iqo++)
-				for (int iqs = 0; iqs < n_qs_bins; iqs++)
-				for (int iql = 0; iql < n_ql_bins; iql++)
-				{
-					double qo = 0.5*(qo_pts[iqo]+qo_pts[iqo+1]);
-					double qs = 0.5*(qs_pts[iqs]+qs_pts[iqs+1]);
-					double ql = 0.5*(ql_pts[iql]+ql_pts[iql+1]);
-					double q0 = get_q0(particle_mass, qo, qs, ql, KT, KL);
-
-					// set Q2 value for this q-K cell
-					double Q2bar = qo*qo + qs*qs + ql*ql - q0*q0;	// Q2bar>=0
-					if (Q2bar < -1.e-6)
-					{
-						err << "Compute_numerator_and_denominator_with_errors_q_mode_1D(warning): "
-							<< "Q2bar = " << Q2bar << " < 0.0!" << endl;
-						continue;
-					}
-					double Qbar = sqrt(abs(Q2bar));
-
-					double private_num_val 			= private_num[idx6D];
-					double private_den_val 			= private_den[idx6D];
-
-					//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					// N.B. - these vectors have different dimensions!!!
-					//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					int iQ_pos = floor((Qbar - Q_min)/delta_Q);
-					if ( iQ_pos < 0 or iQ_pos >= n_Q_bins )
-						continue;
-					int index4D_pos = indexer_qmode_1(iKT, iKphi, iKL, iQ_pos);
-
-					// assume symmetry under Q --> -Q
-					Qbar *= -1.0;
-					int iQ_neg = floor((Qbar - Q_min)/delta_Q);
-					if ( iQ_neg < 0 or iQ_neg >= n_Q_bins )
-						continue;
-					int index4D_neg = indexer_qmode_1(iKT, iKphi, iKL, iQ_neg);
-
-					// first moments
-					in_numerator[index4D_pos] 				+= private_num_val;
-					in_denominator[index4D_pos] 			+= private_den_val;
-					in_numerator[index4D_neg] 				+= private_num_val;
-					in_denominator[index4D_neg] 			+= private_den_val;
-
-					// second moments
-					in_numerator2[index4D_pos] 				+= private_num_val * private_num_val;
-					in_denominator2[index4D_pos] 			+= private_den_val * private_den_val;
-					in_numerator2[index4D_neg] 				+= private_num_val * private_num_val;
-					in_denominator2[index4D_neg] 			+= private_den_val * private_den_val;
-
-					// for error normalizing by numbers of pairs
-					in_numerator_numPair[index4D_pos] 		+= private_num_val * private_numPair_val;
-					in_denominator_denPair[index4D_pos] 	+= private_den_val * private_denPair_val;
-					in_numerator_numPair[index4D_neg] 		+= private_num_val * private_numPair_val;
-					in_denominator_denPair[index4D_neg] 	+= private_den_val * private_denPair_val;
-
-					++idx6D;
-				}
-				*/
 				for (int iQ = 0; iQ < n_Q_bins; iQ++)
 				{
 					double private_num_val 			= private_num[idx4D];
