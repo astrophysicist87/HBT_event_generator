@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 	ostringstream out_filename_stream, err_filename_stream;
 	out_filename_stream << path << "HBT_"
 						<< chosen_particle_name << chosen_particle_name
-						<< "CF.dat";
+						<< "CF.out";
 	err_filename_stream << path << "HBT_"
 						<< chosen_particle_name << chosen_particle_name
 						<< "CF.err";
@@ -166,7 +166,7 @@ int main(int argc, char *argv[])
 
 
 			// Output results
-			HBT_event_ensemble.Output_correlation_function();
+			HBT_event_ensemble.Output_correlation_function( "./results/HBT_pipiCF.dat" );
 
 		}
 		else if ( mode == "read all" )
@@ -191,7 +191,7 @@ int main(int argc, char *argv[])
 
 
 			// Output correlation function
-			HBT_event_ensemble.Output_correlation_function();
+			HBT_event_ensemble.Output_correlation_function( "./results/HBT_pipiCF.dat" );
 
 		}
 	
@@ -238,7 +238,7 @@ int main(int argc, char *argv[])
 
 
 		// Output correlation function
-		HBT_event_ensemble.Output_correlation_function();
+		HBT_event_ensemble.Output_correlation_function( "./results/HBT_pipiCF.dat" );
 
 	}
 

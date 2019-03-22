@@ -85,6 +85,7 @@ file_mode = 1
 	RNG_xDir = 0
 	RNG_yDir = 0
 	RNG_zDir = 1
+	RNG_seed = 0
 	#=======
 
 #===========

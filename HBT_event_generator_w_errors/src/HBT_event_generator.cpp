@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <ios>
 #include <cmath>
 #include <iomanip>
@@ -386,15 +387,15 @@ void HBT_event_generator::Compute_correlation_function()
 }
 
 
-void HBT_event_generator::Output_correlation_function()
+void HBT_event_generator::Output_correlation_function( string filename )
 {
 	switch(q_mode)
 	{
 		case 0:
-			Output_correlation_function_q_mode_3D();
+			Output_correlation_function_q_mode_3D( filename );
 			break;
 		case 1:
-			Output_correlation_function_q_mode_1D();
+			Output_correlation_function_q_mode_1D( filename );
 			break;
 		default:
 			err << "Output_correlation_function(): q_mode = "
@@ -408,16 +409,18 @@ void HBT_event_generator::Output_correlation_function()
 
 
 
-void HBT_event_generator::Output_correlation_function_q_mode_3D()
+void HBT_event_generator::Output_correlation_function_q_mode_3D( string filename )
 {
 	int prec = 6;
 	int extrawidth = 6;
 
+	ofstream ofs( filename.c_str() );
+
 	std::ios oldState(nullptr);
-	oldState.copyfmt(out);
+	oldState.copyfmt(ofs);
 
 	// Print header inforamtion
-	out /*<< setfill('X') */<< setw(prec+extrawidth+2)
+	ofs /*<< setfill('X') */<< setw(prec+extrawidth+2)
 		<< left << "# K_T" << setw(prec+extrawidth)
 		<< left << "K_phi" << setw(prec+extrawidth)
 		<< left << "K_L" << setw(prec+extrawidth)
@@ -429,9 +432,9 @@ void HBT_event_generator::Output_correlation_function_q_mode_3D()
 		<< left << "D" << setw(prec+36)
 		<< left << "C" << endl;
 
-	out << "# " << setfill('-') << setw(150) << " " << endl;
+	ofs << "# " << setfill('-') << setw(150) << " " << endl;
 
-	out.copyfmt(oldState);
+	ofs.copyfmt(oldState);
 
 	int idx = 0;
 	for (int iKT = 0; iKT < n_KT_bins; iKT++)
@@ -442,7 +445,7 @@ void HBT_event_generator::Output_correlation_function_q_mode_3D()
 	for (int iql = 0; iql < n_ql_bins; iql++)
 	{
 
-		out /*<< setfill('X') */<< fixed << setprecision(prec) << "  "
+		ofs /*<< setfill('X') */<< fixed << setprecision(prec) << "  "
 			<< 0.5*(KT_pts[iKT]+KT_pts[iKT+1]) << setw(prec+extrawidth)
 			<< 0.5*(Kphi_pts[iKphi]+Kphi_pts[iKphi+1]) << setw(prec+extrawidth)
 			<< 0.5*(KL_pts[iKL]+KL_pts[iKL+1]) << setw(prec+extrawidth)
@@ -463,20 +466,24 @@ void HBT_event_generator::Output_correlation_function_q_mode_3D()
 		++idx;
 	}
 
+	ofs.close();
+
 	return;
 }
 
 
-void HBT_event_generator::Output_correlation_function_q_mode_1D()
+void HBT_event_generator::Output_correlation_function_q_mode_1D( string filename )
 {
 	int prec = 6;
 	int extrawidth = 6;
 
+	ofstream ofs( filename.c_str() );
+
 	std::ios oldState(nullptr);
-	oldState.copyfmt(out);
+	oldState.copyfmt(ofs);
 
 	// Print header inforamtion
-	out /*<< setfill('X') */<< setw(prec+extrawidth+2)
+	ofs /*<< setfill('X') */<< setw(prec+extrawidth+2)
 		<< left << "# K_T" << setw(prec+extrawidth)
 		<< left << "K_phi" << setw(prec+extrawidth)
 		<< left << "K_L" << setw(prec+extrawidth)
@@ -487,9 +494,9 @@ void HBT_event_generator::Output_correlation_function_q_mode_1D()
 		<< left << "C" << setw(prec+3*extrawidth)
 		<< left << "C(err)" << endl;
 
-	out << "# " << setfill('-') << setw(130) << " " << endl;
+	ofs << "# " << setfill('-') << setw(130) << " " << endl;
 
-	out.copyfmt(oldState);
+	ofs.copyfmt(oldState);
 
 	int idx = 0;
 	for (int iKT = 0; iKT < n_KT_bins; iKT++)
@@ -498,7 +505,7 @@ void HBT_event_generator::Output_correlation_function_q_mode_1D()
 	for (int iQ = 0; iQ < n_Q_bins; iQ++)
 	{
 
-		out /*<< setfill('X') */<< fixed << setprecision(prec) << "  "
+		ofs /*<< setfill('X') */<< fixed << setprecision(prec) << "  "
 			<< 0.5*(KT_pts[iKT]+KT_pts[iKT+1]) << setw(prec+extrawidth)
 			<< 0.5*(Kphi_pts[iKphi]+Kphi_pts[iKphi+1]) << setw(prec+extrawidth)
 			<< 0.5*(KL_pts[iKL]+KL_pts[iKL+1]) << setw(prec+extrawidth)
@@ -511,6 +518,8 @@ void HBT_event_generator::Output_correlation_function_q_mode_1D()
 
 		++idx;
 	}
+
+	ofs.close();
 
 	return;
 }

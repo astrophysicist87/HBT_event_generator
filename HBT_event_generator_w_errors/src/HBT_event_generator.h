@@ -191,9 +191,9 @@ class HBT_event_generator
 		void Compute_correlation_function();
 
 		// Input/output
-		void Output_correlation_function();
-		void Output_correlation_function_q_mode_3D();
-		void Output_correlation_function_q_mode_1D();
+		void Output_correlation_function( string filename );
+		void Output_correlation_function_q_mode_3D( string filename );
+		void Output_correlation_function_q_mode_1D( string filename );
 
 };
 
