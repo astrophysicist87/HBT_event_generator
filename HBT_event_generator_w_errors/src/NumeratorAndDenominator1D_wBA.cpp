@@ -16,7 +16,7 @@
 
 void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_1D()
 {
-/*	bool perform_random_rotation = false;
+	bool perform_random_rotation = false;
 	bool perform_random_shuffle = false;
 
 	int number_of_completed_events = 0;
@@ -82,6 +82,9 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_1
 			double Kphi = atan2(Ky, Kx);
 			double cKphi = cos(Kphi), sKphi = sin(Kphi);
 			double KL = Kz;
+			double thetaK = atan2(KT, KL);	// Usage: atan2(double y, double x)
+											// y-->out, x-->long
+			double Kmag = sqrt(KT*KT+KL*KL);
 
 			// Get indices
 			int KT_idx 	= floor((KT - KT_min)/KT_bin_width);
@@ -146,7 +149,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_1
 				// Record +/- roots in q_s direction
 				for (int i_qs_root = 0; i_qs_root <= 1; i_qs_root++)
 				{
-					int index7D = indexer_qmode_1(iKT, iKphi, iKL, iQ, iqRP, ithq, i_qs_root);
+					int index7D = indexer_qmode_1(KT_idx, Kphi_idx, KL_idx, iQ, iqRP, ithq, i_qs_root);
 
 					double qx = qo * cKphi - qs0 * sKphi;
 					double qy = qs0 * cKphi + qo * sKphi;
@@ -161,11 +164,11 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_1
 					double Eb = sqrt(particle_mass*particle_mass+pbx*pbx+pby*pby+pbz*pbz);
 
 					// rapidity cuts
-					if ( impose_pair_rapidity_cuts
-							and ( ( 2.0*Kz/(Ea+Eb) < Kz_over_K0_min )
-							or ( 2.0*Kz/(Ea+Eb) > Kz_over_K0_max ) )
-						)
-						continue;
+					//if ( impose_pair_rapidity_cuts
+					//		and ( ( 2.0*Kz/(Ea+Eb) < Kz_over_K0_min )
+					//		or ( 2.0*Kz/(Ea+Eb) > Kz_over_K0_max ) )
+					//	)
+					//	continue;
 
 					double q0  =  Ea - Eb;
 					double arg =  q0 * (ti - tj)
@@ -205,6 +208,10 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_1
 			double KT = sqrt(Kx*Kx+Ky*Ky);
 			double Kphi = atan2(Ky, Kx);
 			double cKphi = cos(Kphi), sKphi = sin(Kphi);
+			double KL = Kz;
+			double thetaK = atan2(KT, KL);	// Usage: atan2(double y, double x)
+											// y-->out, x-->long
+			double Kmag = sqrt(KT*KT+KL*KL);
 
 			// If pair survived cuts, get indices
 			int KT_idx 	= floor((KT - KT_min)/KT_bin_width);
@@ -271,7 +278,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_1
 				// Record +/- roots in q_s direction
 				for (int i_qs_root = 0; i_qs_root <= 1; i_qs_root++)
 				{
-					int index7D = indexer_qmode_1(iKT, iKphi, iKL, iQ, iqRP, ithq, i_qs_root);
+					int index7D = indexer_qmode_1(KT_idx, Kphi_idx, KL_idx, iQ, iqRP, ithq, i_qs_root);
 
 					double qx = qo * cKphi - qs0 * sKphi;
 					double qy = qs0 * cKphi + qo * sKphi;
@@ -308,7 +315,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_1
 					const double KT = 0.5*(KT_pts[iKT]+KT_pts[iKT+1]);
 					const double KL = 0.5*(KL_pts[iKL]+KL_pts[iKL+1]);
 					const double thetaK = atan2(KT, KL);	// Usage: atan2(double y, double x)
-													// y-->out, x-->long
+															// y-->out, x-->long
 					const double Kmag = sqrt(KT*KT+KL*KL);
 					double Q0 = 0.5*(Q_pts[iQ]+Q_pts[iQ+1]);
 					if (abs(Q0)<1.e-20)
@@ -411,7 +418,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_1
 
 	}
 
-	cout << "  * Finished " << total_N_events << " events so far!" << endl;*/
+	cout << "  * Finished " << total_N_events << " events so far!" << endl;
 
 	return;
 }

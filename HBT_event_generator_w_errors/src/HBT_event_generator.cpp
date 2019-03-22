@@ -180,7 +180,7 @@ void HBT_event_generator::initialize_all(
 	if ( allEvents.size() == 0 )
 		return;
 	else
-		cout << "allEvents.size() = " << allEvents.size() << ": doing this file!" << endl;
+		out << "allEvents.size() = " << allEvents.size() << ": doing this file!" << endl;
 
 	// Compute numerator and denominator of correlation function
 	Compute_numerator_and_denominator();

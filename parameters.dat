@@ -74,11 +74,6 @@ method_mode = 0
 BE_mode = 0
 
 #===========
-# whether to compute "exact" CF (0)
-# or CF averaged over K bins (1)
-bin_averaging_mode = 0
-
-#===========
 # get particles randomly or from file
 file_mode = 1
 	#=======

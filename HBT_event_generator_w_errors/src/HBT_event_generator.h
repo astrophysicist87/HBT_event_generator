@@ -187,13 +187,8 @@ class HBT_event_generator
 		void Compute_numerator_and_denominator_methodMode2_q_mode_3D();
 		void Compute_numerator_and_denominator_methodMode2_q_mode_1D();
 
-
 		// Correlation function itself
 		void Compute_correlation_function();
-		//void Compute_correlation_function_methodMode0();
-		//void Compute_correlation_function_methodMode1();
-		//void Compute_correlation_function_methodMode2();
-
 
 		// Input/output
 		void Output_correlation_function();
