@@ -14,15 +14,9 @@
 #include "Stopwatch.h"
 
 
-void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1D_wBA(
-							vector<double> & in_numerator, vector<double> & in_numerator2,
-							vector<double> & in_numPair, vector<double> & in_numPair2,
-							vector<double> & in_denominator, vector<double> & in_denominator2,
-							vector<double> & in_denPair, vector<double> & in_denPair2,
-							vector<double> & in_numerator_numPair, vector<double> & in_denominator_denPair
-							)
+void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1D_wBA()
 {
-	bool perform_random_rotation = false;
+/*	bool perform_random_rotation = false;
 	bool perform_random_shuffle = false;
 
 	int number_of_completed_events = 0;
@@ -43,18 +37,19 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 	}
 
 	// Sum over all events
-	#pragma omp parallel for schedule(static) shared( in_numerator, in_numerator2,\
-														in_denominator, in_denominator2,\
-														in_numerator_denominator )
+	//#pragma omp parallel for schedule(static) shared( numerator, numerator2,\
+	//													denominator, denominator2,\
+	//													numerator_denominator )
+	#pragma omp parallel for schedule(static)
 	for (int iEvent = 0; iEvent < allEvents.size(); ++iEvent)
 	{
 		EventRecord event = allEvents[iEvent];
 
-		vector<double> private_num(2*in_numerator.size(), 0.0);
-		vector<double> private_num2(2*in_numerator2.size(), 0.0);
-		vector<double> private_den(2*in_denominator.size(), 0.0);
-		vector<double> private_den2(2*in_denominator2.size(), 0.0);
-		vector<double> private_num_den(2*in_numerator.size(), 0.0);
+		vector<double> private_num(2*numerator.size(), 0.0);
+		vector<double> private_num2(2*numerator2.size(), 0.0);
+		vector<double> private_den(2*denominator.size(), 0.0);
+		vector<double> private_den2(2*denominator2.size(), 0.0);
+		vector<double> private_num_den(2*numerator.size(), 0.0);
 
 		//===================================
 		//======== Doing numerator ==========
@@ -311,32 +306,6 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 			for (int iKphi = 0; iKphi < n_Kphi_bins; iKphi++)
 			for (int iKL = 0; iKL < n_KL_bins; iKL++)
 			{
-				/*for (int iqo = 0; iqo < n_qo_bins; iqo++)
-				for (int iqs = 0; iqs < n_qs_bins; iqs++)
-				for (int iql = 0; iql < n_ql_bins; iql++)
-				{
-					double numerator_this_event = private_num[idx6D];
-					double denominator_this_event = private_den[idx6D];
-
-					// first moments
-					in_numerator[idx6D]
-								+= numerator_this_event;
-					in_denominator[idx6D]
-								+= denominator_this_event;
-
-					// second moments
-					in_numerator2[idx6D]
-								+= numerator_this_event
-									* numerator_this_event;
-					in_denominator2[idx6D]
-								+= denominator_this_event
-									* denominator_this_event;
-					in_numerator_denominator[idx6D]
-								+= numerator_this_event
-									* denominator_this_event;
-
-					++idx6D;
-				}*/
 				for (int iQ = 0; iQ < n_Q_bins; iQ++)
 				{
 					const double KT = 0.5*(KT_pts[iKT]+KT_pts[iKT+1]);
@@ -398,7 +367,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 							// to get the normalization right
 							const double weight_num = abs( (4.0*xi0+xi3)*(4.0*xi0+xi3) - 4.0*xi1*xi1 );
 							const double weight_den = 1.e-100+qs0*( (4.0*xi0+xi3)*(4.0*xi0+xi3) + 4.0*xi1*xi1 + weight_num );
-							const double weight_factor = /*(qs0 < 1.e-6) ? 0.0 :*/ weight_num / weight_den;
+							const double weight_factor = weight_num / weight_den;
 							const double integration_weight = qRP * qRPwt * ttheta_q_wts[ithq];
 
 							// Sum over +/- roots in q_s direction
@@ -415,19 +384,19 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 
 					// input vectors have length of 4D space
 					// first moments
-					in_numerator[index4D]
+					numerator[index4D]
 						+= numerator_this_event;
-					in_denominator[index4D]
+					denominator[index4D]
 						+= denominator_this_event;
 
 					// second moments
-					in_numerator2[index4D]
+					numerator2[index4D]
 						+= numerator_this_event
 							* numerator_this_event;
-					in_denominator2[index4D]
+					denominator2[index4D]
 						+= denominator_this_event
 							* denominator_this_event;
-					in_numerator_denominator[index4D]
+					numerator_denominator[index4D]
 						+= numerator_this_event
 							* denominator_this_event;
 
@@ -445,7 +414,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 
 	}
 
-	cout << "  * Finished " << total_N_events << " events so far!" << endl;
+	cout << "  * Finished " << total_N_events << " events so far!" << endl;*/
 
 	return;
 }

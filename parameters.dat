@@ -33,7 +33,7 @@ n_Kphi_pts = 2
 #determined automatically
 
 # KL grid
-n_KL_pts = 12
+n_KL_pts = 2
 KLmin = -0.55
 KLmax = 0.55
 
@@ -41,7 +41,7 @@ KLmax = 0.55
 # relative momenta (3D)
 n_qo_pts = 2
 n_qs_pts = 2
-n_ql_pts = 2
+n_ql_pts = 22
 delta_qo = 0.005
 delta_qs = 0.005
 delta_ql = 0.02
@@ -66,7 +66,7 @@ bin_mode = 0
 q_mode = 0
 
 #===========
-# whether to use GEHW method (0), Chun's method (1), or bin-averaged method (2)
+# whether to use GEHW method (0) or Chun's method (1)
 method_mode = 2
 
 #===========
@@ -86,7 +86,7 @@ file_mode = 1
 	RNG_R = 10.0	#fm
 	RNG_a = 0.02	#GeV/fm
 	RNG_Nev = 10
-	RNG_mult = 1000
+	RNG_mult = 10000
 	RNG_xDir = 0
 	RNG_yDir = 0
 	RNG_zDir = 1

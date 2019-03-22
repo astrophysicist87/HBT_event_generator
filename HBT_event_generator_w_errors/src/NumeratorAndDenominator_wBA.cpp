@@ -16,11 +16,7 @@
 
 
 
-void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3D_wBA(
-							vector<double> & in_numerator, 				vector<double> & in_numerator2,
-							vector<double> & in_denominator, 			vector<double> & in_denominator2,
-							vector<double> & in_numerator_denominator
-							)
+void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3D_wBA()
 {
 	bool perform_random_rotation = false;
 	bool perform_random_shuffle = false;
@@ -36,18 +32,19 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 	const double Kz_over_K0_max = tanh( KYmax );
 
 	// Sum over all events
-	#pragma omp parallel for schedule(static) shared( in_numerator, in_numerator2,\
-														in_denominator, in_denominator2,\
-														in_numerator_denominator )
+	//#pragma omp parallel for schedule(static) shared( numerator, numerator2,\
+	//													denominator, denominator2,\
+	//													numerator_denominator )
+	#pragma omp parallel for schedule(static)
 	for (int iEvent = 0; iEvent < allEvents.size(); ++iEvent)
 	{
 		EventRecord event = allEvents[iEvent];
 
-		vector<double> private_num(in_numerator.size(), 0.0);
-		vector<double> private_num2(in_numerator2.size(), 0.0);
-		vector<double> private_den(in_denominator.size(), 0.0);
-		vector<double> private_den2(in_denominator2.size(), 0.0);
-		vector<double> private_num_den(in_numerator.size(), 0.0);
+		vector<double> private_num(numerator.size(), 0.0);
+		vector<double> private_num2(numerator2.size(), 0.0);
+		vector<double> private_den(denominator.size(), 0.0);
+		vector<double> private_den2(denominator2.size(), 0.0);
+		vector<double> private_num_den(numerator.size(), 0.0);
 
 		//===================================
 		//======== Doing numerator ==========
@@ -216,19 +213,19 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 					double denominator_this_event = private_den[idx6D];
 
 					// first moments
-					in_numerator[idx6D]
+					numerator[idx6D]
 								+= numerator_this_event;
-					in_denominator[idx6D]
+					denominator[idx6D]
 								+= denominator_this_event;
 
 					// second moments
-					in_numerator2[idx6D]
+					numerator2[idx6D]
 								+= numerator_this_event
 									* numerator_this_event;
-					in_denominator2[idx6D]
+					denominator2[idx6D]
 								+= denominator_this_event
 									* denominator_this_event;
-					in_numerator_denominator[idx6D]
+					numerator_denominator[idx6D]
 								+= numerator_this_event
 									* denominator_this_event;
 

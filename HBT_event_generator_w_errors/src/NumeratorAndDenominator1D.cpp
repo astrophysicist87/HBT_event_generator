@@ -15,12 +15,7 @@
 
 
 
-void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1D(
-							vector<double> & in_numerator, 				vector<double> & in_numerator2,
-							vector<double> & in_denominator, 			vector<double> & in_denominator2,
-							vector<double> & in_numerator_denominator, 	vector<int>    & in_numerator_bin_count,
-							vector<int>    & in_denominator_bin_count
-							)
+void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1D()
 {
 	const int iqoC = (n_qo_pts - 1) / 2;
 	const int iqsC = (n_qs_pts - 1) / 2;
@@ -37,11 +32,12 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 	const double Kz_over_K0_max = tanh( KYmax );
 
 	// Sum over all events
-	#pragma omp parallel for schedule(static) shared( in_numerator, in_numerator2,\
-														in_denominator, in_denominator2,\
-														in_numerator_denominator,\
-														in_numerator_bin_count,\
-														in_denominator_bin_count )
+	//#pragma omp parallel for schedule(static) shared( numerator, numerator2,\
+	//													denominator, denominator2,\
+	//													numerator_denominator,\
+	//													numerator_bin_count,\
+	//													denominator_bin_count )
+	#pragma omp parallel for schedule(static)
 	for (int iEvent = 0; iEvent < allEvents.size(); ++iEvent)
 	{
 		EventRecord event = allEvents[iEvent];
@@ -417,19 +413,19 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 
 				// input vectors have length of 4D space
 				// first moments
-				in_numerator[index4D]
+				numerator[index4D]
 					+= numerator_contribution_from_this_event;
-				in_denominator[index4D]
+				denominator[index4D]
 					+= denominator_contribution_from_this_event;
 
 				// second moments
-				in_numerator2[index4D]
+				numerator2[index4D]
 					+= numerator_contribution_from_this_event
 						* numerator_contribution_from_this_event;
-				in_denominator2[index4D]
+				denominator2[index4D]
 					+= denominator_contribution_from_this_event
 						* denominator_contribution_from_this_event;
-				in_numerator_denominator[index4D]
+				numerator_denominator[index4D]
 					+= numerator_contribution_from_this_event
 						* denominator_contribution_from_this_event;
 
@@ -461,13 +457,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 //=====================================================================================
 //=====================================================================================
 //=====================================================================================
-void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1D_momentum_space_only(
-							vector<double> & in_numerator, vector<double> & in_numerator2,
-							vector<double> & in_numPair, vector<double> & in_numPair2,
-							vector<double> & in_denominator, vector<double> & in_denominator2,
-							vector<double> & in_denPair, vector<double> & in_denPair2,
-							vector<double> & in_numerator_numPair, vector<double> & in_denominator_denPair
-							)
+void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1D_momentum_space_only()
 {
 	bool perform_random_rotation = false;
 	bool perform_random_shuffle = false;
@@ -488,11 +478,12 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 	const double Kz_over_K0_max = tanh( KYmax );
 
 	// Sum over all events
-	#pragma omp parallel for schedule(static) shared( in_numerator, in_numerator2,\
-														in_numPair, in_numPair2,\
-														in_denominator, in_denominator2,\
-														in_denPair, in_denPair2,\
-														in_numerator_numPair, in_denominator_denPair )
+	//#pragma omp parallel for schedule(static) shared( numerator, numerator2,\
+	//													numPair, numPair2,\
+	//													denominator, denominator2,\
+	//													denPair, denPair2,\
+	//													numerator_numPair, denominator_denPair )
+	#pragma omp parallel for schedule(static)
 	for (int iEvent = 0; iEvent < allEvents.size(); ++iEvent)
 	{
 		EventRecord event = allEvents[iEvent];
@@ -763,10 +754,10 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 				double private_numPair_val 	= private_numPair[idx3D];
 				double private_denPair_val 	= private_denPair[idx3D];
 
-				in_numPair[idx3D] 			+= private_numPair_val;
-				in_numPair2[idx3D] 			+= private_numPair_val*private_numPair_val;
-				in_denPair[idx3D] 			+= private_denPair_val;
-				in_denPair2[idx3D] 			+= private_denPair_val*private_denPair_val;
+				numPair[idx3D] 			+= private_numPair_val;
+				numPair2[idx3D] 			+= private_numPair_val*private_numPair_val;
+				denPair[idx3D] 			+= private_denPair_val;
+				denPair2[idx3D] 			+= private_denPair_val*private_denPair_val;
 
 				double KT = 0.5*(KT_pts[iKT]+KT_pts[iKT+1]);
 				double KL = 0.5*(KL_pts[iKL]+KL_pts[iKL+1]);
@@ -777,16 +768,16 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 					double private_den_val 			= private_den[idx4D];
 
 					// first moments
-					in_numerator[idx4D] 			+= private_num_val;
-					in_denominator[idx4D] 			+= private_den_val;
+					numerator[idx4D] 			+= private_num_val;
+					denominator[idx4D] 			+= private_den_val;
 
 					// second moments
-					in_numerator2[idx4D] 			+= private_num_val * private_num_val;
-					in_denominator2[idx4D] 			+= private_den_val * private_den_val;
+					numerator2[idx4D] 			+= private_num_val * private_num_val;
+					denominator2[idx4D] 			+= private_den_val * private_den_val;
 
 					// for error normalizing by numbers of pairs
-					in_numerator_numPair[idx4D] 	+= private_num_val * private_numPair_val;
-					in_denominator_denPair[idx4D] 	+= private_den_val * private_denPair_val;
+					numerator_numPair[idx4D] 	+= private_num_val * private_numPair_val;
+					denominator_denPair[idx4D] 	+= private_den_val * private_denPair_val;
 
 					++idx4D;
 				}

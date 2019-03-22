@@ -14,12 +14,7 @@
 #include "Stopwatch.h"
 
 
-void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3D(
-							vector<double> & in_numerator, 				vector<double> & in_numerator2,
-							vector<double> & in_denominator, 			vector<double> & in_denominator2,
-							vector<double> & in_numerator_denominator, 	vector<int>    & in_numerator_bin_count,
-							vector<int>    & in_denominator_bin_count
-							)
+void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3D()
 {
 	//int number_of_completed_events = 0;
 	err << "  * Computing numerator and denominator of correlation function with errors" << endl;
@@ -34,23 +29,24 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 		err << "allEvents[" << iEvent << "].particles.size() = " << allEvents[iEvent].particles.size() << endl;
 
 	// Sum over all events
-	#pragma omp parallel for schedule(static) shared( in_numerator, in_numerator2,\
-														in_denominator, in_denominator2,\
-														in_numerator_denominator,\
-														in_numerator_bin_count,\
-														in_denominator_bin_count )
+	//#pragma omp parallel for schedule(static) shared( numerator, numerator2,\
+	//													denominator, denominator2,\
+	//													numerator_denominator,\
+	//													numerator_bin_count,\
+	//													denominator_bin_count )
+	#pragma omp parallel for schedule(static)
 	for (int iEvent = 0; iEvent < allEvents.size(); ++iEvent)
 	{
 		EventRecord event = allEvents[iEvent];
 
-		vector<complex<double> > sum1(in_numerator.size());
-		vector<double> sum2(in_numerator.size());
-		vector<double> sum3(in_denominator.size());
-		vector<double> sum4(in_denominator.size());
-		vector<double> sum5(in_denominator.size());
+		vector<complex<double> > sum1(numerator.size());
+		vector<double> sum2(numerator.size());
+		vector<double> sum3(denominator.size());
+		vector<double> sum4(denominator.size());
+		vector<double> sum5(denominator.size());
 
-		vector<int> private_ABC(in_numerator_bin_count.size());
-		vector<int> private_DBC(in_denominator_bin_count.size());
+		vector<int> private_ABC(numerator_bin_count.size());
+		vector<int> private_DBC(denominator_bin_count.size());
 
 		//===================================
 		//======== Doing numerator ==========
@@ -300,28 +296,28 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 						= sum3[idx]*sum4[idx] - sum5[idx];
 
 				// first moments
-				in_numerator[idx]
+				numerator[idx]
 					+= numerator_contribution_from_this_event;
-				in_denominator[idx]
+				denominator[idx]
 					+= denominator_contribution_from_this_event;
 
 				// second moments
-				in_numerator2[idx]
+				numerator2[idx]
 					+= numerator_contribution_from_this_event
 						* numerator_contribution_from_this_event;
-				in_denominator2[idx]
+				denominator2[idx]
 					+= denominator_contribution_from_this_event
 						* denominator_contribution_from_this_event;
-				in_numerator_denominator[idx]
+				numerator_denominator[idx]
 					+= numerator_contribution_from_this_event
 						* denominator_contribution_from_this_event;
 
 				// track number of events where bin count was non-vanishing
-				//in_numerator_bin_count[idx] += int(private_ABC[idx] > 0);
-				//in_denominator_bin_count[idx] += int(private_DBC[idx] > 0);
+				//numerator_bin_count[idx] += int(private_ABC[idx] > 0);
+				//denominator_bin_count[idx] += int(private_DBC[idx] > 0);
 				// track total bin counts
-				in_numerator_bin_count[idx] += private_ABC[idx];
-				in_denominator_bin_count[idx] += private_DBC[idx];
+				numerator_bin_count[idx] += private_ABC[idx];
+				denominator_bin_count[idx] += private_DBC[idx];
 
 				++idx;
 			}
@@ -363,13 +359,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 //=====================================================================================
 //=====================================================================================
 //=====================================================================================
-void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3D_momentum_space_only(
-							vector<double> & in_numerator, vector<double> & in_numerator2,
-							vector<double> & in_numPair, vector<double> & in_numPair2,
-							vector<double> & in_denominator, vector<double> & in_denominator2,
-							vector<double> & in_denPair, vector<double> & in_denPair2,
-							vector<double> & in_numerator_numPair, vector<double> & in_denominator_denPair
-							)
+void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3D_momentum_space_only()
 {
 	bool perform_random_rotation = false;
 	bool perform_random_shuffle = false;
@@ -386,23 +376,24 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 	const double Kz_over_K0_max = tanh( KYmax );
 
 	// Sum over all events
-	#pragma omp parallel for schedule(static) shared( in_numerator, in_numerator2,\
-														in_numPair, in_numPair2,\
-														in_denominator, in_denominator2,\
-														in_denPair, in_denPair2,\
-														in_numerator_numPair, in_denominator_denPair )
+	//#pragma omp parallel for schedule(static) shared( numerator, numerator2,\
+	//													numPair, numPair2,\
+	//													denominator, denominator2,\
+	//													denPair, denPair2,\
+	//													numerator_numPair, denominator_denPair )
+	#pragma omp parallel for schedule(static)
 	for (int iEvent = 0; iEvent < allEvents.size(); ++iEvent)
 	{
 		EventRecord event = allEvents[iEvent];
 
-		vector<double> private_num(in_numerator.size(), 0.0);
-		vector<double> private_num2(in_numerator2.size(), 0.0);
-		vector<double> private_numPair(in_numPair.size(), 0.0);
-		vector<double> private_numPair2(in_numPair2.size(), 0.0);
-		vector<double> private_den(in_denominator.size(), 0.0);
-		vector<double> private_den2(in_denominator2.size(), 0.0);
-		vector<double> private_denPair(in_denPair.size(), 0.0);
-		vector<double> private_denPair2(in_denPair2.size(), 0.0);
+		vector<double> private_num(numerator.size(), 0.0);
+		vector<double> private_num2(numerator2.size(), 0.0);
+		vector<double> private_numPair(numPair.size(), 0.0);
+		vector<double> private_numPair2(numPair2.size(), 0.0);
+		vector<double> private_den(denominator.size(), 0.0);
+		vector<double> private_den2(denominator2.size(), 0.0);
+		vector<double> private_denPair(denPair.size(), 0.0);
+		vector<double> private_denPair2(denPair2.size(), 0.0);
 
 		//===================================
 		//======== Doing numerator ==========
@@ -610,10 +601,10 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 				double private_numPair_val 	= private_numPair[idx3D];
 				double private_denPair_val 	= private_denPair[idx3D];
 
-				in_numPair[idx3D] 			+= private_numPair_val;
-				in_numPair2[idx3D] 			+= private_numPair_val*private_numPair_val;
-				in_denPair[idx3D] 			+= private_denPair_val;
-				in_denPair2[idx3D] 			+= private_denPair_val*private_denPair_val;
+				numPair[idx3D] 			+= private_numPair_val;
+				numPair2[idx3D] 			+= private_numPair_val*private_numPair_val;
+				denPair[idx3D] 			+= private_denPair_val;
+				denPair2[idx3D] 			+= private_denPair_val*private_denPair_val;
 
 				for (int iqo = 0; iqo < n_qo_bins; iqo++)
 				for (int iqs = 0; iqs < n_qs_bins; iqs++)
@@ -622,13 +613,13 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 					double private_num_val 			= private_num[idx6D];
 					double private_den_val 			= private_den[idx6D];
 
-					in_numerator[idx6D] 			+= private_num_val;
-					in_denominator[idx6D] 			+= private_den_val;
+					numerator[idx6D] 			+= private_num_val;
+					denominator[idx6D] 			+= private_den_val;
 
-					in_numerator2[idx6D] 			+= private_num_val*private_num_val;
-					in_numerator_numPair[idx6D] 	+= private_num_val*private_numPair_val;
-					in_denominator2[idx6D] 			+= private_den_val*private_den_val;
-					in_denominator_denPair[idx6D] 	+= private_den_val*private_denPair_val;
+					numerator2[idx6D] 			+= private_num_val*private_num_val;
+					numerator_numPair[idx6D] 	+= private_num_val*private_numPair_val;
+					denominator2[idx6D] 			+= private_den_val*private_den_val;
+					denominator_denPair[idx6D] 	+= private_den_val*private_denPair_val;
 
 					++idx6D;
 				}

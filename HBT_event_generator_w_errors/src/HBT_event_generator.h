@@ -73,13 +73,12 @@ class HBT_event_generator
 
 		// results
 		double n_pair_numerator, n_pair_denominator;
-		vector<double> denominator, correlation_function, correlation_function_error;
-		vector<double> numerator, numerator2, denominator2, numerator_denominator;
-		vector<double> numPair, numPair2, denPair, denPair2;
-		vector<double> numerator_numPair, denominator_denPair;
-		//vector<double> qo_mean_diff, qs_mean_diff, ql_mean_diff, diff_numPair_count;
-		vector<bool> denominator_cell_was_filled;
-		vector<int> numerator_bin_count, denominator_bin_count;
+		vector<double> correlation_function, correlation_function_error;
+		static vector<double> numerator, denominator, numerator2, denominator2, numerator_denominator;
+		static vector<double> numPair, numPair2, denPair, denPair2;
+		static vector<double> numerator_numPair, denominator_denPair;
+		static vector<bool> denominator_cell_was_filled;
+		static vector<int> numerator_bin_count, denominator_bin_count;
 		
 		// miscellaneous
 		string path;
@@ -170,82 +169,27 @@ class HBT_event_generator
 		void get_random_angles(int n_mixed_events, vector<double> & random_angles);
 
 		// Separate parts of correlation function
-		void Compute_numerator_and_denominator_with_errors(
-							vector<double> & in_numerator, 				vector<double> & in_numerator2,
-							vector<double> & in_denominator, 			vector<double> & in_denominator2,
-							vector<double> & in_numerator_denominator, 	vector<int>    & in_numerator_bin_count,
-							vector<int>    & in_denominator_bin_count
-							);
-		void Compute_numerator_and_denominator_with_errors_q_mode_3D(
-							vector<double> & in_numerator, 				vector<double> & in_numerator2,
-							vector<double> & in_denominator, 			vector<double> & in_denominator2,
-							vector<double> & in_numerator_denominator, 	vector<int>    & in_numerator_bin_count,
-							vector<int>    & in_denominator_bin_count
-							);
-		void Compute_numerator_and_denominator_with_errors_q_mode_1D(
-							vector<double> & in_numerator, 				vector<double> & in_numerator2,
-							vector<double> & in_denominator, 			vector<double> & in_denominator2,
-							vector<double> & in_numerator_denominator, 	vector<int>    & in_numerator_bin_count,
-							vector<int>    & in_denominator_bin_count
-							);
-		void Compute_numerator_and_denominator_with_errors_momentum_space_only(
-							vector<double> & in_numerator, 			vector<double> & in_numerator2,
-							vector<double> & in_numPair, 			vector<double> & in_numPair2,
-							vector<double> & in_denominator, 		vector<double> & in_denominator2,
-							vector<double> & in_denPair, 			vector<double> & in_denPair2,
-							vector<double> & in_numerator_numPair, 	vector<double> & in_denominator_denPair
-							);
-		void Compute_numerator_and_denominator_with_errors_q_mode_3D_momentum_space_only(
-							vector<double> & in_numerator, 			vector<double> & in_numerator2,
-							vector<double> & in_numPair, 			vector<double> & in_numPair2,
-							vector<double> & in_denominator, 		vector<double> & in_denominator2,
-							vector<double> & in_denPair, 			vector<double> & in_denPair2,
-							vector<double> & in_numerator_numPair, 	vector<double> & in_denominator_denPair
-							);
-		void Compute_numerator_and_denominator_with_errors_q_mode_1D_momentum_space_only(
-							vector<double> & in_numerator, 			vector<double> & in_numerator2,
-							vector<double> & in_numPair, 			vector<double> & in_numPair2,
-							vector<double> & in_denominator, 		vector<double> & in_denominator2,
-							vector<double> & in_denPair, 			vector<double> & in_denPair2,
-							vector<double> & in_numerator_numPair, 	vector<double> & in_denominator_denPair
-							);
-		void Compute_numerator_and_denominator_with_errors_binPairsMode_qmode3D(
-							vector<double> & in_numerator, vector<double> & in_numerator2,
-							vector<double> & in_numPair, vector<double> & in_numPair2,
-							vector<double> & in_denominator, vector<double> & in_denominator2,
-							vector<double> & in_denPair, vector<double> & in_denPair2,
-							vector<double> & in_numerator_numPair, vector<double> & in_denominator_denPair
-							);
-		void Compute_numerator_and_denominator_with_errors_binPairsMode_qmode1D(
-							vector<double> & in_numerator, vector<double> & in_numerator2,
-							vector<double> & in_numPair, vector<double> & in_numPair2,
-							vector<double> & in_denominator, vector<double> & in_denominator2,
-							vector<double> & in_denPair, vector<double> & in_denPair2,
-							vector<double> & in_numerator_numPair, vector<double> & in_denominator_denPair
-							);
+		void Compute_numerator_and_denominator();
+		void Compute_numerator_and_denominator_with_errors();
+		void Compute_numerator_and_denominator_with_errors_q_mode_3D();
+		void Compute_numerator_and_denominator_with_errors_q_mode_1D();
+
+		void Compute_numerator_and_denominator_with_errors_momentum_space_only();
+		void Compute_numerator_and_denominator_with_errors_q_mode_3D_momentum_space_only();
+		void Compute_numerator_and_denominator_with_errors_q_mode_1D_momentum_space_only();
+
+		void Compute_numerator_and_denominator_with_errors_binPairsMode_qmode3D();
+		void Compute_numerator_and_denominator_with_errors_binPairsMode_qmode1D();
 		// with bin-averaging (done correctly)
-		void Compute_numerator_and_denominator_with_errors_q_mode_3D_wBA(
-							vector<double> & in_numerator, 				vector<double> & in_numerator2,
-							vector<double> & in_denominator, 			vector<double> & in_denominator2,
-							vector<double> & in_numerator_denominator
-							);
-		void Compute_numerator_and_denominator_with_errors_q_mode_1D_wBA(
-							vector<double> & in_numerator, vector<double> & in_numerator2,
-							vector<double> & in_numPair, vector<double> & in_numPair2,
-							vector<double> & in_denominator, vector<double> & in_denominator2,
-							vector<double> & in_denPair, vector<double> & in_denPair2,
-							vector<double> & in_numerator_numPair, vector<double> & in_denominator_denPair
-							);
+		void Compute_numerator_and_denominator_with_errors_q_mode_3D_wBA();
+		void Compute_numerator_and_denominator_with_errors_q_mode_1D_wBA();
 
 
 		// Correlation function itself
 		void Compute_correlation_function();
-		void Compute_correlation_function_q_mode_3D();
-		void Compute_correlation_function_q_mode_1D();
-		void Compute_correlation_function_methodMode1_q_mode_3D();
-		void Compute_correlation_function_methodMode1_q_mode_1D();
-		void Compute_correlation_function_methodMode2_q_mode_3D();
-		void Compute_correlation_function_methodMode2_q_mode_1D();
+		void Compute_correlation_function_methodMode0();
+		void Compute_correlation_function_methodMode1();
+		void Compute_correlation_function_methodMode2();
 
 
 		// Input/output

@@ -15,6 +15,6 @@ fi
 cp ../parameters.dat .
 
 # time and run
-nohup time ./run_HBT_event_generator.e \
+nohup time ./run_HBT_event_generator.e file_mode=0 \
 		1> HBT_event_generator.out \
 		2> HBT_event_generator.err &
