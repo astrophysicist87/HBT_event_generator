@@ -14,7 +14,7 @@
 #include "Stopwatch.h"
 
 
-void HBT_event_generator::Compute_numerator_and_denominator_with_errors_binPairsMode_qmode3D()
+void HBT_event_generator::Compute_numerator_and_denominator_methodMode1_q_mode_3D()
 {
 	bool perform_random_rotation = true;
 	bool perform_random_shuffle = true;
@@ -30,11 +30,6 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_binPairs
 	const double Kz_over_K0_max = tanh( KYmax );
 
 	// Sum over all events
-	//#pragma omp parallel for schedule(static) shared( numerator, numerator2,\
-	//													numPair, numPair2,\
-	//													denominator, denominator2,\
-	//													denPair, denPair2,\
-	//													numerator_numPair, denominator_denPair )
 	#pragma omp parallel for schedule(static)
 	for (int iEvent = 0; iEvent < allEvents.size(); ++iEvent)
 	{
@@ -312,7 +307,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_binPairs
 //========================================================================
 
 // this one uses Chun's method to get correlator vs. Q == sqrt(-(p1-p2)^2)
-void HBT_event_generator::Compute_numerator_and_denominator_with_errors_binPairsMode_qmode1D()
+void HBT_event_generator::Compute_numerator_and_denominator_methodMode1_q_mode_1D()
 {
 	bool perform_random_rotation = true;
 	bool perform_random_shuffle = false;
@@ -328,11 +323,6 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_binPairs
 	const double Kz_over_K0_max = tanh( KYmax );
 
 	// Sum over all events
-	//#pragma omp parallel for schedule(static) shared( numerator, numerator2,\
-	//													numPair, numPair2,\
-	//													denominator, denominator2,\
-	//													denPair, denPair2,\
-	//													numerator_numPair, denominator_denPair )
 	#pragma omp parallel for schedule(static)
 	for (int iEvent = 0; iEvent < allEvents.size(); ++iEvent)
 	{

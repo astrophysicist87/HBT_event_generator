@@ -170,26 +170,29 @@ class HBT_event_generator
 
 		// Separate parts of correlation function
 		void Compute_numerator_and_denominator();
-		void Compute_numerator_and_denominator_with_errors();
-		void Compute_numerator_and_denominator_with_errors_q_mode_3D();
-		void Compute_numerator_and_denominator_with_errors_q_mode_1D();
 
 		void Compute_numerator_and_denominator_with_errors_momentum_space_only();
 		void Compute_numerator_and_denominator_with_errors_q_mode_3D_momentum_space_only();
 		void Compute_numerator_and_denominator_with_errors_q_mode_1D_momentum_space_only();
 
-		void Compute_numerator_and_denominator_with_errors_binPairsMode_qmode3D();
-		void Compute_numerator_and_denominator_with_errors_binPairsMode_qmode1D();
-		// with bin-averaging (done correctly)
-		void Compute_numerator_and_denominator_with_errors_q_mode_3D_wBA();
-		void Compute_numerator_and_denominator_with_errors_q_mode_1D_wBA();
+		void Compute_numerator_and_denominator_methodMode0();
+		void Compute_numerator_and_denominator_methodMode0_q_mode_3D();
+		void Compute_numerator_and_denominator_methodMode0_q_mode_1D();
+
+		void Compute_numerator_and_denominator_methodMode1();
+		void Compute_numerator_and_denominator_methodMode1_q_mode_3D();
+		void Compute_numerator_and_denominator_methodMode1_q_mode_1D();
+
+		void Compute_numerator_and_denominator_methodMode2();
+		void Compute_numerator_and_denominator_methodMode2_q_mode_3D();
+		void Compute_numerator_and_denominator_methodMode2_q_mode_1D();
 
 
 		// Correlation function itself
 		void Compute_correlation_function();
-		void Compute_correlation_function_methodMode0();
-		void Compute_correlation_function_methodMode1();
-		void Compute_correlation_function_methodMode2();
+		//void Compute_correlation_function_methodMode0();
+		//void Compute_correlation_function_methodMode1();
+		//void Compute_correlation_function_methodMode2();
 
 
 		// Input/output

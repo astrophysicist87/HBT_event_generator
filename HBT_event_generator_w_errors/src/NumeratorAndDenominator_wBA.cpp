@@ -16,7 +16,7 @@
 
 
 
-void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3D_wBA()
+void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3D()
 {
 	bool perform_random_rotation = false;
 	bool perform_random_shuffle = false;
@@ -32,9 +32,6 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 	const double Kz_over_K0_max = tanh( KYmax );
 
 	// Sum over all events
-	//#pragma omp parallel for schedule(static) shared( numerator, numerator2,\
-	//													denominator, denominator2,\
-	//													numerator_denominator )
 	#pragma omp parallel for schedule(static)
 	for (int iEvent = 0; iEvent < allEvents.size(); ++iEvent)
 	{

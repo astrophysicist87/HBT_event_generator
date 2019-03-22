@@ -59,6 +59,7 @@ INC		= 	main.h \
 			$(SRCDIR)/gauss_quadrature.h \
 			$(SRCDIR)/ensemble.h \
 			$(SRCDIR)/random_events.h \
+			$(SRCDIR)/estimate_error.h \
 			$(SRCDIR)/HBT_event_generator.h
 
 # -------------------------------------------------

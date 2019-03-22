@@ -14,7 +14,7 @@
 #include "Stopwatch.h"
 
 
-void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3D()
+void HBT_event_generator::Compute_numerator_and_denominator_methodMode0_q_mode_3D()
 {
 	//int number_of_completed_events = 0;
 	err << "  * Computing numerator and denominator of correlation function with errors" << endl;
@@ -29,11 +29,6 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 		err << "allEvents[" << iEvent << "].particles.size() = " << allEvents[iEvent].particles.size() << endl;
 
 	// Sum over all events
-	//#pragma omp parallel for schedule(static) shared( numerator, numerator2,\
-	//													denominator, denominator2,\
-	//													numerator_denominator,\
-	//													numerator_bin_count,\
-	//													denominator_bin_count )
 	#pragma omp parallel for schedule(static)
 	for (int iEvent = 0; iEvent < allEvents.size(); ++iEvent)
 	{
@@ -376,11 +371,6 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3
 	const double Kz_over_K0_max = tanh( KYmax );
 
 	// Sum over all events
-	//#pragma omp parallel for schedule(static) shared( numerator, numerator2,\
-	//													numPair, numPair2,\
-	//													denominator, denominator2,\
-	//													denPair, denPair2,\
-	//													numerator_numPair, denominator_denPair )
 	#pragma omp parallel for schedule(static)
 	for (int iEvent = 0; iEvent < allEvents.size(); ++iEvent)
 	{

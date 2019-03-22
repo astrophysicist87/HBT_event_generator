@@ -15,7 +15,7 @@
 
 
 
-void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1D()
+void HBT_event_generator::Compute_numerator_and_denominator_methodMode0_q_mode_1D()
 {
 	const int iqoC = (n_qo_pts - 1) / 2;
 	const int iqsC = (n_qs_pts - 1) / 2;
@@ -32,11 +32,6 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 	const double Kz_over_K0_max = tanh( KYmax );
 
 	// Sum over all events
-	//#pragma omp parallel for schedule(static) shared( numerator, numerator2,\
-	//													denominator, denominator2,\
-	//													numerator_denominator,\
-	//													numerator_bin_count,\
-	//													denominator_bin_count )
 	#pragma omp parallel for schedule(static)
 	for (int iEvent = 0; iEvent < allEvents.size(); ++iEvent)
 	{
@@ -440,23 +435,14 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 	return;
 }
 
+//=====================================================================================
+//=====================================================================================
+//=====================================================================================
+//=====================================================================================
+//=====================================================================================
+//=====================================================================================
+//=====================================================================================
 
-
-
-
-
-//=====================================================================================
-//=====================================================================================
-//=====================================================================================
-//=====================================================================================
-//=====================================================================================
-//=====================================================================================
-//=====================================================================================
-//=====================================================================================
-//=====================================================================================
-//=====================================================================================
-//=====================================================================================
-//=====================================================================================
 void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1D_momentum_space_only()
 {
 	bool perform_random_rotation = false;
@@ -478,11 +464,6 @@ void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_1
 	const double Kz_over_K0_max = tanh( KYmax );
 
 	// Sum over all events
-	//#pragma omp parallel for schedule(static) shared( numerator, numerator2,\
-	//													numPair, numPair2,\
-	//													denominator, denominator2,\
-	//													denPair, denPair2,\
-	//													numerator_numPair, denominator_denPair )
 	#pragma omp parallel for schedule(static)
 	for (int iEvent = 0; iEvent < allEvents.size(); ++iEvent)
 	{
