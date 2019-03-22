@@ -221,7 +221,7 @@ void HBT_event_generator::Compute_numerator_and_denominator()
 	}
 	else if ( BE_mode == 1 )
 	{
-		Compute_numerator_and_denominator_with_errors_momentum_space_only();
+		Compute_numerator_and_denominator_momentum_space_only();
 	}
 	else
 	{
@@ -600,18 +600,18 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2()
 }
 
 
-void HBT_event_generator::Compute_numerator_and_denominator_with_errors_momentum_space_only()
+void HBT_event_generator::Compute_numerator_and_denominator_momentum_space_only()
 {
 	switch(q_mode)
 	{
 		case 0:
-			Compute_numerator_and_denominator_with_errors_q_mode_3D_momentum_space_only();
+			Compute_numerator_and_denominator_momentum_space_only_q_mode_3D();
 			break;
 		case 1:
-			Compute_numerator_and_denominator_with_errors_q_mode_1D_momentum_space_only();
+			Compute_numerator_and_denominator_momentum_space_only_q_mode_1D();
 			break;
 		default:
-			err << "Compute_numerator_and_denominator_with_errors_momentum_space_only(): q_mode = "
+			err << "Compute_numerator_and_denominator_momentum_space_only(): q_mode = "
 				<< q_mode << " not supported!" << endl;
 			exit(8);
 			break;

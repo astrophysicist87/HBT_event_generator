@@ -354,7 +354,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode0_q_mode_3
 //=====================================================================================
 //=====================================================================================
 //=====================================================================================
-void HBT_event_generator::Compute_numerator_and_denominator_with_errors_q_mode_3D_momentum_space_only()
+void HBT_event_generator::Compute_numerator_and_denominator_momentum_space_only_q_mode_3D()
 {
 	bool perform_random_rotation = false;
 	bool perform_random_shuffle = false;
