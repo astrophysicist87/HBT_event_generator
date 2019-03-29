@@ -590,7 +590,8 @@ void HBT_event_generator::Compute_numerator_and_denominator_momentum_space_only_
 		//=====================================
 
 		// Randomly sample events to mix with
-		const unsigned int n_mixing_events = allEvents.size()-1;
+		const unsigned int n_mixing_events = min( allEvents.size()-1, n_mix_minimum );
+		//const unsigned int n_mixing_events = allEvents.size()-1;
 		//const unsigned int n_mixing_events = 100;
 
 		vector<unsigned int> indices(allEvents.size());
@@ -736,17 +737,17 @@ void HBT_event_generator::Compute_numerator_and_denominator_momentum_space_only_
 				double private_denPair_val 	= private_denPair[idx3D];
 
 				numPair[idx3D] 			+= private_numPair_val;
-				numPair2[idx3D] 			+= private_numPair_val*private_numPair_val;
+				numPair2[idx3D] 		+= private_numPair_val*private_numPair_val;
 				denPair[idx3D] 			+= private_denPair_val;
-				denPair2[idx3D] 			+= private_denPair_val*private_denPair_val;
+				denPair2[idx3D] 		+= private_denPair_val*private_denPair_val;
 
 				double KT = 0.5*(KT_pts[iKT]+KT_pts[iKT+1]);
 				double KL = 0.5*(KL_pts[iKL]+KL_pts[iKL+1]);
 
 				for (int iQ = 0; iQ < n_Q_bins; iQ++)
 				{
-					double private_num_val 			= private_num[idx4D];
-					double private_den_val 			= private_den[idx4D];
+					double private_num_val 		= private_num[idx4D];
+					double private_den_val 		= private_den[idx4D];
 
 					// first moments
 					numerator[idx4D] 			+= private_num_val;
@@ -754,7 +755,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_momentum_space_only_
 
 					// second moments
 					numerator2[idx4D] 			+= private_num_val * private_num_val;
-					denominator2[idx4D] 			+= private_den_val * private_den_val;
+					denominator2[idx4D] 		+= private_den_val * private_den_val;
 
 					// for error normalizing by numbers of pairs
 					numerator_numPair[idx4D] 	+= private_num_val * private_numPair_val;

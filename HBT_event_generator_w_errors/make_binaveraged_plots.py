@@ -9,9 +9,9 @@ import sys
 mpl.rcParams['pdf.fonttype'] = 42
 
 colors = ['red', 'blue', 'green']
-labels = [r'Binwidth = 5 MeV', r'Binwidth = 500 MeV']
-normalizations = [21.0/1668568.0, 21.0/166856800.0]
-bValues = [1.0/0.005, 1.0/0.5]
+labels = [r'Binwidth = 5 MeV', r'Binwidth = 100 MeV', r'Binwidth = 500 MeV']
+normalizations = [21.0/1668568.0, 21.0/33371360.0, 21.0/166856800.0]
+bValues = [1.0/0.005, 1.0/0.1, 1.0/0.5]
 
 # files to plot come after command name and do not include last argument
 filesToPlot = sys.argv[1:-1]

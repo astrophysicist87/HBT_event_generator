@@ -59,6 +59,8 @@ void HBT_event_generator::initialize_all(
 	BE_mode 		= paraRdr->getVal("BE_mode");
 	// - bin parameters
 	bin_epsilon		= paraRdr->getVal("bin_epsilon");
+	// - bin parameters
+	n_mix_minimum	= paraRdr->getVal("n_mix_minimum");
 	//Define various grid sizes
 	// - pair momenta points at which to evaluate correlation function
 	n_KT_pts 		= paraRdr->getVal("n_KT_pts");

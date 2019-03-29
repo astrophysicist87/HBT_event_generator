@@ -16,7 +16,7 @@ KT_grid_mode = 0
 # KT points
 n_KT_pts = 2
 KTmin = 0.0
-KTmax = 0.000001
+KTmax = 0.2
 
 #=======
 # Kphi grid
@@ -34,28 +34,32 @@ n_Kphi_pts = 2
 
 # KL grid
 n_KL_pts = 2
-KLmin = -0.55
-KLmax = 0.55
+KLmin = -0.5
+KLmax = 0.5
 
 #===========
 # relative momenta (3D)
-n_qo_pts = 2
-n_qs_pts = 2
-n_ql_pts = 22
-delta_qo = 0.005
-delta_qs = 0.005
-delta_ql = 0.02
+n_qo_pts = 62
+n_qs_pts = 62
+n_ql_pts = 62
+delta_qo = 0.025
+delta_qs = 0.025
+delta_ql = 0.025
 
 # relative momentum (1D)
-n_Q_pts = 42
+n_Q_pts = 22
 delta_Q = 0.05
 
 # for doing integrations for 1D calculation
-n_qRP_pts = 7
-n_thq_pts = 8
+n_qRP_pts = 11
+n_thq_pts = 12
 
 #===========
 # misc. and ensemble parameters
+
+#===========
+# minimum number of mixed events in denominator
+n_mix_minimum = 10
 
 #===========
 # delta function or something else
@@ -63,15 +67,15 @@ bin_mode = 0
 
 #===========
 # whether to use qo-qs-ql (0: 3D) or Q (1: 1D)
-q_mode = 0
+q_mode = 1
 
 #===========
 # whether to use GEHW method (0), Chun's method (1) or bin-averaging method (2)
-method_mode = 0
+method_mode = 2
 
 #===========
 # whether or not BE effects are pre-included from Pythia
-BE_mode = 0
+BE_mode = 1
 
 #===========
 # get particles randomly or from file

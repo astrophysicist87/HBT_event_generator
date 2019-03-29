@@ -19,8 +19,8 @@
 
 using namespace std;
 
-const complex<double> i(0.0, 1.0);
-const double hbarC = 0.19733;	//GeV*fm
+constexpr complex<double> i(0.0, 1.0);
+constexpr double hbarC = 0.19733;	//GeV*fm
 
 class HBT_event_generator
 {
@@ -35,6 +35,8 @@ class HBT_event_generator
 
 		int bin_mode, q_mode, method_mode, BE_mode;
 		int total_N_events, number_of_completed_events;
+		
+		int n_mix_minimum;
 
 		int n_KT_pts, n_Kphi_pts, n_KL_pts;
 		int n_qo_pts, n_qs_pts, n_ql_pts;

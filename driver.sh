@@ -6,7 +6,7 @@ HOME_DIRECTORY=~/HBT_event_generator
 # Pythia
 PYTHIA_DIRECTORY=~/pythia8235/examples
 ALT_PYTHIA_DIRECTORY=/scratch/blixen/plumberg
-PYTHIA_RESULTS_DIRECTORY=$ALT_PYTHIA_DIRECTORY/MinBias_results
+PYTHIA_RESULTS_DIRECTORY=$ALT_PYTHIA_DIRECTORY/check_old_BEeffects
 # HBT event generator
 HBT_EVENT_GEN_DIRECTORY=$HOME_DIRECTORY/HBT_event_generator_w_errors
 # Fit correlation function
@@ -32,19 +32,19 @@ check_success () {
 #===================
 # Main calculation
 #===================
-runPythia=false
+runPythia=true
 
 projectile="p"
 target="p"
 beamEnergy="13000.0"	#GeV
-Nevents="10000000"
+Nevents="100000"
 QRefValue="0.2"			#GeV
 #PythiaExecutableToUse=""
 
 echo 'Processing Nevents =' $Nevents $projectile'+'$target 'collisions at' $beamEnergy 'GeV'
 
 nCC=0
-for centralityCutString in "0-10%" "10-40%" "40-100%"
+for centralityCutString in "0-100%"
 do
 	success=0
 	echo '  -- analyzing centrality class' $centralityCutString
