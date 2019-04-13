@@ -128,7 +128,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode1_q_mode_3
 		//=====================================
 
 		// Randomly sample events to mix with
-		const unsigned int n_mixing_events = min( allEvents.size()-1, n_mix_minimum );
+		const unsigned int n_mixing_events = min( (int)allEvents.size()-1, n_mix_minimum );
 		//const unsigned int n_mixing_events = allEvents.size()-1;
 		//const unsigned int n_mixing_events = 100;
 
@@ -424,7 +424,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode1_q_mode_1
 		//=====================================
 
 		// Randomly sample events to mix with
-		const unsigned int n_mixing_events = min( allEvents.size()-1, n_mix_minimum );
+		const unsigned int n_mixing_events = min( (int)allEvents.size()-1, n_mix_minimum );
 		//const unsigned int n_mixing_events = allEvents.size()-1;
 		//const unsigned int n_mixing_events = 100;
 

@@ -473,7 +473,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_momentum_space_only_
 		//=====================================
 
 		// Randomly sample events to mix with
-		const unsigned int n_mixing_events = min( allEvents.size()-1, n_mix_minimum );
+		const unsigned int n_mixing_events = min( (int)allEvents.size()-1, n_mix_minimum );
 		//const unsigned int n_mixing_events = allEvents.size()-1;
 		//const unsigned int n_mixing_events = 100;
 

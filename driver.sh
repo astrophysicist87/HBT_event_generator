@@ -195,7 +195,7 @@ do
 		#add a few more files
 		cp ./parameters.dat $RESULTS_DIRECTORY
 
-		zipFilename=$HOME_DIRECTORY/`echo $collisionSystemCentralityStem`"_results.zip"
+		zipFilename=$HOME_DIRECTORY/`echo $collisionSystemCentralityStem`"_results_THERMAL_wBEeffects.zip"
 
 		zip -r `get_filename $zipFilename` $RESULTS_DIRECTORY
 

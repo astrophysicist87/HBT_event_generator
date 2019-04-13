@@ -58,6 +58,10 @@ n_thq_pts = 12
 # misc. and ensemble parameters
 
 #===========
+# minimum number of mixed events in denominator
+n_mix_minimum = 10000
+
+#===========
 # delta function or something else
 bin_mode = 0
 
