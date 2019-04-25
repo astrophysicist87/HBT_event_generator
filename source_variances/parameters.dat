@@ -14,9 +14,9 @@ KT_grid_mode = 0
 	#     (for integrating correlation function)
 
 # KT points
-n_KT_pts = 2
+n_KT_pts = 11
 KTmin = 0.0
-KTmax = 0.2
+KTmax = 1.0
 
 #=======
 # Kphi grid
@@ -28,7 +28,7 @@ Kphi_grid_mode = 0
 	#     (for integrating correlation function)
 
 # Kphi points
-n_Kphi_pts = 2
+n_Kphi_pts = 36
 #Kphimax, Kphimin
 #determined automatically
 
@@ -86,10 +86,10 @@ file_mode = 1
 	RNG_a = 0.02	#GeV/fm
 	RNG_Nev = 10
 	RNG_mult = 100000
-	RNG_xDir = 0
-	RNG_yDir = 0
+	RNG_xDir = 1
+	RNG_yDir = 1
 	RNG_zDir = 1
-	RNG_seed = 0
+	RNG_seed = 1
 	#=======
 
 #===========

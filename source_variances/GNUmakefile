@@ -22,7 +22,7 @@ SRCDIR		=	src
 # --------------- Files involved ------------------
 
 ifeq "$(MAIN)" ""
-MAIN		=	run_HBT_event_generator.e
+MAIN		=	SV.e
 endif
 
 SRC		=	main.cpp \
@@ -42,6 +42,7 @@ INC		= 	main.h \
 			$(SRCDIR)/ensemble.h \
 			$(SRCDIR)/matrix.h \
 			$(SRCDIR)/random_events.h \
+			$(SRCDIR)/read_in_data.h \
 			$(SRCDIR)/estimate_error.h \
 			$(SRCDIR)/SourceVariances.h
 

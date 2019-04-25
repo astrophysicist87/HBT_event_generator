@@ -1,5 +1,5 @@
-#ifndef HBTEG_H
-#define HBTEG_H
+#ifndef SOURCEVARIANCES_H
+#define SOURCEVARIANCES_H
 
 #include <omp.h>
 #include <iostream>
@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <cstdlib>
 #include <complex>
+#include <string>
 
 #include "ParameterReader.h"
 #include "Arsenal.h"
@@ -56,11 +57,17 @@ class SourceVariances
 
 		vector<double> KT_pts, Kphi_pts, KL_pts;
 		vector<double> Kx_pts, Ky_pts, Kz_pts;
+		vector<double> KT_bins, Kphi_bins, KL_bins;
+		vector<double> Kx_bins, Ky_bins, Kz_bins;
 
 		vector<double> S, x_S, x2_S, y_S, y2_S, z_S, z2_S, xo_S, xo2_S, xs_S, xs2_S, xl_S, xl2_S, t_S, t2_S;
 		vector<double> x_t_S, y_t_S, z_t_S, x_y_S, x_z_S, y_z_S, xo_t_S, xs_t_S, xl_t_S, xo_xs_S, xo_xl_S, xs_xl_S;
 
-		
+		vector<double> lambda_Correl, R2, R2o, R2s, R2l, R2os, R2ol, R2sl;
+		//vector<double> lambda_Correl_err, R2_err, R2o_err, R2s_err, R2l_err, R2os_err, R2ol_err, R2sl_err;
+
+		vector<double> detHBT2D, detHBT3D;
+
 		// miscellaneous
 		string path;
 		ostream & out;
@@ -100,6 +107,10 @@ class SourceVariances
 		void Compute_radii_qmode_3D();
 		void Average_source_moments();
 		void Set_radii();
+		void Output_source_moments( string outSM_filename, string coords );
+		void Output_source_variances( string outSV_filename, string coords );
+		void Output_HBTradii( string outHBT_filename );
+		//void Compute_radii();
 
 };
 

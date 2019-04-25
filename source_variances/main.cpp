@@ -14,6 +14,7 @@
 #include "src/EventRecord.h"
 #include "src/ParticleRecord.h"
 #include "src/random_events.h"
+#include "src/read_in_data.h"
 #include "main.h"
 
 using namespace std;
@@ -50,8 +51,8 @@ int main(int argc, char *argv[])
 	// Set-up output files
 	string outmain_filename = get_filename( "./results/", "pi", "out" );
 	string errmain_filename = get_filename( "./results/", "pi", "err" );
-	ofstream outmain(out_filename_stream.str().c_str());
-	ofstream errmain(err_filename_stream.str().c_str());
+	ofstream outmain( outmain_filename.c_str() );
+	ofstream errmain( errmain_filename.c_str() );
 
 	//=================================================
 	// Start the main part of the calculation
@@ -129,11 +130,11 @@ int main(int argc, char *argv[])
 
 			// Compute radii (after
 			// all events have been read in)
-			HBT_event_ensemble.Compute_radii();
+			//HBT_event_ensemble.Compute_radii();
 
 
 			// Output radii
-			HBT_event_ensemble.Output_radii( "./results/HBT_SV_radii.dat" );
+			HBT_event_ensemble.Output_HBTradii( "./results/HBT_SV_radii.dat" );
 
 		}
 		else if ( mode == "read all" )
@@ -154,11 +155,11 @@ int main(int argc, char *argv[])
 
 
 			// Compute radii
-			HBT_event_ensemble.Compute_radii();
+			//HBT_event_ensemble.Compute_radii();
 
 
 			// Output radii
-			HBT_event_ensemble.Output_radii( "./results/HBT_SV_radii.dat" );
+			HBT_event_ensemble.Output_HBTradii( "./results/HBT_SV_radii.dat" );
 
 		}
 	
@@ -179,9 +180,8 @@ int main(int argc, char *argv[])
 			HBT_event_ensemble( paraRdr, allEvents,
 								outmain, errmain );
 
-
 		// Loop a few more times to build up statistics
-		const int nLoops = 1;  //say
+		const int nLoops = 100;  //say
 		for (int iLoop = 1; iLoop < nLoops; ++iLoop)
 		{
 
@@ -199,13 +199,20 @@ int main(int argc, char *argv[])
 
 		}
 
+		HBT_event_ensemble.Average_source_moments();
+
+		HBT_event_ensemble.Set_radii();
 
 		// Compute correlation function itself
-		HBT_event_ensemble.Compute_radii();
+		//HBT_event_ensemble.Compute_radii();
 
 
-		// Output correlation function
-		HBT_event_ensemble.Output_radii( "./results/HBT_SV_radii.dat" );
+		// Output radii and source variances
+		HBT_event_ensemble.Output_source_moments( "./results/source_moments_XYZ.dat", "XYZ" );
+		HBT_event_ensemble.Output_source_moments( "./results/source_moments_OSL.dat", "OSL" );
+		HBT_event_ensemble.Output_source_variances( "./results/source_variances_XYZ.dat", "XYZ" );
+		HBT_event_ensemble.Output_source_variances( "./results/source_variances_OSL.dat", "OSL" );
+		HBT_event_ensemble.Output_HBTradii( "./results/HBT_SV_radii.dat" );
 
 	}
 
