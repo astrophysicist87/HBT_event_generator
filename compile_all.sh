@@ -9,6 +9,8 @@ PYTHIA_DIRECTORY=~/pythia8235/examples
 HBT_EVENT_GEN_DIRECTORY=$HOME_DIRECTORY/HBT_event_generator_w_errors
 # Fit correlation function
 HBT_FITCF_DIRECTORY=$HOME_DIRECTORY/fit_correlation_function
+# Source variances/HBT radii
+HBT_SV_DIRECTORY=$HOME_DIRECTORY/source_variances
 
 success=0
 
@@ -43,6 +45,19 @@ echo '#====================================='
 echo '# Compiling fit_correlation_function'
 echo '#====================================='
 cd $HBT_FITCF_DIRECTORY
+echo 'In directory='`pwd`':'
+echo '#====================================='
+gmake distclean
+gmake all
+success=$[success+`echo $?`]
+echo '#====================================='
+
+#=====================================
+# Compile SV.e
+echo '#====================================='
+echo '# Compiling SV.e'
+echo '#====================================='
+cd $HBT_SV_DIRECTORY
 echo 'In directory='`pwd`':'
 echo '#====================================='
 gmake distclean

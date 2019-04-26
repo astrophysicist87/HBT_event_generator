@@ -11,6 +11,8 @@ PYTHIA_RESULTS_DIRECTORY=$ALT_PYTHIA_DIRECTORY/check_old_BEeffects
 HBT_EVENT_GEN_DIRECTORY=$HOME_DIRECTORY/HBT_event_generator_w_errors
 # Fit correlation function
 HBT_FITCF_DIRECTORY=$HOME_DIRECTORY/fit_correlation_function
+# Source variances/HBT radii
+HBT_SV_DIRECTORY=$HOME_DIRECTORY/source_variances
 
 #============================
 # Some function definitions
@@ -182,6 +184,36 @@ do
 
 		# copy results
 		cp fit_correlation_function.[oe]* ./results/* $RESULTS_DIRECTORY/
+
+		#exit $runSuccess
+	)
+
+	#=====================================
+	# Run SV.e
+	#SVSuccess=$(
+	(
+
+		cd $HBT_SV_DIRECTORY
+		echo '     Now in '`pwd`
+
+		if [ ! -d "./results" ]
+		then
+			mkdir results
+		fi
+
+		cp ../parameters.dat .
+
+		# time and run
+		nohup time ./SV.e \
+				1> SV_record.out \
+				2> SV_record.err
+
+		# check and report whether run was successful
+		runSuccess=`echo $?`
+		check_success 'source_variances' $runSuccess
+
+		# copy results
+		cp SV_record.[oe]* ./results/* $RESULTS_DIRECTORY/
 
 		#exit $runSuccess
 	)
