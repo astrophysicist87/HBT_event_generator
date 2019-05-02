@@ -41,6 +41,10 @@ target="p"
 beamEnergy="13000.0"	#GeV
 Nevents="100000"
 QRefValue="0.2"			#GeV
+BEeffects='off'
+BEEnhancementMode='0'
+SetFragmentationVertices='on'
+SetPartonVertices='off'
 #PythiaExecutableToUse=""
 
 echo 'Processing Nevents =' $Nevents $projectile'+'$target 'collisions at' $beamEnergy 'GeV'
@@ -83,15 +87,22 @@ do
 					mkdir $PYTHIA_RESULTS_DIRECTORY
 			fi
 
+			# set some options for Pythia to run on
+			rm main_BEeffects.cmnd 2>/dev/null
+			# Turn on tracking of space-time information
+			echo 'Fragmentation:setVertices =' $SetFragmentationVertices >> main_BEeffects.cmnd
+			echo 'PartonVertex:setVertex =' $SetPartonVertices >> main_BEeffects.cmnd
+
+			# turn on and set Bose-Einstein effects
+			echo 'HadronLevel:BoseEinstein =' $BEeffects >> main_BEeffects.cmnd
+			echo 'BoseEinstein:QRef =' $QRefValue >> main_BEeffects.cmnd
+			echo 'BoseEinstein:enhanceMode =' $BEEnhancementMode >> main_BEeffects.cmnd
+
+
 			# time and run
-			#./run_mainHIC.sh $projectile $target $beamEnergy \
-			#					$Nevents $PYTHIA_RESULTS_DIRECTORY
-			#./run_testBEeffects.sh $projectile $target $beamEnergy \
-			#					$Nevents $PYTHIA_RESULTS_DIRECTORY \
-			#					$QRefValue
 			./run_BEeffects.sh $projectile $target $beamEnergy \
 								$Nevents $PYTHIA_RESULTS_DIRECTORY \
-								$QRefValue $lowerLimit $upperLimit
+								$lowerLimit $upperLimit
 
 			# check and report whether run was successful
 			runSuccess=`echo $?`
