@@ -21,6 +21,8 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 	bool perform_random_rotation = false;
 	bool perform_random_shuffle = false;
 
+	constexpr bool do_denominator = false;
+
 	int number_of_completed_events = 0;
 	cout << "  * Computing numerator and denominator of correlation function with errors; qmode = 3D using bin-averaging" << endl;
 
@@ -46,6 +48,8 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 		//===================================
 		//======== Doing numerator ==========
 		//===================================
+
+		double num_pairs_this_event = static_cast<double>(event.particles.size() * (event.particles.size() - 1));
 
 		// Sum over pairs of distinct particles
 		for (int iParticle = 0; iParticle < event.particles.size(); ++iParticle)
@@ -85,13 +89,22 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 
 			// Momentum-space cuts
 			if ( KT_idx < 0 or KT_idx >= n_KT_bins )
+			{
+				err << "KT; shouldn't have made it here!" << endl;
 				continue;
+			}
 
 			if ( Kphi_idx < 0 or Kphi_idx >= n_Kphi_bins )
+			{
+				err << "Kphi; shouldn't have made it here!" << endl;
 				continue;
+			}
 
 			if ( KL_idx < 0 or KL_idx >= n_KL_bins )
+			{
+				err << "KL; shouldn't have made it here!" << endl;
 				continue;
+			}
 
 			int index3D = indexerK(KT_idx, Kphi_idx, KL_idx);
 			for (int iqo = 0; iqo < n_qo_bins; iqo++)
@@ -116,13 +129,20 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 							- qy * (yi - yj)
 							- qz * (zi - zj);
 
-				double num_term = cos(arg/hbarC);
+				double num_term = cos(arg/hbarC)
+										/ ( 1.0
+											* px_bin_width
+											* py_bin_width
+											* pz_bin_width );
 
-				private_num[index6D] += num_term;
+				private_num[index6D] += num_term
+										/ num_pairs_this_event;
 
 			}
 		}
 
+		if ( do_denominator )
+		{
 
 		//=====================================
 		//========= Doing denominator =========
@@ -193,6 +213,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 			}
 		}
 
+		}
 
 		// Need this to avoid race conditions
 		#pragma omp critical

@@ -507,11 +507,15 @@ void HBT_event_generator::Output_correlation_function_q_mode_1D( string filename
 	for (int iQ = 0; iQ < n_Q_bins; iQ++)
 	{
 
+		double Q_local = 0.5*(Q_pts[iQ]+Q_pts[iQ+1]);
+		//if ( abs(Q_local) < 1.e-6 )
+		//	Q_local = 1.e-6;
+
 		ofs /*<< setfill('X') */<< fixed << setprecision(prec) << "  "
 			<< 0.5*(KT_pts[iKT]+KT_pts[iKT+1]) << setw(prec+extrawidth)
 			<< 0.5*(Kphi_pts[iKphi]+Kphi_pts[iKphi+1]) << setw(prec+extrawidth)
 			<< 0.5*(KL_pts[iKL]+KL_pts[iKL+1]) << setw(prec+extrawidth)
-			<< 0.5*(Q_pts[iQ]+Q_pts[iQ+1]) << "   "//setw(prec+24)
+			<< Q_local << "   "//setw(prec+24)
 			<< real(numerator[idx] / static_cast<double>(total_N_events)) << "   "//setw(prec+16)
 			<< imag(numerator[idx] / static_cast<double>(total_N_events)) << "   "//setw(prec+16)
 			<< denominator[idx] / static_cast<double>(total_N_events) << "   "//setw(prec+24)
