@@ -6,7 +6,7 @@ HOME_DIRECTORY=~/HBT_event_generator
 # Pythia
 PYTHIA_DIRECTORY=~/pythia8235/examples
 ALT_PYTHIA_DIRECTORY=/scratch/blixen/plumberg
-PYTHIA_RESULTS_DIRECTORY=$ALT_PYTHIA_DIRECTORY/check_old_BEeffects
+PYTHIA_RESULTS_DIRECTORY=$ALT_PYTHIA_DIRECTORY/results_run_BEeffects_PYTHIAv0b
 # HBT event generator
 HBT_EVENT_GEN_DIRECTORY=$HOME_DIRECTORY/HBT_event_generator_w_errors
 # Fit correlation function
@@ -42,10 +42,11 @@ beamEnergy="13000.0"	#GeV
 Nevents="100000"
 QRefValue="0.2"			#GeV
 BEeffects='off'
-BEEnhancementMode='0'
+BEEnhancementMode='0'	# 0 - use fixed QRef
+						# 1 - use ST interval
 SetFragmentationVertices='on'
 SetPartonVertices='off'
-#PythiaExecutableToUse=""
+ThermalOnly='false'
 
 echo 'Processing Nevents =' $Nevents $projectile'+'$target 'collisions at' $beamEnergy 'GeV'
 
@@ -96,13 +97,13 @@ do
 			# turn on and set Bose-Einstein effects
 			echo 'HadronLevel:BoseEinstein =' $BEeffects >> main_BEeffects.cmnd
 			echo 'BoseEinstein:QRef =' $QRefValue >> main_BEeffects.cmnd
-			echo 'BoseEinstein:enhanceMode =' $BEEnhancementMode >> main_BEeffects.cmnd
+			#echo 'BoseEinstein:enhanceMode =' $BEEnhancementMode >> main_BEeffects.cmnd
 
 
 			# time and run
 			./run_BEeffects.sh $projectile $target $beamEnergy \
 								$Nevents $PYTHIA_RESULTS_DIRECTORY \
-								$lowerLimit $upperLimit
+								$lowerLimit $upperLimit $ThermalOnly
 
 			# check and report whether run was successful
 			runSuccess=`echo $?`
@@ -119,14 +120,18 @@ do
 		for line in `cat $recordOfOutputFilenames_Sxp`
 		do
 			readlink -f $PYTHIA_RESULTS_DIRECTORY/$line >> $HBT_EVENT_GEN_DIRECTORY/catalogue.dat
+			readlink -f $PYTHIA_RESULTS_DIRECTORY/$line >> $HBT_SV_DIRECTORY/catalogue.dat
 		done
 		# Set particle catalogue
 		readlink -f $PYTHIA_RESULTS_DIRECTORY/HBT_particle.dat > $HBT_EVENT_GEN_DIRECTORY/particle_catalogue.dat
 		readlink -f $PYTHIA_RESULTS_DIRECTORY/HBT_particle.dat > $HBT_FITCF_DIRECTORY/particle_catalogue.dat
+		readlink -f $PYTHIA_RESULTS_DIRECTORY/HBT_particle.dat > $HBT_SV_DIRECTORY/particle_catalogue.dat
 		# Set ensemble catalogue
-		echo $projectile $target $beamEnergy $lowerLimit $upperLimit $Nevents > $HBT_EVENT_GEN_DIRECTORY/ensemble_catalogue.dat
 		#echo $projectile $target $beamEnergy 0 100 $Nevents > $HBT_EVENT_GEN_DIRECTORY/ensemble_catalogue.dat
+		echo $projectile $target $beamEnergy $lowerLimit $upperLimit $Nevents > $HBT_EVENT_GEN_DIRECTORY/ensemble_catalogue.dat
 		readlink -f $PYTHIA_RESULTS_DIRECTORY/`cat $recordOfOutputFilename_mult` >> $HBT_EVENT_GEN_DIRECTORY/ensemble_catalogue.dat
+		echo $projectile $target $beamEnergy $lowerLimit $upperLimit $Nevents > $HBT_SV_DIRECTORY/ensemble_catalogue.dat
+		readlink -f $PYTHIA_RESULTS_DIRECTORY/`cat $recordOfOutputFilename_mult` >> $HBT_SV_DIRECTORY/ensemble_catalogue.dat
 
 		#exit $runSuccess
 	)
@@ -238,7 +243,13 @@ do
 		#add a few more files
 		cp ./parameters.dat $RESULTS_DIRECTORY
 
-		zipFilename=$HOME_DIRECTORY/`echo $collisionSystemCentralityStem`"_results_THERMAL_wBEeffects.zip"
+		typeStem=""
+		if [ "$ThermalOnly" -eq 'true' ]
+		then
+			typeStem="_THERMAL"
+		fi
+
+		zipFilename=$HOME_DIRECTORY/`echo $collisionSystemCentralityStem`"_results"`echo $typeStem`"_wBEeffects.zip"
 
 		zip -r `get_filename $zipFilename` $RESULTS_DIRECTORY
 

@@ -48,6 +48,11 @@ void SourceVariances::Compute_radii_qmode_3D()
 			if ( KL_idx < 0 or KL_idx >= n_KL_bins )
 				continue;
 
+/*cout << "particles which passed: "
+		<< iEvent << "   " << iParticle << "   "
+		<< E << "   " << px << "   " << py << "   " << pz << "   "
+		<< t << "   " << x << "   " << y << "   " << z << endl;*/
+
 			int index3D = indexerK(KT_idx, Kphi_idx, KL_idx);
 
 			//check this

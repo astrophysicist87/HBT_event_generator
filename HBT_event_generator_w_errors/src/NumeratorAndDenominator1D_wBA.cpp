@@ -19,7 +19,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_1
 	//bool perform_random_rotation = false;
 	//bool perform_random_shuffle = false;
 
-	constexpr bool do_denominator = false;
+	constexpr bool do_denominator = true;
 
 	const int q_space_size = n_Q_bins*n_qRP_pts*n_thq_pts;
 	const int K_space_size = n_KT_bins*n_Kphi_bins*n_KL_bins;
@@ -219,25 +219,25 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_1
 										- qz * (zi - zj);
 
 							double num_term = cos( arg / hbarC )
-												/ ( 1.0
+												/*/ ( 1.0
 													* px_bin_width
 													* py_bin_width
-													* pz_bin_width );
+													* pz_bin_width )*/;
 
 							//private_num[index7D] += num_term;
 							private_num[index7D] += integration_weight
 													* weight_factor
 													* num_term
-													/ ( num_pairs_this_event );
+													/*/ ( num_pairs_this_event )*/;
 
-							if ( inCenter )
+							/*if ( inCenter )
 								normalizations[index3D]
 												+= integration_weight
 													* weight_factor
 													/ ( Q0 * num_pairs_this_event
 														* px_bin_width
 														* py_bin_width
-														* pz_bin_width );
+														* pz_bin_width );*/
 
 						}
 					}
@@ -301,8 +301,8 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_1
 			for (int iQ = 0; iQ < n_Q_bins; iQ++)
 			{
 				double Q0 = 0.5*(Q_pts[iQ]+Q_pts[iQ+1]);
-				if (abs(Q0)<1.e-20)
-					Q0 = 1.e-20;
+				if (abs(Q0)<1.e-6)
+					Q0 = 1.e-6;
 
 				for (int ithq = 0; ithq < n_thq_pts; ithq++)	//using points, not bins!
 				{
@@ -319,10 +319,6 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_1
 
 					for (int iqRP = 0; iqRP < n_qRP_pts; iqRP++)	//using points, not bins!
 					{
-
-						double Q0 = 0.5*(Q_pts[iQ]+Q_pts[iQ+1]);
-						if (abs(Q0)<1.e-20)
-							Q0 = 1.e-20;
 
 						double loc_alpha = 4.0*(particle_mass*particle_mass + KT*KT + KL*KL) + Q0*Q0;
 
@@ -432,8 +428,9 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_1
 						denominator_this_event 	+= private_den[index7D];
 					}
 
-numerator_this_event /= normalizations[idx3D];
-denominator_this_event /= normalizations[idx3D];
+					// normalize appropriately
+					//numerator_this_event /= normalizations[idx3D];
+					//denominator_this_event /= normalizations[idx3D];
 
 					// input vectors have length of 4D space
 					// first moments

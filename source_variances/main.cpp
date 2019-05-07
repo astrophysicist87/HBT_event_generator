@@ -1,4 +1,3 @@
-#include <omp.h>
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -128,12 +127,15 @@ int main(int argc, char *argv[])
 
 			}
 
-			// Compute radii (after
-			// all events have been read in)
-			//HBT_event_ensemble.Compute_radii();
+			HBT_event_ensemble.Average_source_moments();
 
+			HBT_event_ensemble.Set_radii();
 
-			// Output radii
+			// Output radii and source variances
+			HBT_event_ensemble.Output_source_moments( "./results/source_moments_XYZ.dat", "XYZ" );
+			HBT_event_ensemble.Output_source_moments( "./results/source_moments_OSL.dat", "OSL" );
+			HBT_event_ensemble.Output_source_variances( "./results/source_variances_XYZ.dat", "XYZ" );
+			HBT_event_ensemble.Output_source_variances( "./results/source_variances_OSL.dat", "OSL" );
 			HBT_event_ensemble.Output_HBTradii( "./results/HBT_SV_radii.dat" );
 
 		}
@@ -153,12 +155,15 @@ int main(int argc, char *argv[])
 				HBT_event_ensemble( paraRdr, allEvents,
 									outmain, errmain );
 
+			HBT_event_ensemble.Average_source_moments();
 
-			// Compute radii
-			//HBT_event_ensemble.Compute_radii();
+			HBT_event_ensemble.Set_radii();
 
-
-			// Output radii
+			// Output radii and source variances
+			HBT_event_ensemble.Output_source_moments( "./results/source_moments_XYZ.dat", "XYZ" );
+			HBT_event_ensemble.Output_source_moments( "./results/source_moments_OSL.dat", "OSL" );
+			HBT_event_ensemble.Output_source_variances( "./results/source_variances_XYZ.dat", "XYZ" );
+			HBT_event_ensemble.Output_source_variances( "./results/source_variances_OSL.dat", "OSL" );
 			HBT_event_ensemble.Output_HBTradii( "./results/HBT_SV_radii.dat" );
 
 		}
@@ -202,10 +207,6 @@ int main(int argc, char *argv[])
 		HBT_event_ensemble.Average_source_moments();
 
 		HBT_event_ensemble.Set_radii();
-
-		// Compute correlation function itself
-		//HBT_event_ensemble.Compute_radii();
-
 
 		// Output radii and source variances
 		HBT_event_ensemble.Output_source_moments( "./results/source_moments_XYZ.dat", "XYZ" );

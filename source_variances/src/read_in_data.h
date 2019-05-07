@@ -66,6 +66,9 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 		return;
 	}
 
+	// filter out particles produced unreasonably far from collision point
+	double max_accepted_tau = paraRdr->getVal("max_accepted_tau");
+
 	// this vector contains events to include (for specific centrality class)
 	int nextEventIndex = 0;
 	int nextEventID = ensemble_multiplicites[nextEventIndex].eventID;
@@ -91,6 +94,19 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 					>> E >> px >> py >> pz
 					>> t >> x >> y >> z
 			 ) ) { /*cout << "no success reading in!" << endl;*/ break; }
+
+		{
+			const double tconv = t / MmPerFm;
+			const double xconv = x / MmPerFm;
+			const double yconv = y / MmPerFm;
+			const double zconv = z / MmPerFm;
+
+			const double current_tau2 = tconv*tconv - xconv*xconv - yconv*yconv - zconv*zconv;
+
+			// if this particle is out of range, go to next particle
+			if ( max_accepted_tau*max_accepted_tau < current_tau2 )
+				continue;
+		}
 
 		//cout << "eventID = " << eventID << endl;
 		//cout << "nextEventID = " << nextEventID << endl;

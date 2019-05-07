@@ -254,7 +254,7 @@ void SourceVariances::Output_source_moments( string outSM_filename, string coord
 	if ( coords == "XYZ" )
 	{
 
-		fprintf ( pFile, "# K_T      K_phi      K_L      x      y      z      t      ");
+		fprintf ( pFile, "# K_T      K_phi      K_L      S      x      y      z      t      ");
 		fprintf ( pFile, "x2      y2      z2      t2      ");
 		fprintf ( pFile, "xy      xz      xt      yz      yt      zt      \n");
 		fprintf ( pFile, "#----------------------------------------" );
@@ -270,8 +270,8 @@ void SourceVariances::Output_source_moments( string outSM_filename, string coord
 		{
 				fprintf (  pFile,  "%f      %f      %f      ",
 							KT_bins[iKT], Kphi_bins[iKphi], KL_bins[iKL] );
-				fprintf (  pFile,  "%f      %f      %f      %f      ",
-							x_S[idx], y_S[idx], z_S[idx], t_S[idx] );
+				fprintf (  pFile,  "%f      %f      %f      %f      %f      ",
+							S[idx], x_S[idx], y_S[idx], z_S[idx], t_S[idx] );
 				fprintf (  pFile,  "%f      %f      %f      %f      ",
 							x2_S[idx], y2_S[idx], z2_S[idx], t2_S[idx] );
 				fprintf (  pFile,  "%f      %f      %f      %f      %f      %f      \n",
@@ -286,7 +286,7 @@ void SourceVariances::Output_source_moments( string outSM_filename, string coord
 	else if ( coords == "OSL" )
 	{
 
-		fprintf ( pFile, "# K_T      K_phi      K_L      xo      xs      xl      t      ");
+		fprintf ( pFile, "# K_T      K_phi      K_L      S      xo      xs      xl      t      ");
 		fprintf ( pFile, "xo2      xs2      xl2      t2      ");
 		fprintf ( pFile, "xoxs      xoxl      xot      xsxl      xst      xlt      \n");
 		fprintf ( pFile, "#----------------------------------------" );
@@ -302,8 +302,8 @@ void SourceVariances::Output_source_moments( string outSM_filename, string coord
 		{
 				fprintf (  pFile,  "%f      %f      %f      ",
 							KT_bins[iKT], Kphi_bins[iKphi], KL_bins[iKL] );
-				fprintf (  pFile,  "%f      %f      %f      %f      ",
-							xo_S[idx], xs_S[idx], xl_S[idx], t_S[idx] );
+				fprintf (  pFile,  "%f      %f      %f      %f      %f      ",
+							S[idx], xo_S[idx], xs_S[idx], xl_S[idx], t_S[idx] );
 				fprintf (  pFile,  "%f      %f      %f      %f      ",
 							xo2_S[idx], xs2_S[idx], xl2_S[idx], t2_S[idx] );
 				fprintf (  pFile,  "%f      %f      %f      %f      %f      %f      \n",
@@ -337,7 +337,7 @@ void SourceVariances::Output_source_variances( string outSV_filename, string coo
 	{
 
 		fprintf ( pFile, "# K_T      K_phi      K_L      ");
-		fprintf ( pFile, "<x2>      <y2>      <z2>      <t2>      ");
+		fprintf ( pFile, "S      <x2>      <y2>      <z2>      <t2>      ");
 		fprintf ( pFile, "<xy>      <xz>      <xt>      <yz>      <yt>      <zt>      \n");
 		fprintf ( pFile, "#----------------------------------------" );
 		fprintf ( pFile, "----------------------------------------" );
@@ -352,7 +352,8 @@ void SourceVariances::Output_source_variances( string outSV_filename, string coo
 		{
 				fprintf (  pFile,  "%f      %f      %f      ",
 							KT_bins[iKT], Kphi_bins[iKphi], KL_bins[iKL] );
-				fprintf (  pFile,  "%f      %f      %f      %f      ",
+				fprintf (  pFile,  "%f      %f      %f      %f      %f      ",
+							S[idx],
 							x2_S[idx]-x_S[idx]*x_S[idx], y2_S[idx]-y_S[idx]*y_S[idx],
 							z2_S[idx]-z_S[idx]*z_S[idx], t2_S[idx]-t_S[idx]*t_S[idx] );
 				fprintf (  pFile,  "%f      %f      %f      %f      %f      %f      \n",
@@ -369,7 +370,7 @@ void SourceVariances::Output_source_variances( string outSV_filename, string coo
 	{
 
 		fprintf ( pFile, "# K_T      K_phi      K_L      ");
-		fprintf ( pFile, "<xo2>      <xs2>      <xl2>      <t2>      ");
+		fprintf ( pFile, "S      <xo2>      <xs2>      <xl2>      <t2>      ");
 		fprintf ( pFile, "<xoxs>      <xoxl>      <xot>      <xsxl>      <xst>      <xlt>      \n");
 		fprintf ( pFile, "#----------------------------------------" );
 		fprintf ( pFile, "----------------------------------------" );
@@ -384,7 +385,8 @@ void SourceVariances::Output_source_variances( string outSV_filename, string coo
 		{
 				fprintf (  pFile,  "%f      %f      %f      ",
 							KT_bins[iKT], Kphi_bins[iKphi], KL_bins[iKL] );
-				fprintf (  pFile,  "%f      %f      %f      %f      ",
+				fprintf (  pFile,  "%f      %f      %f      %f      %f      ",
+							S[idx],
 							xo2_S[idx]-xo_S[idx]*xo_S[idx], xs2_S[idx]-xs_S[idx]*xs_S[idx],
 							xl2_S[idx]-xl_S[idx]*xl_S[idx], t2_S[idx]-t_S[idx]*t_S[idx] );
 				fprintf (  pFile,  "%f      %f      %f      %f      %f      %f      \n",

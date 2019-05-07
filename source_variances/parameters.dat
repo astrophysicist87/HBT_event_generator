@@ -14,9 +14,9 @@ KT_grid_mode = 0
 	#     (for integrating correlation function)
 
 # KT points
-n_KT_pts = 11
+n_KT_pts = 2
 KTmin = 0.0
-KTmax = 1.0
+KTmax = 0.2
 
 #=======
 # Kphi grid
@@ -28,7 +28,7 @@ Kphi_grid_mode = 0
 	#     (for integrating correlation function)
 
 # Kphi points
-n_Kphi_pts = 36
+n_Kphi_pts = 13
 #Kphimax, Kphimin
 #determined automatically
 
@@ -75,7 +75,7 @@ method_mode = 2
 
 #===========
 # whether or not BE effects are pre-included from Pythia
-BE_mode = 1
+BE_mode = 0
 
 #===========
 # get particles randomly or from file
@@ -89,7 +89,7 @@ file_mode = 1
 	RNG_xDir = 1
 	RNG_yDir = 1
 	RNG_zDir = 1
-	RNG_seed = 1
+	RNG_seed = 0
 	#=======
 
 #===========
