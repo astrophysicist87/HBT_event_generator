@@ -2,17 +2,48 @@
 
 #=====================================
 # Header info
+#=====================================
 HOME_DIRECTORY=~/HBT_event_generator
 # Pythia
-PYTHIA_DIRECTORY=~/pythia8235/examples
+PYTHIA_DIRECTORY=~/pythia8235_MYCOPY/examples
 ALT_PYTHIA_DIRECTORY=/scratch/blixen/plumberg
-PYTHIA_RESULTS_DIRECTORY=$ALT_PYTHIA_DIRECTORY/results_run_BEeffects_PYTHIAv0b
+PYTHIA_RESULTS_DIRECTORY=$ALT_PYTHIA_DIRECTORY/results_run_BEeffects_PYTHIAv1d
 # HBT event generator
 HBT_EVENT_GEN_DIRECTORY=$HOME_DIRECTORY/HBT_event_generator_w_errors
 # Fit correlation function
 HBT_FITCF_DIRECTORY=$HOME_DIRECTORY/fit_correlation_function
 # Source variances/HBT radii
 HBT_SV_DIRECTORY=$HOME_DIRECTORY/source_variances
+#=====================================
+
+
+#=====================================
+# Flags and options
+#=====================================
+runPythia=true
+
+# system specifications
+projectile="p"
+target="p"
+beamEnergy="13000.0"	#GeV
+Nevents="100000"
+
+# BE and related specifications
+QRefValue="0.2"			#GeV
+BEeffects='off'
+BEEnhancementMode='0'	# 0 - use fixed QRef
+						# 1 - use ST interval
+SetFragmentationVertices='on'
+SetPartonVertices='off'
+ThermalOnly='true'
+
+# other flags
+UseColorReconnection='off'
+UseRopeHadronization='off'
+IncludeStringShoving='off'
+IncludeFlavourRopesMechanism='off'
+#=====================================
+
 
 #============================
 # Some function definitions
@@ -34,19 +65,6 @@ check_success () {
 #===================
 # Main calculation
 #===================
-runPythia=true
-
-projectile="p"
-target="p"
-beamEnergy="13000.0"	#GeV
-Nevents="100000"
-QRefValue="0.2"			#GeV
-BEeffects='off'
-BEEnhancementMode='0'	# 0 - use fixed QRef
-						# 1 - use ST interval
-SetFragmentationVertices='on'
-SetPartonVertices='off'
-ThermalOnly='false'
 
 echo 'Processing Nevents =' $Nevents $projectile'+'$target 'collisions at' $beamEnergy 'GeV'
 
@@ -97,6 +115,16 @@ do
 			# turn on and set Bose-Einstein effects
 			echo 'HadronLevel:BoseEinstein =' $BEeffects >> main_BEeffects.cmnd
 			echo 'BoseEinstein:QRef =' $QRefValue >> main_BEeffects.cmnd
+
+			# turn on/off other interesting mechanisms to test
+			echo 'ColourReconnection:reconnect = ' $UseColorReconnection >> main_BEeffects.cmnd
+			echo 'Ropewalk:RopeHadronization = ' $UseRopeHadronization >> main_BEeffects.cmnd
+			echo 'Ropewalk:doShoving = ' $IncludeStringShoving >> main_BEeffects.cmnd
+			echo 'Ropewalk:doFlavour = ' $IncludeFlavourRopesMechanism >> main_BEeffects.cmnd
+
+			# New Pythia options, flags, parameters, etc.
+			# which I've added myself (not generally compatible yet)
+			# Comment out lines below this one if running on unmodified Pythia
 			#echo 'BoseEinstein:enhanceMode =' $BEEnhancementMode >> main_BEeffects.cmnd
 
 

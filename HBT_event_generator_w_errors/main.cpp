@@ -214,7 +214,7 @@ int main(int argc, char *argv[])
 
 
 		// Loop a few more times to build up statistics
-		const int nLoops = 1;  //say
+		const int nLoops = 100000;  //say
 		for (int iLoop = 1; iLoop < nLoops; ++iLoop)
 		{
 
@@ -224,7 +224,8 @@ int main(int argc, char *argv[])
 			cout << "Starting iLoop = " << iLoop << endl;
 
 			// Read in the next file
-			generate_events(allEvents, paraRdr);
+			//generate_events(allEvents, paraRdr);
+			generate_events_v2(allEvents, paraRdr);
 
 
 			// - for each file, update numerator and denominator

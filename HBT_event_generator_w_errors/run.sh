@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # using OpenMP (leave a couple cores free)
-export OMP_NUM_THREADS=10
+export OMP_NUM_THREADS=`nproc --all`
 
 # make sure results directory exists
 DIRECTORY=results

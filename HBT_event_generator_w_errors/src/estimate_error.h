@@ -47,9 +47,21 @@ double estimate_ratio_error(
 			<< "disc < 0!" << endl;
 
 	result =
-		( disc < 0.0 )
+		( disc < 0.0 or den < 1.e-25 )
 		? 1.e+6
 		: abs( num / den ) * sqrt( cA + cB - 2.0*cAB );
+	/*try
+	{
+		result = abs( num / den ) * sqrt( cA + cB - 2.0*cAB );
+	}
+	catch (...)
+	{
+		out << "Exception in estimate_error(): "
+			<< num << "   " << den << "   "
+			<< cA << "   " << cB << "   " << - 2.0*cAB
+			<< "   " << cA + cB - 2.0*cAB << endl;
+		result = 1.0e+6;
+	}*/
 
 	if (verbose)
 	{

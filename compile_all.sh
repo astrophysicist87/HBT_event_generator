@@ -4,7 +4,7 @@
 # Header info
 HOME_DIRECTORY=~/HBT_event_generator
 # Pythia
-PYTHIA_DIRECTORY=~/pythia8235/examples
+PYTHIA_DIRECTORY=~/pythia8235_MYCOPY/examples
 # HBT event generator
 HBT_EVENT_GEN_DIRECTORY=$HOME_DIRECTORY/HBT_event_generator_w_errors
 # Fit correlation function

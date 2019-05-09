@@ -341,7 +341,7 @@ void HBT_event_generator::Compute_correlation_function()
 
 			double R2 = num / (den+1.e-100); // total_N_events factors cancel
 
-			bool methodMode0_is_safe = (method_mode == 0) and (denominator_cell_was_filled[idx]) and (nev > 1);
+			bool methodMode0_is_safe = (method_mode == 0) and (abs(den) > 1.e-25) and (denominator_cell_was_filled[idx]) and (nev > 1);
 			bool methodMode2_is_safe = (method_mode == 2) and (abs(den) > 1.e-25) and (nev > 1);
 			bool this_bin_is_safe = methodMode0_is_safe or methodMode2_is_safe;
 
