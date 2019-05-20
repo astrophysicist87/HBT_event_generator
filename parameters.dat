@@ -90,6 +90,7 @@ file_mode = 1
 	RNG_yDir = 0
 	RNG_zDir = 1
 	RNG_seed = 1
+	RNG_nLoops = 100
 	#=======
 
 #===========

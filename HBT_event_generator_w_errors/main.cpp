@@ -216,7 +216,8 @@ int main(int argc, char *argv[])
 
 		// Loop a few more times to build up statistics
 		// N.B. - 2147483647 is max value for int
-		const int nLoops = 100;  //say
+		//const int nLoops = 100;  //say
+		const int nLoops = paraRdr->getVal("RNG_nLoops");
 		for (int iLoop = 1; iLoop < nLoops; ++iLoop)
 		{
 
