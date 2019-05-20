@@ -204,7 +204,8 @@ int main(int argc, char *argv[])
 
 
 		// Read in the files
-		generate_events(allEvents, paraRdr);
+		//generate_events(allEvents, paraRdr);
+		generate_events_v2(allEvents, paraRdr);
 
 
 		// Create HBT_event_generator object from allEvents

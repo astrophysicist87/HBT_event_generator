@@ -111,6 +111,7 @@ void generate_events_v2(vector<EventRecord> & allEvents, ParameterReader * paraR
 	// model_to_use values:
 	//		0 - Zhang, Wiedemann, Slotta, and Heinz (1997) or slight variant
 	//		1 - my own toy emission function
+	//		2 - another of my own toy emission functions
 
 	if ( model_to_use == 0 )
 	{
@@ -222,7 +223,7 @@ void generate_events_v2(vector<EventRecord> & allEvents, ParameterReader * paraR
 	{
 
 		// test sensitivity to bin-width
-		//double bin_epsilon = paraRdr->getVal("bin_epsilon");
+		double bin_epsilon = paraRdr->getVal("bin_epsilon");
 		double KLmin = paraRdr->getVal("KLmin");
 		double KLmax = paraRdr->getVal("KLmax");
 		double KTmin = paraRdr->getVal("KTmin");
@@ -255,6 +256,7 @@ void generate_events_v2(vector<EventRecord> & allEvents, ParameterReader * paraR
 				//double KL = KL_distribution(generator);
 				//double KL = 0.0;
 				double KL = KLmax * distribution(generator);
+				//double KL = bin_epsilon * distribution(generator);
 
 				double Rscale = R0 / sqrt(1.0 + 0.1*sqrt(mass*mass+KT*KT)/TFO);
 				Rscale = R0;
