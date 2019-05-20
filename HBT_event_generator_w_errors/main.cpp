@@ -214,14 +214,16 @@ int main(int argc, char *argv[])
 
 
 		// Loop a few more times to build up statistics
-		const int nLoops = 100000;  //say
+		// N.B. - 2147483647 is max value for int
+		const int nLoops = 100;  //say
 		for (int iLoop = 1; iLoop < nLoops; ++iLoop)
 		{
 
 			if ( iLoop >= nLoops )
 				break;
 
-			cout << "Starting iLoop = " << iLoop << endl;
+			if ( iLoop % 10 == 0 )
+				cout << "Starting iLoop = " << iLoop << endl;
 
 			// Read in the next file
 			//generate_events(allEvents, paraRdr);

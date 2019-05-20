@@ -16,7 +16,7 @@ using namespace std;
 
 void generate_events(vector<EventRecord> & allEvents, ParameterReader * paraRdr)
 {
-	cout << "Using random number generator for toy model calculation!" << endl;
+	//cout << "Using random number generator for toy model calculation!" << endl;
 
 	allEvents.clear();
 
@@ -84,7 +84,7 @@ void generate_events(vector<EventRecord> & allEvents, ParameterReader * paraRdr)
 
 void generate_events_v2(vector<EventRecord> & allEvents, ParameterReader * paraRdr)
 {
-	cout << "Using random number generator for toy model calculation!" << endl;
+	//cout << "Using random number generator for toy model calculation!" << endl;
 
 	allEvents.clear();
 
@@ -232,8 +232,8 @@ void generate_events_v2(vector<EventRecord> & allEvents, ParameterReader * paraR
 
 		normal_distribution<double> distribution( 0.0, 1.0/sqrt(2.0) );	// rescale by variable source radius
 		uniform_real_distribution<double> KPhi_distribution( 0.0, 2.0*M_PI );
-		//exponential_distribution<double> KT_distribution( TFO );		// set width from FO temp
-		uniform_real_distribution<double> KT_distribution( KTmin, KTmax );		// set width from FO temp
+		exponential_distribution<double> KT_distribution( TFO );		// set width from FO temp
+		//uniform_real_distribution<double> KT_distribution( KTmin, KTmax );		// set width from FO temp
 		uniform_real_distribution<double> KL_distribution( KLmin, KLmax );
 
 		// set some emission function parameters
@@ -250,11 +250,11 @@ void generate_events_v2(vector<EventRecord> & allEvents, ParameterReader * paraR
 				// sample KT, KL first
 				//double KT = KT_distribution(generator);
 				// just use uniform K distribution for simplicity
-				double KT = KT_distribution(generator);
-				//KT = 0.0;
-				double KL = KL_distribution(generator);
-				//KL = 0.0;
-				KL = KLmax * distribution(generator);
+				//double KT = KT_distribution(generator);
+				double KT = 0.0;
+				//double KL = KL_distribution(generator);
+				//double KL = 0.0;
+				double KL = KLmax * distribution(generator);
 
 				double Rscale = R0 / sqrt(1.0 + 0.1*sqrt(mass*mass+KT*KT)/TFO);
 				Rscale = R0;
@@ -267,8 +267,9 @@ void generate_events_v2(vector<EventRecord> & allEvents, ParameterReader * paraR
 
 				double phiT = atan2(yP, xP);
 
-				double Kphi = KPhi_distribution(generator);
+				//double Kphi = KPhi_distribution(generator);
 				//double Kphi = phiT;
+				double Kphi = 0.0;
 
 				double px = KT * cos(Kphi);
 				double py = KT * sin(Kphi);

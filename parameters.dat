@@ -16,7 +16,7 @@ KT_grid_mode = 0
 # KT points
 n_KT_pts = 2
 KTmin = 0.0
-KTmax = 0.2
+KTmax = 0.000001
 
 #=======
 # Kphi grid
@@ -39,12 +39,12 @@ KLmax = 0.5
 
 #===========
 # relative momenta (3D)
-n_qo_pts = 22
-n_qs_pts = 22
-n_ql_pts = 22
+n_qo_pts = 2
+n_qs_pts = 2
+n_ql_pts = 42
 delta_qo = 0.02
 delta_qs = 0.02
-delta_ql = 0.02
+delta_ql = 0.01
 
 # relative momentum (1D)
 n_Q_pts = 22
@@ -85,9 +85,9 @@ file_mode = 1
 	RNG_R = 10.0	#fm
 	RNG_a = 0.02	#GeV/fm
 	RNG_Nev = 10
-	RNG_mult = 100
-	RNG_xDir = 1
-	RNG_yDir = 1
+	RNG_mult = 10000
+	RNG_xDir = 0
+	RNG_yDir = 0
 	RNG_zDir = 1
 	RNG_seed = 1
 	#=======

@@ -17,7 +17,7 @@
 void HBT_event_generator::Compute_numerator_and_denominator_methodMode0_q_mode_3D()
 {
 	//int number_of_completed_events = 0;
-	err << "  * Computing numerator and denominator of correlation function with errors" << endl;
+	//err << "  * Computing numerator and denominator of correlation function with errors" << endl;
 
 	constexpr bool impose_pair_rapidity_cuts = false;
 	const double KYmin = -0.1, KYmax = 0.1;
@@ -25,8 +25,8 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode0_q_mode_3
 	const double Kz_over_K0_max = tanh( KYmax );
 
 	// check multiplicities
-	for (int iEvent = 0; iEvent < allEvents.size(); ++iEvent)
-		err << "allEvents[" << iEvent << "].particles.size() = " << allEvents[iEvent].particles.size() << endl;
+	//for (int iEvent = 0; iEvent < allEvents.size(); ++iEvent)
+	//	err << "allEvents[" << iEvent << "].particles.size() = " << allEvents[iEvent].particles.size() << endl;
 
 	// Sum over all events
 	#pragma omp parallel for schedule(static)
@@ -81,7 +81,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode0_q_mode_3
 				{
 					double num_bin_factor =
 							px_bin_width*py_bin_width*pz_bin_width;
-					num_bin_factor = 1.0;
+					//num_bin_factor = 1.0;
 
 					for (int iqo = 0; iqo < n_qo_bins; iqo++)
 					for (int iqs = 0; iqs < n_qs_bins; iqs++)
@@ -189,7 +189,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode0_q_mode_3
 
 						double den_bin_factor =
 							px_bin_width*py_bin_width*pz_bin_width;
-						den_bin_factor = 1.0;
+						//den_bin_factor = 1.0;
 
 						denominator_cell_was_filled[index6D] = true;
 
@@ -218,7 +218,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode0_q_mode_3
 
 						double den_bin_factor =
 							px_bin_width*py_bin_width*pz_bin_width;
-						den_bin_factor = 1.0;
+						//den_bin_factor = 1.0;
 
 						denominator_cell_was_filled[index6D] = true;
 
@@ -252,7 +252,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode0_q_mode_3
 						double den_bin_factor =
 							px_bin_width*py_bin_width*pz_bin_width
 							*px_bin_width*py_bin_width*pz_bin_width;
-						den_bin_factor = 1.0;
+						//den_bin_factor = 1.0;
 
 						denominator_cell_was_filled[index6D] = true;
 
@@ -289,6 +289,8 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode0_q_mode_3
 						= abs_sum1*abs_sum1 - sum2[idx];
 				double denominator_contribution_from_this_event
 						= sum3[idx]*sum4[idx] - sum5[idx];
+//cout << "den check: " << denominator_contribution_from_this_event
+//		 << "   " << sum3[idx] << "   " << sum4[idx] << "   " << sum5[idx] << endl;
 
 				// first moments
 				numerator[idx]
@@ -317,14 +319,14 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode0_q_mode_3
 				++idx;
 			}
 
-			err << "\t - finished " << ++number_of_completed_events << " of " << total_N_events << endl;
+			//err << "\t - finished " << ++number_of_completed_events << " of " << total_N_events << endl;
 			//print_progressbar( static_cast<double>(++number_of_completed_events)
 			//						/ static_cast<double>(total_N_events), err );
 		}
 
 	}
 
-	err << "  * Finished!" << endl;
+	//err << "  * Finished!" << endl;
 
 	return;
 }
