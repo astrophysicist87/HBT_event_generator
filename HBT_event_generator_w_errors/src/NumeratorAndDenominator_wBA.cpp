@@ -269,6 +269,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 
 void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3D()
 {
+	bool verbose = false;
 	bool perform_random_rotation = false;
 	bool perform_random_shuffle = false;
 
@@ -525,7 +526,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 	}
 
 	// Do my own make-shift reduction here
-	const int idx6D = 0;
+	int idx6D = 0;
 	for (int iThread = 0; iThread < number_of_threads; ++iThread)
 	{
 		numerator[idx6D] += num_per_thread[iThread][idx6D];
