@@ -282,7 +282,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 	const double Kz_over_K0_min = tanh( KYmin );
 	const double Kz_over_K0_max = tanh( KYmax );
 
-	const int number_of_threads = omp_set_num_threads();
+	const int number_of_threads = omp_get_num_threads();
 	vector<vector<double> > num_per_thread( number_of_threads, vector<double>( numerator.size(), 0.0 ) );
 	vector<vector<double> > num2_per_thread( number_of_threads, vector<double>( numerator2.size(), 0.0 ) );
 	vector<vector<double> > den_per_thread( number_of_threads, vector<double>( denominator.size(), 0.0 ) );
@@ -301,6 +301,8 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 	//			numerator2, denominator2, numerator_denominator )
 	for (int iEvent = 0; iEvent < allEvents.size(); ++iEvent)
 	{
+		const int current_thread = omp_get_thread_num();
+
 		EventRecord event = allEvents[iEvent];
 
 		vector<double> private_num(numerator.size(), 0.0);
@@ -478,18 +480,23 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 
 					// first moments
 					//numerator[idx6D]
+					num_per_thread[current_thread][idx6D]
 								+= numerator_this_event;
 					//denominator[idx6D]
+					den_per_thread[current_thread][idx6D]
 								+= denominator_this_event;
 
 					// second moments
 					//numerator2[idx6D]
+					num2_per_thread[current_thread][idx6D]
 								+= numerator_this_event
 									* numerator_this_event;
 					//denominator2[idx6D]
+					den2_per_thread[current_thread][idx6D]
 								+= denominator_this_event
 									* denominator_this_event;
 					//numerator_denominator[idx6D]
+					num_den_per_thread[current_thread][idx6D]
 								+= numerator_this_event
 									* denominator_this_event;
 
@@ -499,13 +506,34 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 				++idx3D;
 			}
 
-			++number_of_completed_events;
 
-			cout << "\t - finished "
-					<< number_of_completed_events + total_N_events - allEvents.size()
-					<< " of " << total_N_events << endl;
+		if (verbose)
+		{
+			#pragma omp critical
+			{
+				//++number_of_completed_events;
+
+				cout << "\t - finished "
+						<< ++number_of_completed_events
+							+ total_N_events
+							- allEvents.size()
+						<< " of " << total_N_events << endl;
+			}
+		}
 		//}*/
 
+	}
+
+	// Do my own make-shift reduction here
+	const int idx6D = 0;
+	for (int iThread = 0; iThread < number_of_threads; ++iThread)
+	{
+		numerator[idx6D] += num_per_thread[iThread][idx6D];
+		denominator[idx6D] += den_per_thread[iThread][idx6D];
+		numerator2[idx6D] += num2_per_thread[iThread][idx6D];
+		denominator2[idx6D] += den2_per_thread[iThread][idx6D];
+		numerator_denominator[idx6D] += num_den_per_thread[iThread][idx6D];
+		idx6D++;
 	}
 
 	cout << "  * Finished " << total_N_events << " events so far!" << endl;
