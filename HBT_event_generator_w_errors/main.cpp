@@ -224,7 +224,7 @@ int main(int argc, char *argv[])
 			if ( iLoop >= nLoops )
 				break;
 
-			if ( iLoop % 10 == 0 )
+			if ( iLoop % 1 == 0 )
 				cout << "Starting iLoop = " << iLoop << endl;
 
 			// Read in the next file

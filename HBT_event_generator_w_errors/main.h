@@ -99,7 +99,7 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 	// this vector contains events to include (for specific centrality class)
 	int nextEventIndex = 0;
 	int nextEventID = ensemble_multiplicites[nextEventIndex].eventID;
-	cout << "nextEventID = " << nextEventID << endl;
+	//cout << "nextEventID = " << nextEventID << endl;
 	int countthis = 0;
 	int n_events_read_from_this_file = 0;
 
@@ -197,8 +197,8 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 				// push event to eventsInFile
 				event.eventID = previous_eventID;
 				//cout << "current_eventID = " << current_eventID << endl;
-				cout << "Pushing previous_eventID = " << previous_eventID << " while reading in " << filename << endl;
-				cout << "event.particles.size() = " << event.particles.size() << endl;
+				//cout << "Pushing previous_eventID = " << previous_eventID << " while reading in " << filename << endl;
+				//cout << "event.particles.size() = " << event.particles.size() << endl;
 				eventsInFile.push_back(event);
 				++n_events_read_from_this_file;
 
@@ -240,8 +240,8 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 	if ( current_eventID > -1 and event.particles.size() > 0 )
 	{
 		event.eventID = current_eventID;
-		cout << "Pushing current_eventID = " << current_eventID << " after reading in " << filename << endl;
-		cout << "event.particles.size() = " << event.particles.size() << endl;
+		//cout << "Pushing current_eventID = " << current_eventID << " after reading in " << filename << endl;
+		//cout << "event.particles.size() = " << event.particles.size() << endl;
 		eventsInFile.push_back(event);
 		++n_events_read_from_this_file;
 	}

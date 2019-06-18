@@ -177,7 +177,8 @@ int main(int argc, char *argv[])
 
 
 		// Read in the files
-		generate_events(allEvents, paraRdr);
+		//generate_events(allEvents, paraRdr);
+		generate_events_v2(allEvents, paraRdr);
 
 
 		// Create SourceVariances object from allEvents
@@ -186,17 +187,20 @@ int main(int argc, char *argv[])
 								outmain, errmain );
 
 		// Loop a few more times to build up statistics
-		const int nLoops = 100;  //say
+		//const int nLoops = 100;  //say
+		const int nLoops = paraRdr->getVal("RNG_nLoops");
 		for (int iLoop = 1; iLoop < nLoops; ++iLoop)
 		{
 
 			if ( iLoop >= nLoops )
 				break;
 
-			cout << "Starting iLoop = " << iLoop << endl;
+			if ( iLoop % 10 == 0 )
+				cout << "Starting iLoop = " << iLoop << endl;
 
 			// Read in the next file
-			generate_events(allEvents, paraRdr);
+			//generate_events(allEvents, paraRdr);
+			generate_events_v2(allEvents, paraRdr);
 
 
 			// - for each file, update numerator and denominator

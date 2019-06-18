@@ -19,6 +19,8 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode0_q_mode_3
 	//int number_of_completed_events = 0;
 	//err << "  * Computing numerator and denominator of correlation function with errors" << endl;
 
+	constexpr bool oneDim_slices = true;
+
 	constexpr bool impose_pair_rapidity_cuts = false;
 	const double KYmin = -0.1, KYmax = 0.1;
 	const double Kz_over_K0_min = tanh( KYmin );
@@ -87,6 +89,22 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode0_q_mode_3
 					for (int iqs = 0; iqs < n_qs_bins; iqs++)
 					for (int iql = 0; iql < n_ql_bins; iql++)
 					{
+						// allows to do only slices
+						if ( oneDim_slices )
+						{
+							bool iqo_not_center = ( iqo != (n_qo_bins-1)/2 );
+							bool iqs_not_center = ( iqs != (n_qs_bins-1)/2 );
+							bool iql_not_center = ( iql != (n_ql_bins-1)/2 );
+
+							// if we're not on an axis slice, skip this q-bin
+							if (
+									( iqo_not_center and iqs_not_center )
+									or ( iqo_not_center and iql_not_center )
+									or ( iqs_not_center and iql_not_center )
+								)
+								continue;
+						}
+
 						int index6D = indexer(iKT, iKphi, iKL, iqo, iqs, iql);
 
 						double qo = 0.5*(qo_pts[iqo]+qo_pts[iqo+1]);
@@ -151,6 +169,22 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode0_q_mode_3
 			for (int iqs = 0; iqs < n_qs_bins; iqs++)
 			for (int iql = 0; iql < n_ql_bins; iql++)
 			{
+
+				// allows to do only slices
+				if ( oneDim_slices )
+				{
+					bool iqo_not_center = ( iqo != (n_qo_bins-1)/2 );
+					bool iqs_not_center = ( iqs != (n_qs_bins-1)/2 );
+					bool iql_not_center = ( iql != (n_ql_bins-1)/2 );
+
+					// if we're not on an axis slice, skip this q-bin
+					if (
+							( iqo_not_center and iqs_not_center )
+							or ( iqo_not_center and iql_not_center )
+							or ( iqs_not_center and iql_not_center )
+						)
+						continue;
+				}
 
 				double qo = 0.5*(qo_pts[iqo]+qo_pts[iqo+1]);
 				double qs = 0.5*(qs_pts[iqs]+qs_pts[iqs+1]);

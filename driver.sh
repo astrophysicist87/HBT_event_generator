@@ -7,7 +7,7 @@ HOME_DIRECTORY=~/HBT_event_generator
 # Pythia
 PYTHIA_DIRECTORY=~/pythia8235_MYCOPY/examples
 ALT_PYTHIA_DIRECTORY=/scratch/blixen/plumberg
-PYTHIA_RESULTS_DIRECTORY=$ALT_PYTHIA_DIRECTORY/results_run_BEeffects_PYTHIAv1d
+PYTHIA_RESULTS_DIRECTORY=$ALT_PYTHIA_DIRECTORY/results_run_BEeffects_PYTHIAv1e
 # HBT event generator
 HBT_EVENT_GEN_DIRECTORY=$HOME_DIRECTORY/HBT_event_generator_w_errors
 # Fit correlation function
@@ -20,19 +20,20 @@ HBT_SV_DIRECTORY=$HOME_DIRECTORY/source_variances
 #=====================================
 # Flags and options
 #=====================================
-runPythia=true
+runPythia=false
 
 # system specifications
 projectile="p"
 target="p"
 beamEnergy="13000.0"	#GeV
-Nevents="100000"
+Nevents="1000000"
 
 # BE and related specifications
 QRefValue="0.2"			#GeV
 BEeffects='off'
 BEEnhancementMode='0'	# 0 - use fixed QRef
-						# 1 - use ST interval
+						# 1 - use ST interval with Gaussian BE form
+						# 2 - use ST interval with spherical Bessel BE form
 SetFragmentationVertices='on'
 SetPartonVertices='off'
 ThermalOnly='true'
@@ -277,7 +278,7 @@ do
 			typeStem="_THERMAL"
 		fi
 
-		zipFilename=$HOME_DIRECTORY/`echo $collisionSystemCentralityStem`"_results"`echo $typeStem`"_wBEeffects.zip"
+		zipFilename=$HOME_DIRECTORY/`echo $collisionSystemCentralityStem`"_results"`echo $typeStem`"_woBEeffects.zip"
 
 		zip -r `get_filename $zipFilename` $RESULTS_DIRECTORY
 

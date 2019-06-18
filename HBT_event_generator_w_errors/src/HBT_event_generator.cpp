@@ -357,7 +357,7 @@ void HBT_event_generator::Compute_correlation_function()
 			//==== error estimates ====
 			//=========================
 
-			bool do_not_get_error_in_center = false;
+			bool do_not_get_error_in_center = true;
 			bool in_center_cell = ( iq == iqCenter );
 
 			if ( in_center_cell and do_not_get_error_in_center )
