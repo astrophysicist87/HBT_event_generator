@@ -1,0 +1,6 @@
+name = pi+		# Particle name
+monval = 211		# Monte-Carlo number
+mass = 0.13957		# mass
+charge = 1		# charge
+spinType = 1		# spin type
+chargeType = 3		# charge type
