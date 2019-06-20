@@ -15,7 +15,7 @@
 
 
 
-/*
+///*
 void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3D()
 {
 	bool perform_random_rotation = false;
@@ -62,9 +62,14 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 			double Ei = pi.E, pix = pi.px, piy = pi.py, piz = pi.pz;
 			double Ej = pj.E, pjx = pj.px, pjy = pj.py, pjz = pj.pz;
 
-			bool num_bin_false = 	   abs( pix - pjx ) > px_bin_width
-									or abs( piy - pjy ) > py_bin_width
-									or abs( piz - pjz ) > pz_bin_width;
+			// check which cell we're in
+			double cx = pix - pjx;
+			double cy = piy - pjy;
+			double cz = piz - pjz;
+
+			bool num_bin_false = 	   cx*cx > px_bin_width*px_bin_width
+									or cy*cy > py_bin_width*py_bin_width
+									or cz*cz > pz_bin_width*pz_bin_width;
 
 			if ( num_bin_false )
 				continue;
@@ -193,10 +198,15 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 				double qy = qs * cKphi + qo * sKphi;
 				double qz = ql;
 
+				// check which cell we're in
+				double cx = pix - pjx - qx;
+				double cy = piy - pjy - qy;
+				double cz = piz - pjz - qz;
+
 				// modified binning condition
-				bool den_bin_false = 	   abs( pix - pjx - qx ) > px_bin_width
-										or abs( piy - pjy - qy ) > py_bin_width
-										or abs( piz - pjz - qz ) > pz_bin_width;
+				bool den_bin_false = 	   cx*cx > px_bin_width*px_bin_width
+										or cy*cy > py_bin_width*py_bin_width
+										or cz*cz > pz_bin_width*pz_bin_width;
 
 				if ( den_bin_false )
 					continue;
@@ -259,14 +269,14 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 
 	return;
 }
-*/
+//*/
 
 
 
 
 
 
-
+/*
 void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3D()
 {
 	bool verbose = false;
@@ -463,7 +473,6 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 			}
 		}
 
-		///*
 		// Need this to avoid race conditions
 		//#pragma omp critical
 		//{
@@ -521,7 +530,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 						<< " of " << total_N_events << endl;
 			}
 		}
-		//}*/
+		//}
 
 	}
 
@@ -541,6 +550,6 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 
 	return;
 }
-
+*/
 
 

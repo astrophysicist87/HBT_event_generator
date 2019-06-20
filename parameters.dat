@@ -28,7 +28,7 @@ Kphi_grid_mode = 0
 	#     (for integrating correlation function)
 
 # Kphi points
-n_Kphi_pts = 9
+n_Kphi_pts = 2
 #Kphimax, Kphimin
 #determined automatically
 
@@ -39,12 +39,12 @@ KLmax = 0.5
 
 #===========
 # relative momenta (3D)
-n_qo_pts = 52
-n_qs_pts = 52
-n_ql_pts = 52
-delta_qo = 0.01
-delta_qs = 0.01
-delta_ql = 0.01
+n_qo_pts = 26
+n_qs_pts = 26
+n_ql_pts = 26
+delta_qo = 0.02
+delta_qs = 0.02
+delta_ql = 0.02
 
 # relative momentum (1D)
 n_Q_pts = 22

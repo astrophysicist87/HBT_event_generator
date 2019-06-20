@@ -18,7 +18,7 @@
 	export OMP_NUM_THREADS=12
 	./run_HBT_event_generator.e \
 		file_mode=0 \
-		RNG_mult=10000 \
+		RNG_mult=1000 \
 		RNG_Nev=1000 \
 		RNG_nLoops=1 \
 		1> HBT_event_generator.out \
@@ -34,8 +34,31 @@
 	cd ../source_variances
 	mkdir results
 	./SV.e file_mode=0 \
-		RNG_mult=10000 \
+		RNG_mult=1000 \
 		RNG_Nev=1000 \
 		RNG_nLoops=1\
 		1> SV.out 2> SV.err
+
+	# back to home directory
+	cd ../
+
+	resultsDirec=rand_submit_results_run2
+	mkdir $resultsDirec
+	cp parameters.dat $resultsDirec
+
+	mv HBT_event_generator_w_errors/HBT_event_generator.* $resultsDirec/
+	mv HBT_event_generator_w_errors/results $resultsDirec/HBTeg_results
+
+	mv fit_correlation_function/fit_correlation_function.* $resultsDirec/
+	mv fit_correlation_function/results $resultsDirec/fit_CF_results
+
+	mv source_variances/SV.out $resultsDirec/
+	mv source_variances/SV.err $resultsDirec/
+	mv source_variances/results $resultsDirec/SV_results
+
+
+
+
 ) &
+
+# End of file
