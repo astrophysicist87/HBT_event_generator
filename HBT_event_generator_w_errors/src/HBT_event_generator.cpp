@@ -124,6 +124,18 @@ void HBT_event_generator::initialize_all(
 	ttheta_q_pts	= vector<double> (n_thq_pts);
 	ttheta_q_wts	= vector<double> (n_thq_pts);
 
+	// just fix them here for now
+	n_KT_pts_per_bin = 5;
+	n_Kphi_pts_per_bin = 5;
+	n_KL_pts_per_bin = 5;
+
+	/*xKT_pts 		= vector<double> (n_KT_pts_per_bin);
+	xKT_wts 		= vector<double> (n_KT_pts_per_bin);
+	xKphi_pts 		= vector<double> (n_Kphi_pts_per_bin);
+	xKphi_wts 		= vector<double> (n_Kphi_pts_per_bin);
+	xKL_pts 		= vector<double> (n_KL_pts_per_bin);
+	xKL_wts 		= vector<double> (n_KL_pts_per_bin);*/
+
 	linspace(KT_pts, KT_min, KT_max);
 	linspace(Kphi_pts, Kphi_min, Kphi_max);
 	linspace(KL_pts, KL_min, KL_max);
@@ -136,6 +148,11 @@ void HBT_event_generator::initialize_all(
 	//gauss_quadrature(n_qRP_pts, 1, 0.0, 0.0, -1.0, 1.0, x_pts, x_wts);
 	gauss_quadrature(n_qRP_pts, 2, 0.0, 0.0, -1.0, 1.0, x_pts, x_wts);	//chebyshev distribution works better
 	gauss_quadrature(n_thq_pts, 1, 0.0, 0.0, -M_PI, M_PI, ttheta_q_pts, ttheta_q_wts);
+
+	// these will be rescaled and shifted to each bin as appropriate
+	//gauss_quadrature(n_KT_pts_per_bin, 1, 0.0, 0.0, -1.0, 1.0, xKT_pts, xKT_wts);
+	//gauss_quadrature(n_Kphi_pts_per_bin, 1, 0.0, 0.0, -1.0, 1.0, xKphi_pts, xKphi_wts);
+	//gauss_quadrature(n_KL_pts_per_bin, 1, 0.0, 0.0, -1.0, 1.0, xKL_pts, xKL_wts);
 
 	px_bin_width 	= bin_epsilon;
 	py_bin_width 	= bin_epsilon;

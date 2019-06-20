@@ -50,6 +50,9 @@ class HBT_event_generator
 		int n_qx_bins, n_qy_bins, n_qz_bins;
 		int n_Q_bins;
 
+		// for bin-averaging
+		int n_KT_pts_per_bin, n_Kphi_pts_per_bin, n_KL_pts_per_bin;
+
 		double KT_min, KT_max, Kphi_min, Kphi_max, KL_min, KL_max;
 		double Kx_min, Kx_max, Ky_min, Ky_max, Kz_min, Kz_max;
 		double qx_min, qx_max, qy_min, qy_max, qz_min, qz_max;
@@ -72,6 +75,10 @@ class HBT_event_generator
 		vector<double> Kx_pts, Ky_pts, Kz_pts;
 		vector<double> qx_pts, qy_pts, qz_pts;
 		vector<double> Q_pts, x_pts, x_wts, ttheta_q_pts, ttheta_q_wts;
+
+		// for bin-averaging
+		vector<double> xKT_pts, xKphi_pts, xKL_pts;
+		vector<double> xKT_wts, xKphi_wts, xKL_wts;
 
 		// results
 		double n_pair_numerator, n_pair_denominator;
@@ -122,6 +129,20 @@ class HBT_event_generator
 								* n_qo_bins + iqo )
 								* n_qs_bins + iqs )
 								* n_ql_bins + iql
+					);
+		}
+		////////////////////
+		inline int indexer(int iKT, int iKphi, int iKL, int ijKT, int ijKphi, int ijKL, int iqo, int iqs, int iql)
+		{
+			return (
+					( ( ( ( ( ( ( iKT * n_Kphi_bins + iKphi )
+										* n_KL_bins + iKL )
+										* n_KT_pts_per_bin + ijKT )
+										* n_Kphi_pts_per_bin + ijKphi )
+										* n_KL_pts_per_bin + ijKL )
+										* n_qo_bins + iqo )
+										* n_qs_bins + iqs )
+										* n_ql_bins + iql
 					);
 		}
 		////////////////////
