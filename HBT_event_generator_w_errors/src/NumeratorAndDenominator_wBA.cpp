@@ -15,9 +15,13 @@
 
 
 
-/*
+///*
 void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3D()
 {
+	// ignore q-dependence in denominator
+	bool use_smoothness_approximation = true;
+	const double SAfact = ( use_smoothness_approximation ) ? 0.0 : 1.0;
+
 	bool perform_random_rotation = false;
 	bool perform_random_shuffle = false;
 
@@ -115,6 +119,10 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 			for (int iql = 0; iql < n_ql_bins; iql++)
 			{
 
+				bool in_center = ( iqo == (n_qo_bins-1)/2 and iqs == (n_qs_bins-1)/2 and iql == (n_ql_bins-1)/2 );
+				double overall_factor = 2.0;
+				if ( in_center ) overall_factor = 1.0;
+
 				double qo = 0.5*(qo_pts[iqo]+qo_pts[iqo+1]);
 				double qs = 0.5*(qs_pts[iqs]+qs_pts[iqs+1]);
 				double ql = 0.5*(ql_pts[iql]+ql_pts[iql+1]);
@@ -132,7 +140,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 							- qy * (yi - yj)
 							- qz * (zi - zj);
 
-				double num_term = 2.0*cos(arg/hbarC);	// factor of 2 allows to collapse sum in half
+				double num_term = cos(arg/hbarC);	// factor of 2 allows to collapse sum in half
 				//						/ ( 1.0
 				//							* px_bin_width
 				//							* py_bin_width
@@ -190,6 +198,15 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 			for (int iql = 0; iql < n_ql_bins; iql++)
 			{
 
+				bool in_center = ( iqo == (n_qo_bins-1)/2 and iqs == (n_qs_bins-1)/2 and iql == (n_ql_bins-1)/2 );
+				double overall_factor = 1.0;
+				if ( not use_smoothness_approximation )
+				{
+					overall_factor = 0.5;
+					if ( in_center )
+						overall_factor = 1.0;
+				}
+
 				double qo = 0.5*(qo_pts[iqo]+qo_pts[iqo+1]);
 				double qs = 0.5*(qs_pts[iqs]+qs_pts[iqs+1]);
 				double ql = 0.5*(ql_pts[iql]+ql_pts[iql+1]);
@@ -199,12 +216,12 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 				double qz = ql;
 
 				// check which cell we're in
-				double cmx = pix - pjx - qx;
-				double cmy = piy - pjy - qy;
-				double cmz = piz - pjz - qz;
-				double cpx = pix - pjx + qx;
-				double cpy = piy - pjy + qy;
-				double cpz = piz - pjz + qz;
+				double cmx = pix - pjx - SAfact*qx;
+				double cmy = piy - pjy - SAfact*qy;
+				double cmz = piz - pjz - SAfact*qz;
+				double cpx = pix - pjx + SAfact*qx;
+				double cpy = piy - pjy + SAfact*qy;
+				double cpz = piz - pjz + SAfact*qz;
 
 				// modified binning condition
 				bool this_pair_den_bin_false
@@ -221,7 +238,8 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 
 				int index6D = indexer(KT_idx, Kphi_idx, KL_idx, iqo, iqs, iql);
 
-				private_den[index6D]++;
+				//private_den[index6D]++;
+				private_den[index6D] += overall_factor;
 
 			}
 		}
@@ -277,7 +295,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 
 	return;
 }
-*/
+//*/
 
 
 /*

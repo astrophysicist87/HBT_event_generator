@@ -19,7 +19,7 @@
 	./run_HBT_event_generator.e \
 		file_mode=0 \
 		RNG_mult=1000 \
-		RNG_Nev=1000 \
+		RNG_Nev=100 \
 		RNG_nLoops=1 \
 		1> HBT_event_generator.out \
 		2> HBT_event_generator.err
@@ -42,7 +42,7 @@
 	# back to home directory
 	cd ../
 
-	resultsDirec=rand_submit_results_run2
+	resultsDirec=rand_submit_results_run3
 	mkdir $resultsDirec
 	cp parameters.dat $resultsDirec
 

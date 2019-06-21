@@ -125,11 +125,11 @@ void HBT_event_generator::initialize_all(
 	ttheta_q_wts	= vector<double> (n_thq_pts);
 
 	// just fix them here for now
-	n_KT_pts_per_bin = 5;
+	/*n_KT_pts_per_bin = 5;
 	n_Kphi_pts_per_bin = 5;
 	n_KL_pts_per_bin = 5;
 
-	/*xKT_pts 		= vector<double> (n_KT_pts_per_bin);
+	xKT_pts 		= vector<double> (n_KT_pts_per_bin);
 	xKT_wts 		= vector<double> (n_KT_pts_per_bin);
 	xKphi_pts 		= vector<double> (n_Kphi_pts_per_bin);
 	xKphi_wts 		= vector<double> (n_Kphi_pts_per_bin);

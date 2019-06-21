@@ -232,12 +232,12 @@ void generate_events_v2(vector<EventRecord> & allEvents, ParameterReader * paraR
 		const double TFO = 0.12;										// FO temp of 120 MeV
 
 		normal_distribution<double> distribution( 0.0, 1.0/sqrt(2.0) );	// rescale by variable source radius
-		uniform_real_distribution<double> KPhi_distribution( 0.0, 2.0*M_PI );
+		//uniform_real_distribution<double> KPhi_distribution( 0.0, 2.0*M_PI );
 		//exponential_distribution<double> KT_distribution( 1.0 / TFO );		// set width from FO temp
-		uniform_real_distribution<double> KT_distribution( KTmin, KTmax );
-		weibull_distribution<double> weird_KT_distribution( 2.0, TFO );			// Weibull corresponds to distribution
+		//uniform_real_distribution<double> KT_distribution( KTmin, KTmax );
+		//weibull_distribution<double> weird_KT_distribution( 2.0, sqrt(2.0)*TFO );			// Weibull corresponds to distribution
 																				// of magnitude of two normal R.V.s
-		uniform_real_distribution<double> KL_distribution( KLmin, KLmax );
+		//uniform_real_distribution<double> KL_distribution( KLmin, KLmax );
 
 		// set some emission function parameters
 		const double t0 = 7.5, z0 = 0.0, R0 = 3.0, Del_t = 2.0, Del_z = 2.5;
@@ -252,11 +252,11 @@ void generate_events_v2(vector<EventRecord> & allEvents, ParameterReader * paraR
 				
 				// sample KT, KL first
 				// just use uniform K distribution for simplicity
-				double KT = KT_distribution(generator);
-				//double KT = 0.0;
+				//double KT = KT_distribution(generator);
+				double KT = 0.0;
 				//double KL = KL_distribution(generator);
 				//double KL = 0.0;
-				double KL = KLmax * distribution(generator);
+				//double KL = KLmax * distribution(generator);
 				//double KL = bin_epsilon * distribution(generator);
 
 				double Rscale = R0 / sqrt(1.0 + 0.1*sqrt(mass*mass+KT*KT)/TFO);
@@ -268,9 +268,9 @@ void generate_events_v2(vector<EventRecord> & allEvents, ParameterReader * paraR
 				double yP = RNG_yDir ? Rscale * distribution(generator) : 0.0;
 				double zP = RNG_zDir ? Rscale * distribution(generator) : 0.0;
 
-				double phiT = atan2(yP, xP);
+				//double phiT = atan2(yP, xP);
 
-				double Kphi = KPhi_distribution(generator);
+				//double Kphi = KPhi_distribution(generator);
 				//double Kphi = phiT;
 				//double Kphi = 0.0;
 
@@ -279,13 +279,14 @@ void generate_events_v2(vector<EventRecord> & allEvents, ParameterReader * paraR
 					KT = sqrt(2.0) * TFO * distribution(generator);
 				} while ( KT < 0.0 );*/
 
-				KT = weird_KT_distribution(generator);
+				//KT = weird_KT_distribution(generator);
 
-				double px = KT * cos(Kphi);
-				//px = TFO * distribution(generator);
-				double py = KT * sin(Kphi);
-				//py = TFO * distribution(generator);
-				double pz = KL;
+				//double px = KT * cos(Kphi);
+				double px = TFO * distribution(generator);
+				//double py = KT * sin(Kphi);
+				double py = TFO * distribution(generator);
+				//double pz = KL;
+				double pz = TFO * distribution(generator);
 				//pz = 0.0;
 
 				double Ep = sqrt( mass*mass + px*px + py*py + pz*pz );
