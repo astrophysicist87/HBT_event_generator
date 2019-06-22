@@ -119,9 +119,13 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 			for (int iql = 0; iql < n_ql_bins; iql++)
 			{
 
-				bool in_center = ( iqo == (n_qo_bins-1)/2 and iqs == (n_qs_bins-1)/2 and iql == (n_ql_bins-1)/2 );
-				double overall_factor = 2.0;
-				if ( in_center ) overall_factor = 1.0;
+				bool in_center = ( iqo == (n_qo_bins-1)/2
+						and iqs == (n_qs_bins-1)/2
+						and iql == (n_ql_bins-1)/2 );
+                                double overall_factor = 1.0;
+                                if ( not in_center and
+					not use_smoothness_approximation )
+                                        overall_factor = 2.0;
 
 				double qo = 0.5*(qo_pts[iqo]+qo_pts[iqo+1]);
 				double qs = 0.5*(qs_pts[iqs]+qs_pts[iqs+1]);
@@ -146,7 +150,7 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 				//							* py_bin_width
 				//							* pz_bin_width );
 
-				private_num[index6D] += num_term;
+				private_num[index6D] += overall_factor * num_term;
 				//						/ num_pairs_this_event;
 
 			}
@@ -198,14 +202,14 @@ void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3
 			for (int iql = 0; iql < n_ql_bins; iql++)
 			{
 
-				bool in_center = ( iqo == (n_qo_bins-1)/2 and iqs == (n_qs_bins-1)/2 and iql == (n_ql_bins-1)/2 );
+				//bool in_center = ( iqo == (n_qo_bins-1)/2 and iqs == (n_qs_bins-1)/2 and iql == (n_ql_bins-1)/2 );
 				double overall_factor = 1.0;
-				if ( not use_smoothness_approximation )
-				{
-					overall_factor = 0.5;
-					if ( in_center )
-						overall_factor = 1.0;
-				}
+				//if ( not use_smoothness_approximation )
+				//{
+				//	overall_factor = 0.5;
+				//	if ( in_center )
+				//		overall_factor = 1.0;
+				//}
 
 				double qo = 0.5*(qo_pts[iqo]+qo_pts[iqo+1]);
 				double qs = 0.5*(qs_pts[iqs]+qs_pts[iqs+1]);
