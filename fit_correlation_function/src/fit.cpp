@@ -139,6 +139,8 @@ void Correlation_function::find_minimum_chisq_correlationfunction_full( int iKT,
             results[i] += T_inverse[i][j]*V[j];
     }
 
+
+
 	// compute results
 	lambda_Correl[indexerK(iKT, iKphi, iKL)] = exp(results[0]);
 	R2_out[indexerK(iKT, iKphi, iKL)] = results[1]*hbarC*hbarC;
@@ -282,6 +284,163 @@ void Correlation_function::find_minimum_chisq_correlationfunction_full( int iKT,
     delete [] T_inverse;
 	delete [] curvature_mat;
 	delete [] covariance_mat;
+    delete [] results;
+
+	return;
+}
+
+
+
+void Correlation_function::find_minimum_chisq_correlationfunction_full( int iKT, int iKphi, int iKL, double qmin, double qmax, int nstep )
+{
+	// set fit radii from full grid first
+	find_minimum_chisq_correlationfunction_full( iKT, iKphi, iKL );
+	
+	// check how much the fit radii change for different fir ranges and keep maximum deviation from radii from full grid
+	for (int step = 0; step < nstep; step++)
+		find_minimum_chisq_CFerr_full_FR( iKT, iKphi, iKL, qmin + step*(qmax-qmin)/static_case<double>(nstep-1) );
+
+	return;
+}
+
+
+void Correlation_function::find_minimum_chisq_CFerr_full_FR( int iKT, int iKphi, int iKL, double qmax )
+{
+
+	const size_t data_length = n_qo_bins*n_qs_bins*n_ql_bins;  // # of points
+
+    int dim = 7;
+    int s_gsl;
+
+    double * V = new double [dim];
+    double * qweight = new double [dim];
+    double ** T = new double * [dim];
+    for(int i = 0; i < dim; i++)
+    {
+        V[i] = 0.0;
+        T[i] = new double [dim];
+        for(int j = 0; j < dim; j++)
+            T[i][j] = 0.0;
+    }
+
+	gsl_matrix * T_gsl = gsl_matrix_alloc (dim, dim);
+	gsl_matrix * T_inverse_gsl = gsl_matrix_alloc (dim, dim);
+	gsl_permutation * perm = gsl_permutation_alloc (dim);
+
+	for (int i = 0; i < n_qo_bins; i++)
+	for (int j = 0; j < n_qs_bins; j++)
+	for (int k = 0; k < n_ql_bins; k++)
+    {
+		int idx = indexer(iKT, iKphi, iKL, i, j, k);
+
+        double q_out_local = 0.5*(qo_pts[i]+qo_pts[i+1]);
+        double q_side_local = 0.5*(qs_pts[j]+qs_pts[j+1]);
+        double q_long_local = 0.5*(ql_pts[k]+ql_pts[k+1]);
+
+		double qnorm = q_out_local*q_out_local + q_side_local*q_side_local + q_long_local*q_long_local;
+
+		// fit-range condition (assume minimum norm is q==0)
+		if ( qnorm > qmax*qmax ) continue;
+
+		double correl_local = correlation_function[idx]-1.0;
+		double correl_err_local = correlation_function_error[idx];
+
+		if (correl_local < 1.0e-15) continue;
+
+		bool ignore_central_point = true;
+		if ( 	ignore_central_point
+				and i==(n_qo_bins-1)/2
+				and j==(n_qs_bins-1)/2
+				and k==(n_ql_bins-1)/2)
+			continue;
+//			correl_err_local = 1.0e10;	//ignore central point
+        double sigma_k_prime = correl_err_local/correl_local;
+
+        double inv_sigma_k_prime_sq = 1./(sigma_k_prime*sigma_k_prime);
+        double log_correl_over_sigma_sq = log(correl_local)*inv_sigma_k_prime_sq;
+
+		qweight[0] = - 1.0;
+		qweight[1] = q_out_local*q_out_local;
+		qweight[2] = q_side_local*q_side_local;
+		qweight[3] = q_long_local*q_long_local;
+		qweight[4] = q_out_local*q_side_local;
+		qweight[5] = q_out_local*q_long_local;
+		qweight[6] = q_side_local*q_long_local;
+
+        for(int ij = 0; ij < dim; ij++)
+        {
+            V[ij] += qweight[ij]*log_correl_over_sigma_sq;
+            T[0][ij] += qweight[ij]*inv_sigma_k_prime_sq;
+        }
+
+        for(int ij = 1; ij < dim; ij++)
+            T[ij][0] = T[0][ij];
+            
+        for(int ij = 1; ij < dim; ij++)
+        {
+            for(int lm = 1; lm < dim; lm++)
+                T[ij][lm] += -qweight[ij]*qweight[lm]*inv_sigma_k_prime_sq;
+        }
+    }
+
+    for(int i = 0; i < dim; i++)
+        for(int j = 0; j < dim; j++)
+            gsl_matrix_set(T_gsl, i, j, T[i][j]);
+
+    // Make LU decomposition of matrix T_gsl
+    gsl_linalg_LU_decomp (T_gsl, perm, &s_gsl);
+    // Invert the matrix m
+    gsl_linalg_LU_invert (T_gsl, perm, T_inverse_gsl);
+
+    double ** T_inverse = new double * [dim];
+    for(int i = 0; i < dim; i++)
+    {
+        T_inverse[i] = new double [dim];
+        for(int j = 0; j < dim; j++)
+            T_inverse[i][j] = gsl_matrix_get(T_inverse_gsl, i, j);
+    }
+    double * results = new double [dim];
+    for(int i = 0; i < dim; i++)
+    {
+        results[i] = 0.0;
+        for(int j = 0; j < dim; j++)
+            results[i] += T_inverse[i][j]*V[j];
+    }
+
+    double lambda 	= exp(results[0]);
+	double R2_o 	= results[1]*hbarC*hbarC;
+	double R2_s 	= results[2]*hbarC*hbarC;
+	double R2_l 	= results[3]*hbarC*hbarC;
+	double R2_os 	= results[4]*hbarC*hbarC;
+	double R2_ol 	= results[5]*hbarC*hbarC;
+	double R2_sl 	= results[6]*hbarC*hbarC;
+
+	const int iK3D = indexerK(iKT, iKphi, iKL);
+
+	//make error the value of the largest variation
+	lambda_Correl_FRerr[iK3D] 	= max( abs( lambda - lambda_Correl[iK3D] ), lambda_Correl_FRerr[iK3D] );
+	R2_out_FRerr[iK3D] 			= max( abs( R2_o - R2_out[iK3D] ), R2_out_FRerr[iK3D] );
+	R2_side_FRerr[iK3D] 		= max( abs( R2_s - R2_side[iK3D] ), R2_side_FRerr[iK3D] );
+	R2_long_FRerr[iK3D] 		= max( abs( R2_l - R2_long[iK3D] ), R2_long_FRerr[iK3D] );
+	R2_outside_FRerr[iK3D] 		= max( abs( R2_os - R2_outside[iK3D] ), R2_outside_FRerr[iK3D] );
+	R2_outlong_FRerr[iK3D] 		= max( abs( R2_ol - R2_outlong[iK3D] ), R2_outlong_FRerr[iK3D] );
+	R2_sidelong_FRerr[iK3D] 	= max( abs( R2_sl - R2_sidelong[iK3D] ), R2_sidelong_FRerr[iK3D] );
+
+	//=============================
+    // clean up
+    gsl_matrix_free (T_gsl);
+    gsl_matrix_free (T_inverse_gsl);
+    gsl_permutation_free (perm);
+
+    delete [] qweight;
+    delete [] V;
+    for(int i = 0; i < dim; i++)
+    {
+        delete [] T[i];
+        delete [] T_inverse[i];
+    }
+    delete [] T;
+    delete [] T_inverse;
     delete [] results;
 
 	return;

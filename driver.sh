@@ -7,7 +7,7 @@ HOME_DIRECTORY=~/HBT_event_generator
 # Pythia
 PYTHIA_DIRECTORY=~/pythia8235_MYCOPY/examples
 ALT_PYTHIA_DIRECTORY=/scratch/blixen/plumberg
-PYTHIA_RESULTS_DIRECTORY=$ALT_PYTHIA_DIRECTORY/results_run_BEeffects_PYTHIAv1e
+PYTHIA_RESULTS_DIRECTORY=$ALT_PYTHIA_DIRECTORY/results_run_BEeffects_PYTHIAv1f
 # HBT event generator
 HBT_EVENT_GEN_DIRECTORY=$HOME_DIRECTORY/HBT_event_generator_w_errors
 # Fit correlation function
@@ -20,7 +20,7 @@ HBT_SV_DIRECTORY=$HOME_DIRECTORY/source_variances
 #=====================================
 # Flags and options
 #=====================================
-runPythia=false
+runPythia=true
 
 # system specifications
 projectile="p"
@@ -30,8 +30,8 @@ Nevents="1000000"
 
 # BE and related specifications
 QRefValue="0.2"			#GeV
-BEeffects='off'
-BEEnhancementMode='0'	# 0 - use fixed QRef
+BEeffects='on'
+BEEnhancementMode='2'	# 0 - use fixed QRef
 						# 1 - use ST interval with Gaussian BE form
 						# 2 - use ST interval with spherical Bessel BE form
 SetFragmentationVertices='on'
@@ -186,6 +186,7 @@ do
 		nohup time ./run_HBT_event_generator.e \
 				centrality_minimum=$lowerLimit \
 				centrality_maximum=$upperLimit \
+				BE_mode=$BEEnhancementMode \
 				1> HBT_event_generator.out \
 				2> HBT_event_generator.err
 		# N.B. - centralities now determined in Pythia

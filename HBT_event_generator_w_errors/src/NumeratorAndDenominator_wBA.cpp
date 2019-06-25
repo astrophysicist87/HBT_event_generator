@@ -19,7 +19,7 @@
 void HBT_event_generator::Compute_numerator_and_denominator_methodMode2_q_mode_3D()
 {
 	// ignore q-dependence in denominator
-	bool use_smoothness_approximation = true;
+	bool use_smoothness_approximation = false;
 	const double SAfact = ( use_smoothness_approximation ) ? 0.0 : 1.0;
 
 	bool perform_random_rotation = false;

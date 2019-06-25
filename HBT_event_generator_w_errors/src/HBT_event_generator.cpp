@@ -239,7 +239,7 @@ void HBT_event_generator::Compute_numerator_and_denominator()
 				break;
 		}
 	}
-	else if ( BE_mode == 1 )
+	else if ( BE_mode > 0 )
 	{
 		Compute_numerator_and_denominator_momentum_space_only();
 	}
@@ -268,7 +268,7 @@ void HBT_event_generator::Compute_correlation_function()
 
 	const int iqCenter = (q_space_size-1)/2;
 
-	if ( method_mode == 1 or BE_mode == 1 )
+	if ( method_mode == 1 or BE_mode > 0 )
 	{
 		// Compute correlation function itself
 		// (along with error estimates)
