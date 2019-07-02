@@ -289,12 +289,15 @@ void HBT_event_generator::Compute_correlation_function()
 										and denPair[idxK] > 0
 										and abs( CF_den ) > 1.e-25;
 
+				double BE_shift = 0.0;
+				if (BE_mode > 0) BE_shift = 1.0;
+
 				//==============================
 				//==== correlation function ====
 				//==============================
 				correlation_function[idx]
 							= ( this_bin_is_safe )
-								? 1.0 + R2 - static_cast<double>(BE_mode)
+								? 1.0 + R2 - BE_shift
 								: 1.0;
 
 				//=========================

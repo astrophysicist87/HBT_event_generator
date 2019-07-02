@@ -24,20 +24,45 @@ void Correlation_function::Fit_correlation_function_Q()
 {
 	if ( fit_mode == 0 )
 	{
-		out << "--> Getting HBT radii by Gaussian fit method (vs. Q only)" << endl;
-		for (int iKT = 0; iKT < n_KT_bins; ++iKT)
-		for (int iKphi = 0; iKphi < n_Kphi_bins; ++iKphi)
-		for (int iKL = 0; iKL < n_KL_bins; ++iKL)
+
+		out << "--> Getting HBT radii by Gaussian fit method" << endl;
+
+		/*if ( use_fit_range_errors )
 		{
-			out << "  --> Fitting in pair-momentum bin: "
-				<< "KT=[" << KT_pts[iKT] << ", " << KT_pts[iKT+1] << "] GeV, "
-				<< "Kphi=[" << Kphi_pts[iKphi] << ", " << Kphi_pts[iKphi+1] << "], "
-				<< "KL=[" << KL_pts[iKL] << ", " << KL_pts[iKL+1] << "] GeV"
-				<< endl;
-			find_minimum_chisq_correlationfunction_Q( iKT, iKphi, iKL );
+
+			const double Qmax = -init_Q;	// choose maximum Q value to define maximum fit-range radius
+			const double Qmin = 0.5 * Qmax;	// say
+			const int nstep = 6;			// steps of 10% of Qmax
+
+			for (int iKT = 0; iKT < n_KT_bins; ++iKT)
+			for (int iKphi = 0; iKphi < n_Kphi_bins; ++iKphi)
+			for (int iKL = 0; iKL < n_KL_bins; ++iKL)
+			{
+				out << "  --> Doing fit-range analysis: "
+					<< "KT=[" << KT_pts[iKT] << ", " << KT_pts[iKT+1] << "] GeV, "
+					<< "Kphi=[" << Kphi_pts[iKphi] << ", " << Kphi_pts[iKphi+1] << "], "
+					<< "KL=[" << KL_pts[iKL] << ", " << KL_pts[iKL+1] << "] GeV"
+					<< endl;
+				find_minimum_chisq_correlationfunction_Q_FR( iKT, iKphi, iKL, Qmin, Qmax, nstep );
+			}
+		}
+		else*/
+		{
+			for (int iKT = 0; iKT < n_KT_bins; ++iKT)
+			for (int iKphi = 0; iKphi < n_Kphi_bins; ++iKphi)
+			for (int iKL = 0; iKL < n_KL_bins; ++iKL)
+			{
+				out << "  --> Fitting in pair-momentum bin: "
+					<< "KT=[" << KT_pts[iKT] << ", " << KT_pts[iKT+1] << "] GeV, "
+					<< "Kphi=[" << Kphi_pts[iKphi] << ", " << Kphi_pts[iKphi+1] << "], "
+					<< "KL=[" << KL_pts[iKL] << ", " << KL_pts[iKL+1] << "] GeV"
+					<< endl;
+				find_minimum_chisq_correlationfunction_Q( iKT, iKphi, iKL );
+			}
 		}
 
 		out << "--> Finished getting HBT radii by Gaussian fit method" << endl;
+
 	}
 	else
 	{
@@ -273,15 +298,16 @@ out << "results errors: " << lambda_Correl_err[indexerK(iKT, iKphi, iKL)] << "  
 }
 
 
-
-void Correlation_function::find_minimum_chisq_correlationfunction_Q( int iKT, int iKphi, int iKL, double Qmin, double Qmax, int nstep )
+/*
+void Correlation_function::find_minimum_chisq_correlationfunction_Q_FR( int iKT, int iKphi, int iKL, double Qmin, double Qmax, int nstep )
 {
-	// set fit radii from full grid first
-	find_minimum_chisq_correlationfunction_Q( iKT, iKphi, iKL );
-	
+	// first set the radii themselves
+	// this function also sets the ordinary fit errors (perhaps incorrectly)
+	find_minimum_chisq_correlationfunction_full( iKT, iKphi, iKL );
+
 	// check how much the fit radii change for different fir ranges and keep maximum deviation from radii from full grid
 	for (int step = 0; step < nstep; step++)
-		find_minimum_chisq_CFerr_Q_FR( iKT, iKphi, iKL, Qmin + step*(Qmax-Qmin)/static_case<double>(nstep-1) );
+		find_minimum_chisq_CFerr_Q_FR( iKT, iKphi, iKL, Qmin + step*(Qmax-Qmin)/static_case<double>(nstep-1.0) );
 
 	return;
 }
@@ -422,6 +448,6 @@ void Correlation_function::find_minimum_chisq_CFerr_Q_FR( int iKT, int iKphi, in
 
 	return;
 }
-
+*/
 
 //End of file

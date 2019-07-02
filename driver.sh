@@ -7,7 +7,7 @@ HOME_DIRECTORY=~/HBT_event_generator
 # Pythia
 PYTHIA_DIRECTORY=~/pythia8235_MYCOPY/examples
 ALT_PYTHIA_DIRECTORY=/scratch/blixen/plumberg
-PYTHIA_RESULTS_DIRECTORY=$ALT_PYTHIA_DIRECTORY/results_run_BEeffects_PYTHIAv1f
+PYTHIA_RESULTS_DIRECTORY=$ALT_PYTHIA_DIRECTORY/results_run_BEeffects_MSM_toymodel
 # HBT event generator
 HBT_EVENT_GEN_DIRECTORY=$HOME_DIRECTORY/HBT_event_generator_w_errors
 # Fit correlation function
@@ -25,8 +25,8 @@ runPythia=true
 # system specifications
 projectile="p"
 target="p"
-beamEnergy="13000.0"	#GeV
-Nevents="1000000"
+beamEnergy="500000.0"	#GeV
+Nevents="10000"
 
 # BE and related specifications
 QRefValue="0.2"			#GeV
@@ -70,7 +70,7 @@ check_success () {
 echo 'Processing Nevents =' $Nevents $projectile'+'$target 'collisions at' $beamEnergy 'GeV'
 
 nCC=0
-for centralityCutString in "0-100%"
+for centralityCutString in "0-0.1%"
 do
 	success=0
 	echo '  -- analyzing centrality class' $centralityCutString
@@ -126,7 +126,7 @@ do
 			# New Pythia options, flags, parameters, etc.
 			# which I've added myself (not generally compatible yet)
 			# Comment out lines below this one if running on unmodified Pythia
-			#echo 'BoseEinstein:enhanceMode =' $BEEnhancementMode >> main_BEeffects.cmnd
+			echo 'BoseEinstein:enhanceMode =' $BEEnhancementMode >> main_BEeffects.cmnd
 
 
 			# time and run
@@ -146,6 +146,7 @@ do
 		recordOfOutputFilenames_Sxp=$PYTHIA_RESULTS_DIRECTORY/`echo $collisionSystemStem`"_S_x_p_filenames.dat"
 		recordOfOutputFilename_mult=$PYTHIA_RESULTS_DIRECTORY/`echo $collisionSystemStem`"_total_N_filename.dat"
 		rm $HBT_EVENT_GEN_DIRECTORY/catalogue.dat
+		rm $HBT_SV_DIRECTORY/catalogue.dat
 		for line in `cat $recordOfOutputFilenames_Sxp`
 		do
 			readlink -f $PYTHIA_RESULTS_DIRECTORY/$line >> $HBT_EVENT_GEN_DIRECTORY/catalogue.dat
@@ -184,8 +185,8 @@ do
 
 		# time and run
 		nohup time ./run_HBT_event_generator.e \
-				centrality_minimum=$lowerLimit \
-				centrality_maximum=$upperLimit \
+				#centrality_minimum=$lowerLimit \
+				#centrality_maximum=$upperLimit \
 				BE_mode=$BEEnhancementMode \
 				1> HBT_event_generator.out \
 				2> HBT_event_generator.err

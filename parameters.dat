@@ -34,17 +34,17 @@ n_Kphi_pts = 2
 
 # KL grid
 n_KL_pts = 2
-KLmin = -0.5
-KLmax = 0.5
+KLmin = -1.0
+KLmax = 1.0
 
 #===========
 # relative momenta (3D)
-n_qo_pts = 42
-n_qs_pts = 42
-n_ql_pts = 42
-delta_qo = 0.02
-delta_qs = 0.02
-delta_ql = 0.02
+n_qo_pts = 12
+n_qs_pts = 12
+n_ql_pts = 12
+delta_qo = 0.05
+delta_qs = 0.05
+delta_ql = 0.05
 
 # relative momentum (1D)
 n_Q_pts = 22

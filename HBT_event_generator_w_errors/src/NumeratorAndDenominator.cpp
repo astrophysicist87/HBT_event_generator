@@ -625,27 +625,27 @@ void HBT_event_generator::Compute_numerator_and_denominator_momentum_space_only_
 			for (int iKL = 0; iKL < n_KL_bins; iKL++)
 			{
 
-				double private_numPair_val 	= private_numPair[idx3D];
-				double private_denPair_val 	= private_denPair[idx3D];
+				double private_numPair_val 		= private_numPair[idx3D];
+				double private_denPair_val 		= private_denPair[idx3D];
 
-				numPair[idx3D] 			+= private_numPair_val;
-				numPair2[idx3D] 			+= private_numPair_val*private_numPair_val;
-				denPair[idx3D] 			+= private_denPair_val;
-				denPair2[idx3D] 			+= private_denPair_val*private_denPair_val;
+				numPair[idx3D] 					+= private_numPair_val;
+				numPair2[idx3D] 				+= private_numPair_val*private_numPair_val;
+				denPair[idx3D] 					+= private_denPair_val;
+				denPair2[idx3D] 				+= private_denPair_val*private_denPair_val;
 
 				for (int iqo = 0; iqo < n_qo_bins; iqo++)
 				for (int iqs = 0; iqs < n_qs_bins; iqs++)
 				for (int iql = 0; iql < n_ql_bins; iql++)
 				{
-					double private_num_val 			= private_num[idx6D];
-					double private_den_val 			= private_den[idx6D];
+					double private_num_val 		= private_num[idx6D];
+					double private_den_val 		= private_den[idx6D];
 
 					numerator[idx6D] 			+= private_num_val;
 					denominator[idx6D] 			+= private_den_val;
 
 					numerator2[idx6D] 			+= private_num_val*private_num_val;
 					numerator_numPair[idx6D] 	+= private_num_val*private_numPair_val;
-					denominator2[idx6D] 			+= private_den_val*private_den_val;
+					denominator2[idx6D] 		+= private_den_val*private_den_val;
 					denominator_denPair[idx6D] 	+= private_den_val*private_denPair_val;
 
 					++idx6D;

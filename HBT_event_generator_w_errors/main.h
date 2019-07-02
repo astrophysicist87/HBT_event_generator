@@ -286,6 +286,8 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 		cout << "n_current_events = " << n_current_events << endl;*/
 	}
 
+	//if (1) exit(8);
+
 	return;
 }
 

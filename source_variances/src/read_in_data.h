@@ -52,6 +52,8 @@ inline void complete_particle(ParticleRecord & p)
 // function to read in a file containing some number of events
 void read_in_file(string filename, vector<EventRecord> & eventsInFile, ParameterReader * paraRdr)
 {
+	bool check_particle_range = false;
+
 	ifstream infile(filename.c_str());
 
 	int count = 0;
@@ -95,6 +97,11 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 					>> t >> x >> y >> z
 			 ) ) { /*cout << "no success reading in!" << endl;*/ break; }
 
+		//cout << "This particle: " << eventID << "   " << particleID << "   "
+		//		<< E << "   " << px << "   " << py << "   " << pz << "   "
+		//		<< t << "   " << x << "   " << y << "   " << z << endl;
+
+		if ( check_particle_range )
 		{
 			const double tconv = t / MmPerFm;
 			const double xconv = x / MmPerFm;
@@ -186,8 +193,8 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 				// push event to eventsInFile
 				event.eventID = previous_eventID;
 				//cout << "current_eventID = " << current_eventID << endl;
-				cout << "Pushing previous_eventID = " << previous_eventID << " while reading in " << filename << endl;
-				cout << "event.particles.size() = " << event.particles.size() << endl;
+				//cout << "Pushing previous_eventID = " << previous_eventID << " while reading in " << filename << endl;
+				//cout << "event.particles.size() = " << event.particles.size() << endl;
 				eventsInFile.push_back(event);
 				++n_events_read_from_this_file;
 
@@ -229,8 +236,8 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 	if ( current_eventID > -1 and event.particles.size() > 0 )
 	{
 		event.eventID = current_eventID;
-		cout << "Pushing current_eventID = " << current_eventID << " after reading in " << filename << endl;
-		cout << "event.particles.size() = " << event.particles.size() << endl;
+		//cout << "Pushing current_eventID = " << current_eventID << " after reading in " << filename << endl;
+		//cout << "event.particles.size() = " << event.particles.size() << endl;
 		eventsInFile.push_back(event);
 		++n_events_read_from_this_file;
 	}
@@ -274,6 +281,8 @@ void read_in_file(string filename, vector<EventRecord> & eventsInFile, Parameter
 
 		cout << "n_current_events = " << n_current_events << endl;*/
 	}
+
+	//if (1) exit(8);
 
 	return;
 }
